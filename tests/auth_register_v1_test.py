@@ -17,6 +17,11 @@ def test_valid_register():
 	login_return = auth_login_v1("user@mail.com", "password")
 	assert register_return == login_return
 
+def test_multiple_valid_registers():
+	register1_return = auth_register_v1("user1@mail.com", "password", "firstname", "lastname")
+	login1_return = auth_login_v1("user1@mail.com", "password")
+	assert register1_return == login1_return
+
 	register2_return = auth_register_v1("user2@mail.com", "password", "firstname", "lastname")
 	login2_return = auth_login_v1("user2@mail.com", "password2")
 	assert register2_return == login2_return
