@@ -33,8 +33,16 @@ def test_first_name_empty():
 	with pytest.raises(InputError):
 	  	assert auth_register_v1("firstname@mail.com", "password", "", "lastname")
 
+def test_first_name_too_long():
+	with pytest.raises(InputError):
+	  	assert auth_register_v1("firstname@mail.com", "password", "a" * 51, "lastname")
+
 def test_last_name_empty():
 	with pytest.raises(InputError):
 	  	assert auth_register_v1("firstname@mail.com", "password", "firstname", "")
+
+def test_last_name_too_long():
+	with pytest.raises(InputError):
+	  	assert auth_register_v1("firstname@mail.com", "password", "firstname", "a" * 51)
 
 
