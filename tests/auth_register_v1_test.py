@@ -5,6 +5,13 @@ from src.auth import auth_login_v1
 from src.error import InputError
 from src.other import clear_v1
 
+# Automatically applied to all tests
+@pytest.fixture(autouse=True)
+def clear_data():
+	clear_v1()
+
+# Tests for valid registrations
+
 def test_valid_register():
 	register_return = auth_register_v1("user@mail.com", "password", "firstname", "lastname")
 	login_return = auth_login_v1("user@mail.com", "password")
@@ -20,6 +27,8 @@ def test_user_id_unique():
 		register_return = auth_register_v1(f"user{i}@mail.com", "password", "firstname", "lastname")
 		assert register_return not in used_ids
 		used_ids.append(register_return)
+
+# Tests for invalid registrations
 
 def test_invalid_email():
 	with pytest.raises(InputError):
