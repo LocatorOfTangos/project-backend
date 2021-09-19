@@ -23,7 +23,7 @@ def test_multiple_valid_registers():
 	assert register1_return == login1_return
 
 	register2_return = auth_register_v1("user2@mail.com", "password", "firstname", "lastname")
-	login2_return = auth_login_v1("user2@mail.com", "password2")
+	login2_return = auth_login_v1("user2@mail.com", "password")
 	assert register2_return == login2_return
 
 def test_user_id_unique():
