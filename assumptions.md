@@ -1,0 +1,1 @@
+Assumed names are case sensitive: NAME != Name != name
