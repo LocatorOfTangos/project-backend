@@ -50,6 +50,25 @@ def email_is_valid(email):
         return False
 
 def auth_register_v1(email, password, name_first, name_last):
+    '''
+    Registers a user by adding them to the users list of the data store and assigning an ID
+
+    Arguments:
+        email (string)		- email address of the user being registered
+        password (string)	- password of the user
+        name_first (string)	- first name of the user
+        name_last (string)	- last name of the user
+
+    Exceptions:
+        InputError  - Occurs when:
+			> Email address has already been used by a registered user
+			> Email does not match the format of a valid email address
+			> First or last name is not between 1 and 50 characters long (inclusive)
+			> Password is less than 6 characters long
+
+    Return Value:
+        Returns a dictionary containing the ID assigned to the user, with the key 'auth_user_id'
+    '''
     store = data_store.get()
     users = store['users'] # List of users, index = id
 
