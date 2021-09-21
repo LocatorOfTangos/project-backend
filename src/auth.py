@@ -53,6 +53,10 @@ def auth_register_v1(email, password, name_first, name_last):
     store = data_store.get()
     users = store['users'] # List of users, index = id
 
+    # Normalise case of names
+    name_first = name_first.title()
+    name_last = name_last.title()
+
     # Check if email is valid
     if not email_is_unique(email):
         raise InputError('Email has already been used to register a user')
