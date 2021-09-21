@@ -7,6 +7,7 @@ def auth_login_v1(email, password):
 		'auth_user_id': 1,
 	}
 
+# Returns a copy of 'string' with all non-alphanumeric characters removed
 def remove_non_alnum(string):
 	result = ''
 	for ch in string:
@@ -14,6 +15,10 @@ def remove_non_alnum(string):
 			result += ch
 	return result
 
+# Generates a unique handle for a user by concatenating first and last names
+# Number appended to end to differentiate users with the same name
+# Handle contains only alphanumeric characters
+# Handle is truncated to 20 name characters, exluding number for duplicate names
 def create_handle(first, last):
 	# Generate handle from first 20 alphanum characters
 	store = data_store.get()
@@ -32,6 +37,7 @@ def create_handle(first, last):
 	
 	return handle
 
+# Returns true if email address has not yet been used by a registered user in the data store
 def email_is_unique(email):
 	store = data_store.get()
 	users = store['users']
@@ -42,6 +48,7 @@ def email_is_unique(email):
 
 	return True
 
+# Returns true if email address matches the format for a valid email address
 def email_is_valid(email):
 	pattern = '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 	return True if re.fullmatch(pattern, email) else False
