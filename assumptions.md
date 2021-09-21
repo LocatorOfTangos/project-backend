@@ -1,1 +1,1 @@
-Assumed names are case sensitive: NAME != Name != name
+Assumed name case doesn't matter: 'HAYDEN' is the same name as 'Hayden' and 'hayden'
