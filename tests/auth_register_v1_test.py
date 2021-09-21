@@ -2,7 +2,6 @@ import pytest
 
 from src.auth import auth_register_v1
 from src.auth import auth_login_v1
-from src.data_store import data_store
 from src.error import InputError
 from src.other import clear_v1
 
