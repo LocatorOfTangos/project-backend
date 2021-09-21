@@ -26,6 +26,8 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
+    # List of user dictionaries, indexed by ID
+    # User contains: first_name, last_name, email, password, handle
     'users': [],
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
