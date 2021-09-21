@@ -71,33 +71,3 @@ def test_last_name_too_long():
 	with pytest.raises(InputError):
 	  	assert auth_register_v1("firstname@mail.com", "password", "firstname", "a" * 51)
 
-# Tests for handle generation
-
-@pytest.fixture
-def users():
-	store = data_store.get()
-	return store['users']
-
-def test_handle_unique(users):
-	id1 = auth_register_v1("user1@mail.com", "password", "firstname", "lastname")['auth_user_id']
-	id2 = auth_register_v1("user2@mail.com", "password", "firstname", "lastname")['auth_user_id']
-	id3 = auth_register_v1("user3@mail.com", "password", "firstname", "lastname")['auth_user_id']
-
-	users[id1]['handle'] != users[id2]['handle'] != users[id3]['handle']
-
-def test_handle_increment(users):
-	id1 = auth_register_v1("user1@mail.com", "password", "firstname", "lastname")['auth_user_id']
-	id2 = auth_register_v1("user2@mail.com", "password", "firstname", "lastname")['auth_user_id']
-	id3 = auth_register_v1("user3@mail.com", "password", "firstname", "lastname")['auth_user_id']
-
-	assert users[id1]['handle'] == 'firstnamelastname'
-	assert users[id2]['handle'] == 'firstnamelastname0'
-	assert users[id3]['handle'] == 'firstnamelastname1'
-
-def test_handle_length(users):
-	id = auth_register_v1("user@mail.com", "password", "abcdefghijklm", "nopqrstuvwxyz")['auth_user_id']
-	assert len(users[id]['handle']) <= 20
-
-def test_handle_alphanumeric(users):
-	id = auth_register_v1("user@mail.com", "password", "abc%^&$%&%^&$", "(^&def&%")['auth_user_id']
-	assert users[id]['handle'].isalnum()
