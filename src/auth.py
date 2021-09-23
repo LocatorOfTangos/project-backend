@@ -28,7 +28,7 @@ def create_handle(first, last):
 	# Check if handle is taken
 	occurrences = 0
 	for user in users:
-		if user['first_name'] == first and user['last_name'] == last:
+		if user['name_first'] == first and user['name_last'] == last:
 			occurrences += 1
 	
 	# If taken, append with a number
