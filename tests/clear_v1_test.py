@@ -21,4 +21,4 @@ def test_channels_clear():
 	clear_v1()
 	u_id = auth_register_v1("user@mail.com", "password", "first", "last")['auth_user_id']
 	with pytest.raises(InputError):
-		assert channel_details_v1(uid, c_id)
+		assert channel_details_v1(u_id, c_id)
