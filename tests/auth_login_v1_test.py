@@ -41,8 +41,6 @@ def test_incorrect_password():
 
     with pytest.raises(InputError):
         assert auth_login_v1("JamisonFawkes@gigglemail.boom", "Roadhog")
-    
+
     with pytest.raises(InputError):
         assert auth_login_v1("TheEngineer@mercmail.tf", "ConundrumsOfPhilosophy")
-    
-
