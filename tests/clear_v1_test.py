@@ -11,11 +11,11 @@ from src.error import InputError
 def clear_data():
 	clear_v1()
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
+#@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_users_clear():
 	# Successfully register and login a user
 	user = auth_register_v1("user@mail.com", "password", "first", "last")
-	assert auth_login_v1("user@mail.com", "password")['auth_user_id'] == user
+	assert auth_login_v1("user@mail.com", "password") == user
 
 	clear_v1()
 
@@ -26,7 +26,7 @@ def test_users_clear():
 def test_channels_clear():
 	# Successfully register and login a user
 	user = auth_register_v1("user@mail.com", "password", "first", "last")
-	assert auth_login_v1("user@mail.com", "password")['auth_user_id'] == user
+	assert auth_login_v1("user@mail.com", "password") == user
 
 	# Successfully create a channel and get its details
 	channel = channels_create_v1(user['auth_user_id'], "channel_name", True)
