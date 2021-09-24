@@ -3,8 +3,27 @@ from src.error import InputError
 import re
 
 def auth_login_v1(email, password):
+	#Initialising variables
+	user_id = None
+	user_list = data_store.get()['users']
+	password_list = data_store.get()['passwords']
+
+	#Loop through users to find one with matching email
+	for user in user_list:
+		if user['email'] == email:
+			user_id = user['u_id']
+			break
+
+	#Raise InputError if no user if found with corresponding email
+	if user_id == None
+		raise InputError('No user is registered with this Email')
+		
+	#Raise InputError if password is incorrect
+	if password_list[user_id] != password
+		raise InputError('Incorrect Password')
+
 	return {
-		'auth_user_id': 1,
+		'auth_user_id': user_id,
 	}
 
 # Returns a copy of 'string' with all non-alphanumeric characters removed
