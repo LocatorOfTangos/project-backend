@@ -116,5 +116,5 @@ def auth_register_v1(email, password, name_first, name_last):
 	data_store.set(store)
 	
 	return {
-		'auth_user_id': id,
+		'auth_user_id': u_id,
 	}
