@@ -3,8 +3,8 @@ from src.error import InputError
 import re
 
 def auth_login_v1(email, password):
-	#Initialising variables
-	user_id = None
+	#Initialising lists
+	email_registered = False
 	user_list = data_store.get()['users']
 	password_list = data_store.get()['passwords']
 
@@ -12,14 +12,15 @@ def auth_login_v1(email, password):
 	for user in user_list:
 		if user['email'] == email:
 			user_id = user['u_id']
+			email_registered = True
 			break
 
 	#Raise InputError if no user if found with corresponding email
-	if user_id == None
+	if email_registered == False:
 		raise InputError('No user is registered with this Email')
 		
 	#Raise InputError if password is incorrect
-	if password_list[user_id] != password
+	if password_list[user_id] != password:
 		raise InputError('Incorrect Password')
 
 	return {
@@ -135,5 +136,5 @@ def auth_register_v1(email, password, name_first, name_last):
 	data_store.set(store)
 	
 	return {
-		'auth_user_id': id,
+		'auth_user_id': u_id,
 	}
