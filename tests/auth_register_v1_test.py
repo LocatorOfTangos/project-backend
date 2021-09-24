@@ -49,6 +49,12 @@ def test_invalid_email():
 	with pytest.raises(InputError):
 	  	assert auth_register_v1("user*@mail.com", "password", "firstname", "lastname")
 
+	with pytest.raises(InputError):
+		assert auth_register_v1("user@mail.", "password", "firstname", "lastname")
+
+	with pytest.raises(InputError):
+		assert auth_register_v1("user@mail.c", "password", "firstname", "lastname")
+
 def test_duplicate_email():
 	auth_register_v1("user@mail.com", "password", "firstname", "lastname")
 	with pytest.raises(InputError):
