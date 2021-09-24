@@ -22,17 +22,21 @@ def test_channel_name_too_short():
 	with pytest.raises(InputError):
 		assert channels_create_v1(auth_user_id2 , " ", True)
 
-# Test for correct incrementing for channel id
+# Test for correct output and incrementing of channel ids
 
-def test_channel_id_increment():
+def test_channel_id_one():
 	auth_user_id3 = auth_register_v1("player3@gmail.com", "player321", "firstname", "lastname")
-	auth_user_id4 = auth_Register_v1("player4@gmail.com", "player432", "firstname", "lastname")
+	assert channels_create_v1(auth_user_id3, "firstchannel", True) = 1
 
-	channel_id_one = channels_create_v1(auth_user_id3, "firstchannel", True)
-	channel_id_two = channels_create_v1(auth_user_id4, "secondchannnel", True)
+def test_channel_id_multiple():
+	auth_user_id4 = auth_register_v1("player4@gmail.com", "player543", "firstname", "lastname")
+	assert channels_create_v1(auth_user_id4, "firstchannel", True) = 1
 
-	assert channel_id_one = 1
-	assert channel_id_two = 2
+	auth_user_id5 = auth_register_v1("player5@gmail.com", "player654", "firstname", "lastname")
+	assert channels_create_v1(auth_user_id5, "secondchannnel", True) = 2
 
+	auth_user_id6 = auth_register_v1("player6@gmail.com", "player765", "firstname", "lastname")
+	assert channels_create_v1(auth_user_id6, "thirdchannel", True) = 3
 
-
+	auth_user_id7 = auth_register_v1("player7@gmail.com", "player876", "firstname", "lastname")
+	assert channels_create_v1(auth_user_id7, "fourthchannel", True) = 4
