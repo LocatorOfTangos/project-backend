@@ -122,12 +122,16 @@ def auth_register_v1(email, password, name_first, name_last):
 	handle = create_handle(name_first, name_last)
 	u_id = len(users)
 
+	# User is global owner if joined first (if id is 0)
+	perm_id = 1 if u_id == 0 else 2
+
 	users.append({
 		'u_id': u_id,
 		'email': email,
 		'name_first': name_first,
 		'name_last': name_last,
 		'handle_str': handle,
+		'global_permissions': perm_id,
 	})
 
 	# Add password to data store
