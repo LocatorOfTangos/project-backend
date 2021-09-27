@@ -27,6 +27,13 @@ def test_invalid_channel_id(clear, user, channel):
 	with pytest.raises(InputError):
 		assert channel_messages_v1(user, 5, 0)
 
+def test_valid_no_messages(clear, user, channel):
+	assert channel_messages_v1(user, channel, 0) == {'messages': [], 'start':0, 'end':-1}
+
+def test_invalid_user(clear, channel):
+	with pytest.raises(AccessError):
+		assert channel_messages_v1(12365478, channel, 0)
+
 def test_invalid_start(clear, user, channel):
 	with pytest.raises(InputError):
 		assert channel_messages_v1(user, channel, 5)
