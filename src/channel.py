@@ -1,29 +1,27 @@
+#from data_store import data_store
+
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
 def channel_details_v1(auth_user_id, channel_id):
-    return {
-        'name': 'Hayden',
-        'owner_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
-    }
+    '''
+    Raise input error for invalid channel id
+    Raise access error if auth_user_id is not in the channel
+    Create an empty list to store all members and owners.
+    Loop through channels in data_store. Find the matching channel_id. Return that channel dict
+    '''
+    # Check if channel is valid
+    if check_valid_channel(channel_id) == False:
+        raise InputError("Invalid channel")
+    
+    # Check if user is in the channel
+    
+    # Implement the function
+
+
+
+    
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
@@ -42,3 +40,14 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 def channel_join_v1(auth_user_id, channel_id):
     return {
     }
+
+'''
+def check_valid_channel(channel_id):
+
+    # Loop through data_store to check if channel_id is present
+    
+    for channels in data_store['channels']:
+        if channels.get('channel_id') == channel_id:
+            return True           
+    return False
+'''
