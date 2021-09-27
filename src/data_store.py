@@ -37,7 +37,7 @@ initial_object = {
     # Channel contains: channel_id, name, is_public, owner_members[], all_members[], messages[]
     # Owner_members and all_members are lists of user dictionaries
     # Messages is a list of message dictionaries
-    #   Append messages to list - most recent message should be at end
+    #   Add messages to front of list - most recent message should be at index 0
     #   Message dictionaries contain: message_id, u_id, message, time_created
     'channels': []
 }

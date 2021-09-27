@@ -48,7 +48,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         raise InputError("Start must not be greater than the number of messages in the channel")
     
     # Get the up to 50 most recent messages from start
-    page = messages[-(start + 1) : -(start + 51) : -1]
+    page = messages[start : start + 50]
 
     end = (start + 50) if (start + 50) < len(messages) else -1
 
