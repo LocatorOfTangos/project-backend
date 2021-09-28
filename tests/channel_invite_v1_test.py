@@ -1,5 +1,4 @@
 import pytest
-import random
 import time
 
 from src.auth import auth_register_v1
@@ -9,6 +8,11 @@ from src.channels import channels_create_v1
 # MISCELLANEOUS IMPORTS
 from src.other import clear_v1
 from src.error import InputError, AccessError
+
+
+@pytest.fixture(autouse=True)
+def clear():
+    clear_v1()
 
 
 def successful_inv(is_public):
@@ -21,12 +25,14 @@ def successful_inv(is_public):
     assert channel_invite_v1(inviter_id, channel_id, invited_id) == {}, 'PUBLIC INVITE FAILED' if is_public else\
                                                                         'PRIVATE INVITE FAILED'
 
-    clear_v1
+
+@pytest.mark.skip(reason="Requires unimplemented functions")
+def test_successful_inv_public():
+    successful_inv(True)
 
 
 @pytest.mark.skip(reason="Requires unimplemented functions")
-def test_successful_inv():
-    successful_inv(True)
+def test_successful_inv_private():
     successful_inv(False)
 
 
@@ -35,8 +41,7 @@ def test_successful_inv():
 def test_uid_dne():
     inviter_id = auth_register_v1('inviter@email.com', 'password', 'mister', 'inviter')['auth_user_id']
 
-    ls = list(range(2000, 2200, 20))
-    dne_id = ls[random.randint(0, len(ls) - 1)]
+    dne_id = 2
 
     channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
 
