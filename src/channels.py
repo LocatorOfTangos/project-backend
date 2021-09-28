@@ -35,6 +35,9 @@ def channels_create_v1(auth_user_id, name, is_public):
     #check for valid user_id
     users = store['users']
     
+    '''
+    might create a seperate file for these functions
+    '''
     for user in users:
         if user['u_id'] == u_id:
             return True
@@ -61,5 +64,5 @@ def channels_create_v1(auth_user_id, name, is_public):
     store['channels'].append(channels_details)
     
     return {
-        'channel_id': channel_id
+        'channel_id': channel_id,
     }
