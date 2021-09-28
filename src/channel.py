@@ -7,27 +7,34 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 	}
 
 def channel_details_v1(auth_user_id, channel_id):
-    
-    '''Raise input error for invalid channel id
-    Raise access error if auth_user_id is not in the channel
-    Create an empty list to store all members and owners.
-    Loop through channels in data_store. Find the matching channel_id. Return that channel dict
-    '''
-    # Check if channel is valid
-    if valid_channel_id(channel_id) == False:
-        raise InputError("Invalid channel")
 
-    # Check if user is in the channel
-    if user_is_member(auth_user_id, channel_id) == False:
-		raise AccessError("User is not a member")
+	'''Raise input error for invalid channel id
+	Raise access error if auth_user_id is not in the channel
+	Create an empty list to store all members and owners.
+	Loop through channels in data_store. Find the matching channel_id. Return that channel dict
+	'''
+	# Check if channel is valid
+	if not valid_channel_id(channel_id):
+		raise InputError("Channel does not exist")
+
+	# Check if user is in the channel
+	if not user_is_member(auth_user_id, channel_id):
+		raise AccessError("User is not a member of the channel")	
 
 	# Check if user is valid
-	if valid_user_id(auth_user_id) == False:
-		raise InputError("Invalid user")
+	if not valid_user_id(auth_user_id):
+		raise AccessError("User ID does not belong to a user")
 
-    # Implement the function
+	# Implement the function
 	owner = []
 	members = []
+	store = data_store.get()
+	channels = store['channels']
+	for channel in data[channels]:
+		if channel.get("channel_id") == channel_id:
+			channel_name = channel.get('name')
+			
+				
 
 
 
@@ -66,7 +73,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 	}
 
 def channel_join_v1(auth_user_id, channel_id):
-    return {
-    }
+	return {
+	}
 
 
