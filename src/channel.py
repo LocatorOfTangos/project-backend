@@ -1,5 +1,5 @@
-from data_store import data_store
-from errors import InputError
+from src.data_store import data_store
+from src.errors import InputError
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
