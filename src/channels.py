@@ -25,14 +25,8 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     store = data_store.get()
     channels = store['channels']
-    
-    #check if channel is public or private
-    if is_public == True:
-        public = True
-    else:
-        public = False
-    
-    #check for valid user_id
+
+    #Check for valid user_id
     users = store['users']
     
     for user in users:
@@ -41,20 +35,19 @@ def channels_create_v1(auth_user_id, name, is_public):
         else:
             raise AccessError('Invalid User ID')
     
-    #check for valid channel name
-    if not 1 < len(name) < 20:
+    #Check for valid channel name
+    if not 1 <= len(name) <= 20:
         raise InputError('Invalid Channel Name. Name must be between 1 to 20 characters')
     
-    #create channel_id
+    #Create channel_id
     number_of_channels = len(channels)
-    channel_id = number_of_channels + 1
     
     channels_details = {
         'channel_id': channel_id,
         'name': name,
-        'is_public': public
-        'owner_members': [auth_user_id]
-        'all_members': [auth_user_id]
+        'is_public': is_public,
+        'owner_members': [auth_user_id],
+        'all_members': [auth_user_id],
         'messages': ,
     }
     
