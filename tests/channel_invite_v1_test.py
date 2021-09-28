@@ -2,8 +2,9 @@ import pytest
 import time
 
 from src.auth import auth_register_v1
-from src.channel import channel_invite_v1
+from src.channel import channel_invite_v1, channel_details_v1
 from src.channels import channels_create_v1
+from src.data_store import data_store
 
 # MISCELLANEOUS IMPORTS
 from src.other import clear_v1
@@ -24,6 +25,8 @@ def successful_inv(is_public):
     channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
     assert channel_invite_v1(inviter_id, channel_id, invited_id) == {}, 'PUBLIC INVITE FAILED' if is_public else\
                                                                         'PRIVATE INVITE FAILED'
+
+    assert any(member['u_id'] == invited_id for member in channel_details_v1(invited_id, channel_id)['all_members'])
 
 
 @pytest.mark.skip(reason="Requires unimplemented functions")
@@ -59,11 +62,24 @@ def test_invalid_channel_id():
         auth_register_v1('invitee@email.com', 'password', 'mister', 'invited')['auth_user_id']
     )
 
-    ls = list(range(2000, 2200, 20))
-    dne_id = ls[random.randint(0, len(ls) - 1)]
+    dne_id = 2
 
     with pytest.raises(InputError):
         assert channel_invite_v1(inviter_id, dne_id, invited_id)
+
+
+@pytest.mark.skip(reason="Requires unimplemented functions")
+def test_member_exists():
+    inviter_id, invited_id = (
+        auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id'],
+        auth_register_v1('invitee@email.com', 'password', 'mister', 'invited')['auth_user_id']
+    )
+
+    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
+    channel_invite_v1(inviter_id, channel_id, invited_id)
+
+    with pytest.raises(InputError):
+        assert channel_invite_v1(inviter_id, channel_id, invited_id)
 
 
 @pytest.mark.skip(reason="Requires unimplemented functions")
