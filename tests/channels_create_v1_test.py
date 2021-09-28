@@ -7,13 +7,13 @@ from src.other import clear_v1
 # Clears existing data for all tests
 @pytest.fixture(autouse=True)
 def clear():
-    clear_v1()
+	clear_v1()
 
 
 # Tests for valid input for channels_create_v1 
 
 def test_channel_name_too_long():
-    auth_user_id = auth_register_v1("player1@gmail.com", "player123", "firstname", "lastname")
+	auth_user_id = auth_register_v1("player1@gmail.com", "player123", "firstname", "lastname")
 	with pytest.raises(InputError):
 		assert channels_create_v1(auth_user_id, "anextremelylongchannelname" , True)
 		
