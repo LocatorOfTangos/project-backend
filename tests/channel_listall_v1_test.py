@@ -33,9 +33,9 @@ def test_basic_listall():
 def test_basic_mult_list():
     inviter_id = auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id'],
 
-    channels_create_v1(inviter_id, 'The Funky Bunch', is_public)
-    channels_create_v1(inviter_id, 'The Wonky Bunch', is_public)
-    channels_create_v1(inviter_id, 'The Lanky Bunch', is_public)
+    channels_create_v1(inviter_id, 'The Funky Bunch', True)
+    channels_create_v1(inviter_id, 'The Wonky Bunch', False)
+    channels_create_v1(inviter_id, 'The Lanky Bunch', True)
 
     assert channels_listall_v1(inviter_id) == {
         'channels': [
