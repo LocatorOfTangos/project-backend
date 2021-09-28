@@ -3,8 +3,28 @@ from src.error import InputError
 import re
 
 def auth_login_v1(email, password):
+	#Initialising lists
+	email_registered = False
+	user_list = data_store.get()['users']
+	password_list = data_store.get()['passwords']
+
+	#Loop through users to find one with matching email
+	for user in user_list:
+		if user['email'] == email:
+			user_id = user['u_id']
+			email_registered = True
+			break
+
+	#Raise InputError if no user if found with corresponding email
+	if email_registered == False:
+		raise InputError('No user is registered with this Email')
+		
+	#Raise InputError if password is incorrect
+	if password_list[user_id] != password:
+		raise InputError('Incorrect Password')
+
 	return {
-		'auth_user_id': 1,
+		'auth_user_id': user_id,
 	}
 
 # Returns a copy of 'string' with all non-alphanumeric characters removed
@@ -102,12 +122,16 @@ def auth_register_v1(email, password, name_first, name_last):
 	handle = create_handle(name_first, name_last)
 	u_id = len(users)
 
+	# User is global owner if joined first (if id is 0)
+	perm_id = 1 if u_id == 0 else 2
+
 	users.append({
 		'u_id': u_id,
 		'email': email,
 		'name_first': name_first,
 		'name_last': name_last,
 		'handle_str': handle,
+		'global_permissions': perm_id,
 	})
 
 	# Add password to data store
