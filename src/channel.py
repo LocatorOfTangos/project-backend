@@ -1,6 +1,23 @@
+from data_store import data_store
+from errors import InputError
+
+
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+    data = data_store.get()
+
+    details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
+
+    if not any(u_id == user['u_id'] for user in data['users']) or any(u_id == user['u_id'] for user in details['all_members']):
+        raise InputError
+
+    for channel in data['channels']:
+        if channel['channel_id'] == channel_id:
+            channel['all_members'].append(u_id)
+            break
+
     return {
     }
+
 
 def channel_details_v1(auth_user_id, channel_id):
     return {
@@ -24,6 +41,7 @@ def channel_details_v1(auth_user_id, channel_id):
             }
         ],
     }
+
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
