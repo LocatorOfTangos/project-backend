@@ -1,5 +1,4 @@
 import pytest
-import time
 
 from src.auth import auth_register_v1
 from src.channel import channel_invite_v1, channel_details_v1
