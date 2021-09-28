@@ -42,6 +42,8 @@ def test_uid_dne():
 
     with pytest.raises(InputError):
         assert channel_invite_v1(dne_id, channel_id, inviter_id), 'FAILED DNE_AUTH_UID TEST'
+
+    with pytest.raises(InputError):
         assert channel_invite_v1(inviter_id, channel_id, dne_id), 'FAILED DNE_UID TEST' 
 
 
