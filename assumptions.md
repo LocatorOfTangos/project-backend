@@ -1,0 +1,1 @@
+Assumed name case doesn't matter: 'HAYDEN' is the same name as 'Hayden' and 'hayden'
