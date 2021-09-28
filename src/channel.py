@@ -50,6 +50,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # Get the up to 50 most recent messages from start
     page = messages[start : start + 50]
 
+    # Get the index of the end of the page, or -1 if there are no messages after the page
     end = (start + 50) if (start + 50) < len(messages) else -1
 
     return {

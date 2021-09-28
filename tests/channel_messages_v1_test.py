@@ -20,6 +20,8 @@ def channel(user):
 	c_id = channels_create_v1(user, "channel", True)['channel_id'] # User automatically added to channel
 	return c_id
 
+# Tests:
+
 def test_invalid_channel_id(clear, user, channel):
 	with pytest.raises(InputError):
 		assert channel_messages_v1(user, -1, 0)
