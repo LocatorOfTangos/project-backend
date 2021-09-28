@@ -26,17 +26,17 @@ def test_channel_name_too_short():
 
 def test_channel_id_one():
 	auth_user_id3 = auth_register_v1("player3@gmail.com", "player321", "firstname", "lastname")
-	assert channels_create_v1(auth_user_id3, "firstchannel", True) = 1
+	assert channels_create_v1(auth_user_id3, "firstchannel", True) == 1
 
 def test_channel_id_multiple():
 	auth_user_id4 = auth_register_v1("player4@gmail.com", "player543", "firstname", "lastname")
-	assert channels_create_v1(auth_user_id4, "firstchannel", True) = 1
+	assert channels_create_v1(auth_user_id4, "firstchannel", True) == 1
 
 	auth_user_id5 = auth_register_v1("player5@gmail.com", "player654", "firstname", "lastname")
-	assert channels_create_v1(auth_user_id5, "secondchannnel", True) = 2
+	assert channels_create_v1(auth_user_id5, "secondchannnel", True) == 2
 
 	auth_user_id6 = auth_register_v1("player6@gmail.com", "player765", "firstname", "lastname")
-	assert channels_create_v1(auth_user_id6, "thirdchannel", True) = 3
+	assert channels_create_v1(auth_user_id6, "thirdchannel", True) == 3
 
 	auth_user_id7 = auth_register_v1("player7@gmail.com", "player876", "firstname", "lastname")
-	assert channels_create_v1(auth_user_id7, "fourthchannel", True) = 4
+	assert channels_create_v1(auth_user_id7, "fourthchannel", True) == 4
