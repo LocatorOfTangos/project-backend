@@ -31,6 +31,30 @@ def channel_details_v1(auth_user_id, channel_id):
 
 
 def channel_messages_v1(auth_user_id, channel_id, start):
+	'''
+	Returns a page of messages from the channel matching channel_id.
+	Returns up to 50 messages, starting from index 'start' (where 0
+	is the most recent message sent to the channel).
+
+	Arguments:
+		auth_user_id (integer)	- id of the user making the request
+		channel_id (integer)	- id of the channel to retrieve messages from
+		start (integer)			- index of the first message to retrieve
+
+	Exceptions:
+		InputError  - Occurs when:
+			> The channel does not exist
+			> Start is greater than the number of messages in the channel
+		AcessError	- Occurs when:
+			> auth_user_id does not belong to a user
+			> User is not a member of the channel
+
+	Return Value:
+		Returns a dictionary containing 'messages' (a list of the up to 50 messages),
+		'start', and 'end' (start + 50, or -1 if the last message of the channel has been
+		retrieved)
+	'''
+
 	# Error cases
 	if not valid_user_id(auth_user_id):
 		raise AccessError("User ID does not belong to a user")
