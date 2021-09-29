@@ -12,13 +12,14 @@ def channel_details_v1(auth_user_id, channel_id):
 	if not valid_channel_id(channel_id):
 		raise InputError("Channel does not exist")
 
+	# Check if user is valid
+	if not valid_user_id(auth_user_id):
+		raise InputError("User ID does not belong to a user")
+
 	# Check if user is in the channel
 	if not user_is_member(auth_user_id, channel_id):
 		raise AccessError("User is not a member of the channel")	
 
-	# Check if user is valid
-	if not valid_user_id(auth_user_id):
-		raise AccessError("User ID does not belong to a user")
 
 	# Implement the function
 	owners = []
@@ -49,11 +50,11 @@ def channel_details_v1(auth_user_id, channel_id):
 	channel_details = {
 		'name': channel_name,
 		'is_public': status,
-		'owner_members': owner,
+		'owner_members': owners,
 		'all_members': members,
 	}
 
-	return channel_details
+	return channel_details 
 
 
 
