@@ -49,8 +49,8 @@ def channel_details_v1(auth_user_id, channel_id):
 	channel_details = {
 		'name': channel_name,
 		'is_public': status,
-		'all_members': members,
 		'owner_members': owner,
+		'all_members': members,
 	}
 
 	return channel_details
