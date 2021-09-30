@@ -2,7 +2,6 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.validation import valid_user_id
 
-
 def channels_list_v1(auth_user_id):
     return {
         'channels': [
@@ -43,7 +42,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         raise InputError('Invalid Channel Name. Name must be between 1 to 20 characters')
     
     # Create channel_id
-    channel_id = len(channels) + 1
+    channel_id = len(channels)
     
     channels_details = {
         'channel_id': channel_id,

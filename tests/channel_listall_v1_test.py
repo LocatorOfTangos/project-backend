@@ -20,7 +20,7 @@ def test_basic_listall():
     assert channels_listall_v1(inviter_id) == {
         'channels': [
             {
-                'channel_id': 1,
+                'channel_id': 0,
                 'name': 'The Funky Bunch',
             }
         ]
@@ -37,15 +37,15 @@ def test_basic_mult_list():
     assert channels_listall_v1(inviter_id) == {
         'channels': [
             {
-                'channel_id': 1,
+                'channel_id': 0,
                 'name': 'The Funky Bunch',
             },
             {
-                'channel_id': 2,
+                'channel_id': 1,
                 'name': 'The Wonky Bunch',
             },
             {
-                'channel_id': 3,
+                'channel_id': 2,
                 'name': 'The Lanky Bunch',
             }
         ]
