@@ -1,6 +1,6 @@
-<<<<<<< HEAD
+from src.error import AccessError, InputError
 from src.data_store import data_store
-from src.error import InputError
+from src.validation import user_is_member, valid_user_id, valid_channel_id
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
@@ -8,8 +8,11 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
 
-    if not any(u_id == user['u_id'] for user in data['users']) or any(u_id == user['u_id'] for user in details['all_members']):
-        raise InputError
+    if not any(u_id == user['u_id'] for user in data['users']):
+        raise InputError('This user does not exist')
+
+    if any(u_id == user['u_id'] for user in details['all_members']):
+        raise InputError('This user has already been added to the channel')
 
     for channel in data['channels']:
         if channel['channel_id'] == channel_id:
@@ -18,15 +21,6 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     return {
     }
-=======
-from src.error import AccessError, InputError
-from src.data_store import data_store
-from src.validation import user_is_member, valid_user_id, valid_channel_id
-
-def channel_invite_v1(auth_user_id, channel_id, u_id):
-	return {
-	}
->>>>>>> origin/master
 
 
 def channel_details_v1(auth_user_id, channel_id):

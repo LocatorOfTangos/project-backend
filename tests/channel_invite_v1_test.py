@@ -21,31 +21,28 @@ def successful_inv(is_public):
         auth_register_v1('invitee@email.com', 'password', 'mister', 'invited')['auth_user_id']
     )
 
-    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
+    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channel_id']
     assert channel_invite_v1(inviter_id, channel_id, invited_id) == {}, 'PUBLIC INVITE FAILED' if is_public else\
                                                                         'PRIVATE INVITE FAILED'
 
     assert any(member['u_id'] == invited_id for member in channel_details_v1(invited_id, channel_id)['all_members'])
 
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_successful_inv_public():
     successful_inv(True)
 
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_successful_inv_private():
     successful_inv(False)
 
 
 # DNE = DOES NOT EXIST
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_uid_dne():
     inviter_id = auth_register_v1('inviter@email.com', 'password', 'mister', 'inviter')['auth_user_id']
 
     dne_id = 2
 
-    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
+    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', True)['channel_id']
 
     with pytest.raises(InputError):
         assert channel_invite_v1(dne_id, channel_id, inviter_id), 'FAILED DNE_AUTH_UID TEST'
@@ -54,7 +51,6 @@ def test_uid_dne():
         assert channel_invite_v1(inviter_id, channel_id, dne_id), 'FAILED DNE_UID TEST' 
 
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_invalid_channel_id():
     inviter_id, invited_id = (
         auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id'],
@@ -67,28 +63,26 @@ def test_invalid_channel_id():
         assert channel_invite_v1(inviter_id, dne_id, invited_id)
 
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_member_exists():
     inviter_id, invited_id = (
         auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id'],
         auth_register_v1('invitee@email.com', 'password', 'mister', 'invited')['auth_user_id']
     )
 
-    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
+    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', True)['channel_id']
     channel_invite_v1(inviter_id, channel_id, invited_id)
 
     with pytest.raises(InputError):
         assert channel_invite_v1(inviter_id, channel_id, invited_id)
 
 
-@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_access_error():
     inviter_id, invited_id = (
         auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id'],
         auth_register_v1('invitee@email.com', 'password', 'mister', 'invited')['auth_user_id']
     )
 
-    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', is_public)['channels']
+    channel_id = channels_create_v1(inviter_id, 'The Funky Bunch', True)['channel_id']
 
     with pytest.raises(AccessError):
-        assert channel_invite_v1(invited_id, channel_id, invitee_id)
+        assert channel_invite_v1(invited_id, channel_id, invited_id)
