@@ -67,7 +67,7 @@ def test_valid_channel_id():
     }
 
 
-'''
+
 @pytest.mark.skip(reason="channels_join not implemented")
 def test_multiple_users():
     
@@ -111,7 +111,6 @@ def test_multiple_users():
             },
         ]
     }
-'''
 
 
 
