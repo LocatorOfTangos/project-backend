@@ -1,21 +1,20 @@
+from src.data_store import data_store
+from src.error import InputError, AccessError
+from src.validation import valid_user_id
+
 def channels_list_v1(auth_user_id):
 
     #check for valid user_id
-    users = store['users']
-    
-    for user in users:
-        if user['u_id'] == u_id:
-            return True
-        else:
-            raise AccessError('User ID does not exist')
+    if not valid_user_id(auth_user_id):
+        raise AccessError("User ID does not exist")
     
     #empty list for dictionary of channels
     list_channels = []
 
     #Loop through channel
     #Check if user is in channel, then append to channel list
-
-    for channel in store['channels']:
+    store = data_store.get()
+    for channel in data_store['channels']:
         if user_id in channel['all_members']:
             list_channels.append({
                 'channel_id': channel['channel_id'],
