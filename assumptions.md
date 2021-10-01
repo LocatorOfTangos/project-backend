@@ -1,1 +1,3 @@
-Assumed name case doesn't matter: 'HAYDEN' is the same name as 'Hayden' and 'hayden'
+Assumed name case doesn't matter: 'HAYDEN' is the same name as 'Hayden' and 'hayden'. This is because in handle creation, names are converted to all lowercase, and to reflect the real-world semantics of names.
+
+Assumed that the return types of all functions matches the specifications during testing (e.g. assume that auth_login returns a dictionary with key auth_user_id and an integer value). This is because these formats are universal across different implementations.
