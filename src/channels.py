@@ -14,8 +14,8 @@ def channels_list_v1(auth_user_id):
     #Loop through channel
     #Check if user is in channel, then append to channel list
     store = data_store.get()
-    for channel in data_store['channels']:
-        if user_id in channel['all_members']:
+    for channel in store['channels']:
+        if auth_user_id in channel['all_members']:
             list_channels.append({
                 'channel_id': channel['channel_id'],
                 'name': channel['name'],
