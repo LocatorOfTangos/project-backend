@@ -21,9 +21,24 @@ def valid_user_id(u_id):
 # Returns true if user u_id is a member of channel c_id, else false
 def user_is_member(u_id, c_id):
     store = data_store.get()
-    users = store['channels'][c_id]['users']
+    users = store['channels'][c_id]['all_members']
 
     for user in users:
-        if user['u_id'] == u_id:
+        if user == u_id:
             return True
     return False
+
+
+# Return user's details as a dict given u_id
+def get_user_details(u_id):
+    store = data_store.get()
+    users = store['users']
+    user_details = {}
+    for user in users:
+        if user['u_id'] == u_id:
+            user_details = {
+                'u_id': user['u_id'],
+                'name_first': user['name_first'],
+                'name_last': user['name_last'],
+            }
+    return user_details
