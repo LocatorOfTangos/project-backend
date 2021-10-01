@@ -26,11 +26,23 @@ def test_multiple_valid_registers():
 	assert register2_return == login2_return
 
 def test_user_id_unique():
-	used_ids = []
-	for i in range(30):
-		register_return = auth_register_v1(f"user{i}@mail.com", "password", "firstname", "lastname")
-		assert register_return not in used_ids
-		used_ids.append(register_return)
+	used_ids = set()
+
+	u_id = auth_register_v1("user1@mail.com", "password", "firstname", "lastname")['auth_user_id']
+	assert u_id not in used_ids
+	used_ids.add(u_id)
+
+	u_id = auth_register_v1("user2@mail.com", "password", "firstname", "lastname")['auth_user_id']
+	assert u_id not in used_ids
+	used_ids.add(u_id)
+
+	u_id = auth_register_v1("user3@mail.com", "password", "firstname", "lastname")['auth_user_id']
+	assert u_id not in used_ids
+	used_ids.add(u_id)
+
+	u_id = auth_register_v1("user4@mail.com", "password", "firstname", "lastname")['auth_user_id']
+	assert u_id not in used_ids
+	used_ids.add(u_id)
 
 # Tests for invalid registrations
 
