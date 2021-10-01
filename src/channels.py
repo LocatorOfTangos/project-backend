@@ -12,15 +12,21 @@ def channels_list_v1(auth_user_id):
         ],
     }
 
+
 def channels_listall_v1(auth_user_id):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+    if not valid_user_id(auth_user_id):
+        raise AccessError("User ID does not exist")
+
+    channels = data_store.get()['channels']
+    owners_channels = {
+        'channels' : [{
+            'channel_id': channel['channel_id'],
+            'name': channel['name']
+        } for channel in channels if auth_user_id in channel['owner_members']]
     }
+
+    return owners_channels
+
 
 def channels_create_v1(auth_user_id, name, is_public):
 
@@ -35,7 +41,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     if not 1 <= len(name) <= 20:
         raise InputError('Invalid Channel Name. Name must be between 1 to 20 characters')
     
-    #Create channel_id
+    # Create channel_id
     channel_id = len(channels)
     
     channels_details = {
@@ -52,3 +58,4 @@ def channels_create_v1(auth_user_id, name, is_public):
     return {
         'channel_id': channel_id,
     }
+
