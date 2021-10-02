@@ -4,23 +4,23 @@ from src.validation import user_is_member, valid_user_id, valid_channel_id, get_
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
-    data = data_store.get()
+	data = data_store.get()
 
-    details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
+	details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
 
-    if not any(u_id == user['u_id'] for user in data['users']):
-        raise InputError('This user does not exist')
+	if not any(u_id == user['u_id'] for user in data['users']):
+		raise InputError('This user does not exist')
 
-    if any(u_id == user['u_id'] for user in details['all_members']):
-        raise InputError('This user has already been added to the channel')
+	if any(u_id == user['u_id'] for user in details['all_members']):
+		raise InputError('This user has already been added to the channel')
 
-    for channel in data['channels']:
-        if channel['channel_id'] == channel_id:
-            channel['all_members'].append(u_id)
-            break
+	for channel in data['channels']:
+		if channel['channel_id'] == channel_id:
+			channel['all_members'].append(u_id)
+			break
 
-    return {
-    }
+	return {
+	}
 
 
 def channel_details_v1(auth_user_id, channel_id):
@@ -128,5 +128,38 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 	}
 
 def channel_join_v1(auth_user_id, channel_id):
-	return {
-	}
+	store = data_store.get()
+	users = store['users']
+	channels = store['channels']
+	joining_user = {}
+	joining_channel = {}
+
+	# Find user dictionary with corresponding u_id, raise AccessError if it does not exist
+	for user in users:
+		if user['u_id'] == auth_user_id:
+			joining_user = user
+			break
+	if joining_user == {}:
+		raise AccessError("User ID does not belong to a user")
+
+	# Find channel dictionary with corresponding c_id, raise InputError if it does not exist
+	for channel in channels:
+		if channel['channel_id'] == channel_id:
+			joining_channel = channel
+			break
+	if joining_channel == {}:
+		raise InputError("Channel ID does not describe an existing channel")
+
+	# Check whether user is already a member of the given channel, raise InputError if the case
+	for member in joining_channel['all_members']:
+		if member == auth_user_id:
+			raise InputError("User is already a member of this channel")
+
+	# Check if channel is private and user is not a global owner, raise AccessError if the case
+	if joining_channel['is_public'] == False and joining_user['global_permissions'] != 1:
+		raise AccessError("User does not have permissions to join channel")
+
+	# Append user to the channel all_members list
+	joining_channel['all_members'].append(joining_user['u_id'])
+	
+	return {}
