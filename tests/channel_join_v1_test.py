@@ -19,7 +19,7 @@ def test_return_type():
 
 	assert channel_join_v1(user2_id, channel_id) == {}
 
-@pytest.mark.skip(reason="channel_details_v1 not functional")
+# @pytest.mark.skip(reason="channel_details_v1 not functional")
 def test_join_successful():
 	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
 	user2_id = auth_register_v1("name2@email.com", "password", "firstname", "lastname")['auth_user_id']
