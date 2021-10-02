@@ -43,17 +43,16 @@ def create_handle(first, last):
 	# Generate handle from first 20 alphanum characters
 	store = data_store.get()
 	users = store['users']
-	handle = remove_non_alnum(first.lower() + last.lower())[:20]
+	base_handle = remove_non_alnum(first.lower() + last.lower())[:20]
 
-	# Check if handle is taken
+	# If taken, append with a number
 	occurrences = 0
+	handle = base_handle
 	for user in users:
-		if user['name_first'] == first and user['name_last'] == last:
+		if user['handle_str'] == handle:
+			handle = base_handle + f"{occurrences}"
 			occurrences += 1
 	
-	# If taken, append with a number
-	if occurrences > 0:
-		handle += f"{occurrences - 1}"
 	
 	return handle
 
@@ -70,7 +69,7 @@ def email_is_unique(email):
 
 # Returns true if email address matches the format for a valid email address
 def email_is_valid(email):
-	pattern = '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
+	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 	return True if re.fullmatch(pattern, email) else False
 
 def auth_register_v1(email, password, name_first, name_last):
