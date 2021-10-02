@@ -56,8 +56,6 @@ def test_valid_channel_id():
                 'u_id': u_id,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
             },
         ],
         'all_members': [
@@ -65,8 +63,6 @@ def test_valid_channel_id():
                 'u_id': u_id ,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
             },
         ],
     }
@@ -96,8 +92,6 @@ def test_multiple_users():
                 'user_id': u_id,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
             },
         ],
         'all_members': [
@@ -105,22 +99,16 @@ def test_multiple_users():
                 'user_id': u_id ,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
             },
             {
                 'user_id': u2_id ,
                 'name_first': 'David',
                 'name_last': 'Smith',
-                'email': 'secondtestemail@gmail.com',
-                'handle_str': 'davidsmith'
             },
             {
                 'user_id': u3_id ,
                 'name_first': 'Sam',
                 'name_last': 'Nguyen',
-                'email': 'thirdtestemail@gmail.com',
-                'handle_str': 'samnguyen'
             },
         ]
     }
