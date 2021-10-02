@@ -72,17 +72,15 @@ def test_valid_channel_id():
     }
 
 
-
-@pytest.mark.skip(reason="channels_join not implemented")
 def test_multiple_users():
     
-    #Test when channel have multiple user and is private
-    
+    #Test when channel have multiple user and is public
+
     u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
     u2_id = auth_register_v1("secondtestemail@gmail.com", "password", "david", "smith")['auth_user_id']
-    u3_id = auth_register_v1("thirdemail@gmail.com", "password", "sam", "nguyen")['auth_user_id']
+    u3_id = auth_register_v1("thirdtestemail@gmail.com", "password", "sam", "nguyen")['auth_user_id']
 
-    channel_id = channels_create_v1(u_id, "test channel", False)['channel_id']
+    channel_id = channels_create_v1(u_id, "test channel", True)['channel_id']
     channel_join_v1(u2_id, channel_id)
     channel_join_v1(u3_id, channel_id)
     channel_detail = {}
@@ -90,10 +88,10 @@ def test_multiple_users():
     channel_detail = channel_details_v1(u_id, channel_id)
     assert(channel_detail) == {
         'name': 'test channel',
-        'is_public': False,
+        'is_public': True,
         'owner_members': [
             {
-                'user_id': u_id,
+                'u_id': u_id,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
                 'email': 'testemail@gmail.com',
@@ -102,21 +100,21 @@ def test_multiple_users():
         ],
         'all_members': [
             {
-                'user_id': u_id ,
+                'u_id': u_id ,
                 'name_first': 'Vu',
                 'name_last': 'Luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
             {
-                'user_id': u2_id ,
+                'u_id': u2_id ,
                 'name_first': 'David',
                 'name_last': 'Smith',
                 'email': 'secondtestemail@gmail.com',
                 'handle_str': 'davidsmith'
             },
             {
-                'user_id': u3_id ,
+                'u_id': u3_id ,
                 'name_first': 'Sam',
                 'name_last': 'Nguyen',
                 'email': 'thirdtestemail@gmail.com',
