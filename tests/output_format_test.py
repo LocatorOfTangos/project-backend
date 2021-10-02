@@ -91,7 +91,7 @@ def test_channel_details(user, channel):
 	memb = out['all_members'][0]
 	assert isinstance(memb, dict)
 	assert set(memb.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str'}
-	assert isinstance(memb['uid'], int)
+	assert isinstance(memb['u_id'], int)
 	assert isinstance(memb['email'], str)
 	assert isinstance(memb['name_first'], str)
 	assert isinstance(memb['name_last'], str)
