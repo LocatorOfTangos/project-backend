@@ -82,7 +82,7 @@ def test_channel_details(user, channel):
 	own = out['owner_members'][0]
 	assert isinstance(own, dict)
 	assert set(own.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str'}
-	assert isinstance(own['uid'], int)
+	assert isinstance(own['u_id'], int)
 	assert isinstance(own['email'], str)
 	assert isinstance(own['name_first'], str)
 	assert isinstance(own['name_last'], str)
