@@ -13,5 +13,3 @@ def clear_v1():
     store['channels'] = []
     store['passwords'] = []
     data_store.set(store)
-
-    return {}
