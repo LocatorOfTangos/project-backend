@@ -40,5 +40,7 @@ def get_user_details(u_id):
                 'u_id': user['u_id'],
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
+                'email': user['email'],
+                'handle_str': user['handle_str']
             }
     return user_details
