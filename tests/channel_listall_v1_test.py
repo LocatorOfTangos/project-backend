@@ -31,7 +31,7 @@ def test_basic_mult_list():
     inviter_id = auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id']
 
     channels_create_v1(inviter_id, 'The Funky Bunch', True)
-    channels_create_v1(inviter_id, 'The Wonky Bunch', False)
+    channels_create_v1(inviter_id, 'The Wonky Bunch', True)
     channels_create_v1(inviter_id, 'The Lanky Bunch', True)
 
     assert channels_listall_v1(inviter_id) == {
@@ -51,6 +51,29 @@ def test_basic_mult_list():
         ]
     }
 
+def test_private_channels():
+    inviter_id = auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id']
+
+    channels_create_v1(inviter_id, 'The Funky Bunch', False)
+    channels_create_v1(inviter_id, 'The Wonky Bunch', True)
+    channels_create_v1(inviter_id, 'The Lanky Bunch', False)
+
+    assert channels_listall_v1(inviter_id) == {
+        'channels': [
+            {
+                'channel_id': 0,
+                'name': 'The Funky Bunch',
+            },
+            {
+                'channel_id': 1,
+                'name': 'The Wonky Bunch',
+            },
+            {
+                'channel_id': 2,
+                'name': 'The Lanky Bunch',
+            }
+        ]
+    }
 
 def test_basic_DNE_id():
     with pytest.raises(AccessError):
