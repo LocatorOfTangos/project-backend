@@ -11,7 +11,6 @@ from src.error import InputError
 def clear_data():
 	clear_v1()
 
-#@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_users_clear():
 	# Successfully register and login a user
 	user = auth_register_v1("user@mail.com", "password", "first", "last")
@@ -22,7 +21,27 @@ def test_users_clear():
 	with pytest.raises(InputError):
 		assert auth_login_v1("user@mail.com", "password")
 
-#@pytest.mark.skip(reason="Requires unimplemented functions")
+def test_multiple_users_clear():
+	user1 = auth_register_v1("user1@mail.com", "password", "first", "last")
+	user2 = auth_register_v1("user2@mail.com", "password", "first", "last")
+	user3 = auth_register_v1("user3@mail.com", "password", "first", "last")
+	user4 = auth_register_v1("user4@mail.com", "password", "first", "last")
+	assert auth_login_v1("user1@mail.com", "password") == user1
+	assert auth_login_v1("user2@mail.com", "password") == user2
+	assert auth_login_v1("user3@mail.com", "password") == user3
+	assert auth_login_v1("user4@mail.com", "password") == user4
+
+	clear_v1()
+
+	with pytest.raises(InputError):
+		assert auth_login_v1("user1@mail.com", "password")
+	with pytest.raises(InputError):
+		assert auth_login_v1("user2@mail.com", "password")
+	with pytest.raises(InputError):
+		assert auth_login_v1("user3@mail.com", "password")
+	with pytest.raises(InputError):
+		assert auth_login_v1("user4@mail.com", "password")
+
 def test_channels_clear():
 	# Successfully register and login a user
 	user = auth_register_v1("user@mail.com", "password", "first", "last")
@@ -34,6 +53,10 @@ def test_channels_clear():
 
 	clear_v1()
 
+	# Recreate the cleared user
+	user = auth_register_v1("user@mail.com", "password", "first", "last")
+	assert auth_login_v1("user@mail.com", "password") == user
+	
 	with pytest.raises(InputError):
 		assert channel_details_v1(user['auth_user_id'], channel['channel_id'])['name']
 
