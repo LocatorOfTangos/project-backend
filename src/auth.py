@@ -93,8 +93,8 @@ def auth_register_v1(email, password, name_first, name_last):
 		Returns a dictionary containing 'auth_user_id'
 	'''
 	# Normalise case of names
-	name_first = name_first.title()
-	name_last = name_last.title()
+	name_first = name_first.lower()
+	name_last = name_last.lower()
 
 	# Check if email is valid
 	if not email_is_unique(email):

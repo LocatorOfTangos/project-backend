@@ -32,6 +32,9 @@ def test_invalid_channel_id(clear, user, channel):
 def test_valid_no_messages(clear, user, channel):
 	assert channel_messages_v1(user, channel, 0) == {'messages': [], 'start':0, 'end':-1}
 
+def test_messages_list_len(clear, user, channel):
+	assert 0 <= len(channel_messages_v1(user, channel, 0)['messages']) <= 50
+
 def test_invalid_user(clear, channel):
 	with pytest.raises(AccessError):
 		assert channel_messages_v1(12365478, channel, 0)
@@ -39,6 +42,9 @@ def test_invalid_user(clear, channel):
 def test_invalid_start(clear, user, channel):
 	with pytest.raises(InputError):
 		assert channel_messages_v1(user, channel, 5)
+
+	with pytest.raises(InputError):
+		assert channel_messages_v1(user, channel, -5)
 
 def test_not_member(clear, channel):
 	user_unauthorised = auth_register_v1("user2@mail.com", "password", "first", "last")['auth_user_id']
