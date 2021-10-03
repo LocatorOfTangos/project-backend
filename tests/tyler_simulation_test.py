@@ -12,7 +12,6 @@ from src.auth import (
 from src.channel import (
     channel_invite_v1,
     channel_details_v1,
-    channel_messages_v1,
     channel_join_v1
 )
 from src.channels import (
@@ -70,6 +69,29 @@ def test_simulation_v1():
                 'name': 'channel3',
             }
         ]
+    }
+
+    assert channel_details_v1(person1_reg['auth_user_id'], 1) == {
+        'name': 'channel2',
+        'is_public': False,
+        'owner_members': [
+            {
+                'u_id': person1_reg['auth_user_id'],
+                'name_first': 'tyler',
+                'name_last': 'gan',
+                'email': 'tyler@gmail.com',
+                'handle_str': 'tylergan'
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': person1_reg['auth_user_id'],
+                'name_first': 'tyler',
+                'name_last': 'gan',
+                'email': 'tyler@gmail.com',
+                'handle_str': 'tylergan'
+            }
+        ],
     }
 
     # REGISTERING A SECOND USER
