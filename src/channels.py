@@ -45,14 +45,14 @@ def channels_listall_v1(auth_user_id):
         raise AccessError("User ID does not exist")
 
     channels = data_store.get()['channels']
-    owners_channels = {
-        'channels' : [{
+    all_channels = {
+        'channels': [{
             'channel_id': channel['channel_id'],
             'name': channel['name']
-        } for channel in channels if auth_user_id in channel['owner_members']]
+        } for channel in channels]
     }
 
-    return owners_channels
+    return all_channels
 
 
 def channels_create_v1(auth_user_id, name, is_public):
