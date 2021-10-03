@@ -17,7 +17,7 @@ def test_invalid_channel_id():
     '''
     u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
     with pytest.raises(InputError):
-        assert(channel_details_v1(u_id, 3))
+        assert channel_details_v1(u_id, 3)
 
 
 def test_invalid_user_id():
@@ -26,19 +26,18 @@ def test_invalid_user_id():
     '''
     u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
     channel_id = channels_create_v1(u_id, "test channel", True)['channel_id']
-    with pytest.raises(InputError):
-        assert(channel_details_v1(-1, channel_id))
+    with pytest.raises(AccessError):
+        assert channel_details_v1(-1, channel_id) 
 
 def test_user_not_authorised():
     '''
     Test when channel_id is valid and the authorised user is not a member of the channel
     '''
-    clear_v1()
     u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
     u2_id = auth_register_v1("secondtestemail@gmail.com", "password", "david", "smith")['auth_user_id']
     channel_id = channels_create_v1(u_id, "test channel", True)['channel_id']
     with pytest.raises(AccessError):
-        assert(channel_details_v1(u2_id, channel_id))
+        assert channel_details_v1(u2_id, channel_id)
 
 def test_valid_channel_id():
     '''
@@ -48,7 +47,7 @@ def test_valid_channel_id():
     channel_id = channels_create_v1(u_id, "test channel", True)['channel_id']
     channel_detail = {}
     channel_detail = channel_details_v1(u_id, channel_id)
-    assert(channel_detail) == {
+    assert channel_detail == {
         'name': 'test channel',
         'is_public': True,
         'owner_members': [
@@ -71,29 +70,20 @@ def test_valid_channel_id():
         ],
     }
 
-
-
-@pytest.mark.skip(reason="channels_join not implemented")
-def test_multiple_users():
-    
-    #Test when channel have multiple user and is private
-    
+def test_private_channel():
+    '''
+    Test for valid channel id and user id
+    '''
     u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
-    u2_id = auth_register_v1("secondtestemail@gmail.com", "password", "david", "smith")['auth_user_id']
-    u3_id = auth_register_v1("thirdemail@gmail.com", "password", "sam", "nguyen")['auth_user_id']
-
     channel_id = channels_create_v1(u_id, "test channel", False)['channel_id']
-    channel_join_v1(u2_id, channel_id)
-    channel_join_v1(u3_id, channel_id)
     channel_detail = {}
-
     channel_detail = channel_details_v1(u_id, channel_id)
-    assert(channel_detail) == {
+    assert channel_detail == {
         'name': 'test channel',
         'is_public': False,
         'owner_members': [
             {
-                'user_id': u_id,
+                'u_id': u_id,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
@@ -102,24 +92,62 @@ def test_multiple_users():
         ],
         'all_members': [
             {
-                'user_id': u_id ,
+                'u_id': u_id ,
+                'name_first': 'vu',
+                'name_last': 'luu',
+                'email': 'testemail@gmail.com',
+                'handle_str': 'vuluu'
+            },
+        ],
+    }
+
+
+def test_multiple_users():
+    
+    #Test when channel have multiple user and is private
+    
+    u_id = auth_register_v1("testemail@gmail.com", "password", "vu", "luu")['auth_user_id']
+    u2_id = auth_register_v1("secondtestemail@gmail.com", "password", "david", "smith")['auth_user_id']
+    u3_id = auth_register_v1("thirdemail@gmail.com", "password", "sam", "nguyen")['auth_user_id']
+
+    channel_id = channels_create_v1(u_id, "test channel", True)['channel_id']
+    channel_join_v1(u2_id, channel_id)
+    channel_join_v1(u3_id, channel_id)
+    channel_detail = {}
+
+    channel_detail = channel_details_v1(u_id, channel_id)
+    assert(channel_detail) == {
+        'name': 'test channel',
+        'is_public': True,
+        'owner_members': [
+            {
+                'u_id': u_id,
+                'name_first': 'vu',
+                'name_last': 'luu',
+                'email': 'testemail@gmail.com',
+                'handle_str': 'vuluu'
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id ,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
             {
-                'user_id': u2_id ,
+                'u_id': u2_id ,
                 'name_first': 'david',
                 'name_last': 'smith',
                 'email': 'secondtestemail@gmail.com',
                 'handle_str': 'davidsmith'
             },
             {
-                'user_id': u3_id ,
+                'u_id': u3_id ,
                 'name_first': 'sam',
                 'name_last': 'nguyen',
-                'email': 'thirdtestemail@gmail.com',
+                'email': 'thirdemail@gmail.com',
                 'handle_str': 'samnguyen'
             },
         ]

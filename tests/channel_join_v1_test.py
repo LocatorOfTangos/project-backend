@@ -5,11 +5,19 @@ from src.channels import channels_create_v1
 from src.auth import auth_register_v1
 from src.error import InputError, AccessError
 from src.other import clear_v1
+from src.validation import user_is_member
 
 # Automatically applied to all tests
 @pytest.fixture(autouse=True)
 def clear_data():
 	clear_v1()
+
+def test_invalid_user():
+	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
+	channel_id = channels_create_v1(user1_id, "channelname", True)['channel_id']
+
+	with pytest.raises(AccessError):
+		channel_join_v1(1234569, channel_id)
 
 def test_return_type():
 	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
@@ -47,6 +55,23 @@ def test_join_successful():
 			break
 	
 	assert joined == True
+
+def test_join_public():
+	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
+	user2_id = auth_register_v1("name2@email.com", "password", "firstname", "lastname")['auth_user_id']
+
+	pubchannel_id = channels_create_v1(user1_id, "channelname", True)['channel_id']
+	channel_join_v1(user2_id, pubchannel_id)
+
+	assert user_is_member(user1_id, pubchannel_id)
+	assert user_is_member(user2_id, pubchannel_id)
+
+def test_join_global_owner():
+	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
+	user2_id = auth_register_v1("name2@email.com", "password", "firstname", "lastname")['auth_user_id']
+
+	privchannel_id = channels_create_v1(user2_id, "channelname", False)['channel_id']
+	channel_join_v1(user1_id, privchannel_id)
 
 def test_invalid_channel_id():
 	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']

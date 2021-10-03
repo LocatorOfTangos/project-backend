@@ -1,7 +1,7 @@
 import pytest
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1
-from src.channel import channel_details_v1
+from src.channel import channel_details_v1, channel_join_v1, channel_invite_v1
 from src.error import InputError, AccessError
 from src.other import clear_v1
 from src.validation import user_is_member
@@ -76,6 +76,7 @@ def test_owner():
 
       details = channel_details_v1(u_id, c_id)
       owners = details['owner_members']
+      members = details['all_members']
 
       # Find user in owner_members matching c_id
       assert owners == [
@@ -85,5 +86,113 @@ def test_owner():
                   'name_first': 'first',
                   'name_last': 'last',
                   'handle_str': 'firstlast'
+            }
+      ]
+      
+      assert members == [
+            {
+                  'u_id': u_id,
+                  'email': 'user@mail.com',
+                  'name_first': 'first',
+                  'name_last': 'last',
+                  'handle_str': 'firstlast'
+            }
+      ]
+
+def test_owner_with_other_members():
+      u_id1 = auth_register_v1("user1@mail.com", "password", "first", "last")['auth_user_id']
+      c_id = channels_create_v1(u_id1, "newchannel", True)['channel_id']
+      
+      u_id2 = auth_register_v1("user2@mail.com", "password", "blake", "morris")['auth_user_id']
+      channel_join_v1(u_id2, c_id)
+      
+      u_id3 = auth_register_v1("user3@mail.com", "password", "redmond", "mobbs")['auth_user_id']
+      channel_join_v1(u_id3, c_id)
+
+      details = channel_details_v1(u_id1, c_id)
+      owners = details['owner_members']
+      members = details['all_members']
+
+      # Find user in owner_members matching c_id
+      assert owners == [
+            {
+                  'u_id': u_id1,
+                  'email': 'user1@mail.com',
+                  'name_first': 'first',
+                  'name_last': 'last',
+                  'handle_str': 'firstlast'
+            }
+      ]
+      
+      assert members == [
+            {
+                  'u_id': u_id1,
+                  'email': 'user1@mail.com',
+                  'name_first': 'first',
+                  'name_last': 'last',
+                  'handle_str': 'firstlast'
+            },
+            {
+                  'u_id': u_id2,
+                  'email': 'user2@mail.com',
+                  'name_first': 'blake',
+                  'name_last': 'morris',
+                  'handle_str': 'blakemorris'
+            },
+            {
+                  'u_id': u_id3,
+                  'email': 'user3@mail.com',
+                  'name_first': 'redmond',
+                  'name_last': 'mobbs',
+                  'handle_str': 'redmondmobbs'
+            }
+      ]
+
+def test_owner_with_other_members_private():
+      u_id1 = auth_register_v1("user1@mail.com", "password", "first", "last")['auth_user_id']
+      c_id = channels_create_v1(u_id1, "newchannel", False)['channel_id']
+      
+      u_id2 = auth_register_v1("user2@mail.com", "password", "blake", "morris")['auth_user_id']
+      channel_invite_v1(u_id1, c_id, u_id2)
+      
+      u_id3 = auth_register_v1("user3@mail.com", "password", "redmond", "mobbs")['auth_user_id']
+      channel_invite_v1(u_id1, c_id, u_id3)
+
+      details = channel_details_v1(u_id1, c_id)
+      owners = details['owner_members']
+      members = details['all_members']
+
+      # Find user in owner_members matching c_id
+      assert owners == [
+            {
+                  'u_id': u_id1,
+                  'email': 'user1@mail.com',
+                  'name_first': 'first',
+                  'name_last': 'last',
+                  'handle_str': 'firstlast'
+            }
+      ]
+      
+      assert members == [
+            {
+                  'u_id': u_id1,
+                  'email': 'user1@mail.com',
+                  'name_first': 'first',
+                  'name_last': 'last',
+                  'handle_str': 'firstlast'
+            },
+            {
+                  'u_id': u_id2,
+                  'email': 'user2@mail.com',
+                  'name_first': 'blake',
+                  'name_last': 'morris',
+                  'handle_str': 'blakemorris'
+            },
+            {
+                  'u_id': u_id3,
+                  'email': 'user3@mail.com',
+                  'name_first': 'redmond',
+                  'name_last': 'mobbs',
+                  'handle_str': 'redmondmobbs'
             }
       ]

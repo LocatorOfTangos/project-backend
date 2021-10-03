@@ -11,7 +11,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 	if not any(u_id == user['u_id'] for user in data['users']):
 		raise InputError('This user does not exist')
 
-	if any(u_id == user['u_id'] for user in details['all_members']):
+	if user_is_member(u_id, channel_id):
 		raise InputError('This user has already been added to the channel')
 
 	for channel in data['channels']:
@@ -30,7 +30,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
 	# Check if user is valid
 	if not valid_user_id(auth_user_id):
-		raise InputError("User ID does not belong to a user")
+		raise AccessError("User ID does not belong to a user")
 
 	# Check if user is in the channel
 	if not user_is_member(auth_user_id, channel_id):
@@ -114,6 +114,9 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
 	if start > len(messages):
 		raise InputError("Start must not be greater than the number of messages in the channel")
+
+	if start < 0:
+		raise InputError("Start must not be negative")
 	
 	# Get the up to 50 most recent messages from start
 	page = messages[start : start + 50]
