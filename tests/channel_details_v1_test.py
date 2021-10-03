@@ -54,8 +54,8 @@ def test_valid_channel_id():
         'owner_members': [
             {
                 'u_id': u_id,
-                'name_first': 'Vu',
-                'name_last': 'Luu',
+                'name_first': 'vu',
+                'name_last': 'luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
@@ -63,8 +63,8 @@ def test_valid_channel_id():
         'all_members': [
             {
                 'u_id': u_id ,
-                'name_first': 'Vu',
-                'name_last': 'Luu',
+                'name_first': 'vu',
+                'name_last': 'luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
@@ -94,8 +94,8 @@ def test_multiple_users():
         'owner_members': [
             {
                 'user_id': u_id,
-                'name_first': 'Vu',
-                'name_last': 'Luu',
+                'name_first': 'vu',
+                'name_last': 'luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
@@ -103,22 +103,22 @@ def test_multiple_users():
         'all_members': [
             {
                 'user_id': u_id ,
-                'name_first': 'Vu',
-                'name_last': 'Luu',
+                'name_first': 'vu',
+                'name_last': 'luu',
                 'email': 'testemail@gmail.com',
                 'handle_str': 'vuluu'
             },
             {
                 'user_id': u2_id ,
-                'name_first': 'David',
-                'name_last': 'Smith',
+                'name_first': 'david',
+                'name_last': 'smith',
                 'email': 'secondtestemail@gmail.com',
                 'handle_str': 'davidsmith'
             },
             {
                 'user_id': u3_id ,
-                'name_first': 'Sam',
-                'name_last': 'Nguyen',
+                'name_first': 'sam',
+                'name_last': 'nguyen',
                 'email': 'thirdtestemail@gmail.com',
                 'handle_str': 'samnguyen'
             },
