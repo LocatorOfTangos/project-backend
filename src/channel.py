@@ -184,19 +184,20 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
 def channel_join_v1(auth_user_id, channel_id):
 	'''
-	Adds the user auth_user_id to the channel channel_id that they are authorised to join
+	Adds a user to a given channel, provided they have the permissions to join it.
 
 	Arguments:
-		auth_user_id (int)	- ID of the user joining a channel
-		channel_id (int)	- ID of the channel to join
+		authorised user id (string) 	- id of the user joining the channel
+		channel id (string) 			- id of the channel being joined
 
 	Exceptions:
 		InputError  - Occurs when:
-			> channel_id does not refer to an existing channel
-			> The user is already a member of the channel
-		AccessError	- Occurs when:
-			> The channel is private, the user is not already a member and is not a global owner
-			> auth_user_id does not refer to a valid user
+			> Channel_id does not refer to a valid channel
+			> The authorised user is already a member of the channel
+		AccessError - Occurs when:
+			> Auth_user_id does not belong to a user
+			> Channel_id refers to a channel that is private and the authorised user\
+			> is not already a channel member and is not a global owner
 
 	Return Value:
 		Returns an empty dictionary

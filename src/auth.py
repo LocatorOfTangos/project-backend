@@ -3,6 +3,23 @@ from src.error import InputError
 import re
 
 def auth_login_v1(email, password):
+	'''
+	Logs a user in by checking and identifying the given email and password combination.
+
+	Arguments:
+		email (string)		- email address of the user logging in
+		password (string)	- logging in user's password
+
+	Exceptions:
+		InputError - Occurs when:
+			> email entered does not belong to a user
+			> password is not correct
+
+	Return Value:
+		Returns a dictionary containing 'auth_user_id'
+	'''
+
+
 	#Initialising lists
 	email_registered = False
 	user_list = data_store.get()['users']
