@@ -49,7 +49,7 @@ def channels_listall_v1(auth_user_id):
         'channels' : [{
             'channel_id': channel['channel_id'],
             'name': channel['name']
-        } for channel in channels if auth_user_id in channel['owner_members']]
+        } for channel in channels]
     }
 
     return owners_channels
