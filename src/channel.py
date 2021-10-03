@@ -3,6 +3,29 @@ from src.data_store import data_store
 from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+	'''
+	Adds the user given by u_id to a channel given by channel_id
+	User is added to the channel immediately
+	All channel members are able to invite other users
+
+	Arguments:
+		auth_user_id (int)	- id of the user inviting another user to a channel
+		channel_id (int)	- id of the channel the user is being invited to
+		u_id (int)			- id of the user being invited to the channel
+
+	Exceptions:
+		InputError  - Occurs when:
+			> channel_id does not refer to an existing channel
+			> u_id does not refer to an existing user
+			> User with id u_id is already a member of the channel
+		AccessError	- Occurs when:
+			> channel_id is valid but auth_user_id is not a member
+			> auth_user_id does not refer to an existing user
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
 	data = data_store.get()
 
 	details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
@@ -23,6 +46,36 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 
 def channel_details_v1(auth_user_id, channel_id):
+	'''
+	Provides details about a channel that the user is auth_user_id
+
+	Arguments:
+		auth_user_id (int)	- ID of the user making the request for channel details
+		channel_id (int)	- ID of the channel to get the details of
+
+	Exceptions:
+		InputError  - Occurs when:
+			> channel_id does not refer to an existing channel
+		AccessError	- Occurs when:
+			> channel_id is valid but the user auth_user_id is not a member
+			> auth_user_id does not refer to a valid user
+
+	Return Value:
+		Returns a dictionary containing: {
+			name:			name of the channel (string)
+			is_public: 		true if the channel is public, false if private (bool)
+			owner_members: 	a list of users who are owners of the channel (list)
+			all_members: 	a list of users who are members of the channel (list)
+		}
+		The member lists are lists of dictionaries containing: {
+			u_id:			id of the user (int)
+			email:			email address of the user (string)
+			name_first:		first name of the user (string)
+			last_first:		last name of the user (string)
+			handle_str:		the user's unique handle (string)
+		}
+	'''
+
 	# Check if channel is valid
 	if not valid_channel_id(channel_id):
 		raise InputError("Channel does not exist")
@@ -130,6 +183,25 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 	}
 
 def channel_join_v1(auth_user_id, channel_id):
+	'''
+	Adds the user auth_user_id to the channel channel_id that they are authorised to join
+
+	Arguments:
+		auth_user_id (int)	- ID of the user joining a channel
+		channel_id (int)	- ID of the channel to join
+
+	Exceptions:
+		InputError  - Occurs when:
+			> channel_id does not refer to an existing channel
+			> The user is already a member of the channel
+		AccessError	- Occurs when:
+			> The channel is private, the user is not already a member and is not a global owner
+			> auth_user_id does not refer to a valid user
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
 	store = data_store.get()
 	users = store['users']
 	channels = store['channels']
