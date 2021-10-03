@@ -7,3 +7,5 @@ Assumed IDs for channels and users are unique, as they are used to differentiate
 Assumed that the return types of all functions matches the specifications during testing (e.g. assume that auth_login returns a dictionary with key auth_user_id and an integer value). This is because these formats are universal across different implementations.
 
 Assumed that an input error should be thrown if channel_messages is called with a negative start value. This is because a negative number is not a valid index when the most recent message is given index 0.
+
+Assumed that channel names do not need to be only alphanumeric, and can contain whitespace characters.
