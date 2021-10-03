@@ -29,7 +29,6 @@ def user_is_member(u_id, c_id):
             return True
     return False
 
-
 # Return user's details as a dict given u_id
 def get_user_details(u_id):
     store = data_store.get()

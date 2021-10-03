@@ -2,7 +2,6 @@ from src.error import AccessError, InputError
 from src.data_store import data_store
 from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details
 
-
 def channel_invite_v1(auth_user_id, channel_id, u_id):
 	data = data_store.get()
 
