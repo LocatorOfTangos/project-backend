@@ -96,6 +96,10 @@ def test_already_private_channel_member():
 	with pytest.raises(InputError):
 		assert channel_join_v1(user1_id, channel2_id)
 
+	# Member attempts to rejoin their own private channel
+	with pytest.raises(InputError):
+		assert channel_join_v1(user2_id, channel2_id)
+
 def test_non_global_owner_joins_private_channel():
 	user1_id = auth_register_v1("name1@email.com", "password", "firstname", "lastname")['auth_user_id']
 	channel_id = channels_create_v1(user1_id, "channelname", False)['channel_id']
