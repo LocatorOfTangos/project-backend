@@ -41,6 +41,20 @@ def channels_list_v1(auth_user_id):
 
 
 def channels_listall_v1(auth_user_id):
+    '''
+	Provides a list of all existing channels
+
+	Arguments:
+		auth_user_id (integer)  - id of a registered user
+
+	Exceptions:
+		None
+
+	Return Value:
+		Returns a dictionary containing 'channels', with a list of channels
+        Each channel in the list is a dictionary with keys 'channel_id' and 'name'
+	'''
+
     if not valid_user_id(auth_user_id):
         raise AccessError("User ID does not exist")
 
