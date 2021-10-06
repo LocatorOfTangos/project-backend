@@ -28,7 +28,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 	data = data_store.get()
 
-	details = channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
+	channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
 
 	if not any(u_id == user['u_id'] for user in data['users']):
 		raise InputError('This user does not exist')
