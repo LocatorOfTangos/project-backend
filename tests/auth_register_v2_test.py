@@ -1,24 +1,22 @@
 import pytest
 import json
-from tests.helpers import response_comp, auth_register_v2_request, auth_login_v2_request
-
-def resp_data(resp):
-	return json.loads(resp.text)
+from src.make_request import *
+from tests.helpers import *
 
 # Tests for valid registrations
 def test_valid_register():
 	register_return = auth_register_v2_request("user@mail.com", "password", "firstname", "lastname")
 	login_return = auth_login_v2_request("user@mail.com", "password")
-	assert response_comp(register_return, login_return)
+	assert resp_comp(register_return, login_return)
 
 def test_multiple_valid_registers():
 	register1_return = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname")
 	login1_return = auth_login_v2_request("user1@mail.com", "password")
-	assert response_comp(register1_return, login1_return)
+	assert resp_comp(register1_return, login1_return)
 
 	register2_return = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname")
 	login2_return = auth_login_v2_request("user2@mail.com", "password")
-	assert response_comp(register2_return, login2_return)
+	assert resp_comp(register2_return, login2_return)
 
 def test_user_token_unique():
 	used_tokens = set()
