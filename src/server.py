@@ -44,12 +44,20 @@ def echo():
         'data': data
     })
 
+# Auth
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
     data = request.args
     resp = auth_register_v1(**data)
     return resp
 
+@APP.route('/auth/login/v2', methods=['POST'])
+def auth_login():
+    data = request.args
+    resp = auth_login_v1(**data)
+    return resp
+
+# Clear
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     resp = clear_v1()
