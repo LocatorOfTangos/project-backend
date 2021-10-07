@@ -18,3 +18,10 @@ def auth_login_v2_request(email, password):
 
 def clear_v1_request():
 	return requests.delete(config.url + 'clear/v1', params={})
+
+def channels_create_v2_request(token, name, is_public):
+	return requests.post(config.url + 'channels/create/v2', params={
+		'token': token,
+		'name': name,
+		'is_public': is_public
+	})
