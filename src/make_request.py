@@ -15,3 +15,6 @@ def auth_login_v2_request(email, password):
 		'email': email,
 		'password': password,
 	})
+
+def clear_v1_request():
+	return requests.delete(config.url + 'clear/v1', params={})

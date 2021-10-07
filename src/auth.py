@@ -34,11 +34,11 @@ def auth_login_v1(email, password):
 
 	#Raise InputError if no user if found with corresponding email
 	if email_registered == False:
-		raise InputError('No user is registered with this Email')
+		raise InputError(description='No user is registered with this Email')
 		
 	#Raise InputError if password is incorrect
 	if password_list[user_id] != password:
-		raise InputError('Incorrect Password')
+		raise InputError(description='Incorrect Password')
 
 	return {
 		'auth_user_id': user_id,
@@ -107,7 +107,7 @@ def auth_register_v1(email, password, name_first, name_last):
 			> Password is less than 6 characters long
 
 	Return Value:
-		Returns a dictionary containing 'auth_user_id'
+		Returns a dictionary containing 'auth_user_id' and 'token'
 	'''
 	# Normalise case of names
 	name_first = name_first.lower()
@@ -115,21 +115,21 @@ def auth_register_v1(email, password, name_first, name_last):
 
 	# Check if email is valid
 	if not email_is_unique(email):
-		raise InputError('Email has already been used to register a user')
+		raise InputError(description='Email has already been used to register a user')
 	
 	if not email_is_valid(email):
-		raise InputError('Email is invalid')
+		raise InputError(description='Email is invalid')
 
 	# Check if names are valid
 	if not 1 <= len(name_first) <= 50:
-		raise InputError('First name must be between 1 and 50 characters')
+		raise InputError(description='First name must be between 1 and 50 characters')
 	
 	if not 1 <= len(name_last) <= 50:
-		raise InputError('Last name must be between 1 and 50 characters')
+		raise InputError(description='Last name must be between 1 and 50 characters')
 
 	# Check if password is valid
 	if len(password) < 6:
-		raise InputError('Password must not be less than 6 characters')
+		raise InputError(description='Password must not be less than 6 characters')
 
 	# Add to users list in data store
 	store = data_store.get()
@@ -141,6 +141,8 @@ def auth_register_v1(email, password, name_first, name_last):
 	# User is global owner if joined first (if id is 0)
 	perm_id = 1 if u_id == 0 else 2
 
+	token = f'{u_id}' # Temporary #TODO
+
 	users.append({
 		'u_id': u_id,
 		'email': email,
@@ -148,6 +150,7 @@ def auth_register_v1(email, password, name_first, name_last):
 		'name_last': name_last,
 		'handle_str': handle,
 		'global_permissions': perm_id,
+		'token': token,
 	})
 
 	# Add password to data store
@@ -157,4 +160,5 @@ def auth_register_v1(email, password, name_first, name_last):
 	
 	return {
 		'auth_user_id': u_id,
+		'token': token,
 	}

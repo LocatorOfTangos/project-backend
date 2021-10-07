@@ -27,7 +27,7 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     # List of user dictionaries, indexed by ID
-    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions
+    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, token
     'users': [],
 
     # List of passwords, indexed by ID

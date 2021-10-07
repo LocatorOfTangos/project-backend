@@ -1,14 +1,21 @@
 import pytest
 import json
+from src import data_store
 from src.make_request import *
 from tests.helpers import *
 
+@pytest.fixture(autouse=True)
+def clear():
+	clear_v1_request()
+
 # Tests for valid registrations
+@pytest.mark.skip(reason='login not yet implemnted')
 def test_valid_register():
 	register_return = auth_register_v2_request("user@mail.com", "password", "firstname", "lastname")
 	login_return = auth_login_v2_request("user@mail.com", "password")
-	assert resp_comp(register_return, login_return)
+	assert resp_comp(register_return, login_return)['auth_user_id']
 
+@pytest.mark.skip(reason='login not yet implemnted')
 def test_multiple_valid_registers():
 	register1_return = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname")
 	login1_return = auth_login_v2_request("user1@mail.com", "password")

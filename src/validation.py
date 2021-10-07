@@ -11,8 +11,12 @@ def valid_channel_id(channel_id):
 
 # Returns true if u_id refers to a valid user, else false
 def valid_user_id(u_id):
+    print(f"Valid_user called with {u_id}")
     store = data_store.get()
+
     users = store['users']
+    print(f"Users ccontains {users}")
+
     for user in users:
         if user['u_id'] == u_id:
             return True
