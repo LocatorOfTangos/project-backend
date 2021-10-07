@@ -9,6 +9,7 @@ def resp_comp(a, b):
 	print(json.loads(b.text))
 	return json.loads(a.text) == json.loads(b.text)
 
+# Convert the returns 
 def resp_data(resp):
 	return json.loads(resp.text)
 
