@@ -9,6 +9,7 @@ from src import config
 
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1
+from src.channels import channels_create_v1
 from src.other import clear_v1
 
 def quit_gracefully(*args):
@@ -34,7 +35,7 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-# Example
+'''Example'''
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
@@ -44,7 +45,7 @@ def echo():
         'data': data
     })
 
-# Auth
+'''Auth'''
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
     data = request.args
@@ -57,7 +58,14 @@ def auth_login():
     resp = auth_login_v1(**data)
     return resp
 
-# Clear
+'''Channels'''
+@APP.route('/channels/create/v2', methods=['POST'])
+def channels_create():
+    data = request.args
+    resp = channels_create_v1(**data)
+    return resp   
+
+'''Clear'''
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     resp = clear_v1()
