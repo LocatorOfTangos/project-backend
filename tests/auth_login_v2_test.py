@@ -26,9 +26,9 @@ def test_multiple_users_registered():
     user2_reg = auth_register_v2_request("Worrange@gmail.com", "7heReverend", "William", "Orange")
     user3_reg = auth_register_v2_request("haydensmith@outlook.com", "God1lovecomputerscience", "Hayden", "Smith")
 
-    user1_log = auth_login_v2_request("Worrange@gmail.com", "7heReverend")
-    user2_log = auth_login_v2_request("haydensmith@outlook.com", "God1lovecomputerscience")
-    user3_log = auth_login_v2_request("Avagrenouille@funkymail.com", "h1pp1tyh0pp1ty")
+    user2_log = auth_login_v2_request("Worrange@gmail.com", "7heReverend")
+    user3_log = auth_login_v2_request("haydensmith@outlook.com", "God1lovecomputerscience")
+    user1_log = auth_login_v2_request("Avagrenouille@funkymail.com", "h1pp1tyh0pp1ty")
 
     assert resp_comp(user1_reg, user1_log)
     assert resp_comp(user2_reg, user2_log)
@@ -39,7 +39,7 @@ def test_unregistered_email():
     assert auth_login_v2_request("name@squeemail.com", "password").status_code == 400
 
 def test_no_registered_emails():
-    assert auth_login_v2_request("boost@juicemail.com", "Mang0Mag1c") == 400
+    assert auth_login_v2_request("boost@juicemail.com", "Mang0Mag1c").status_code == 400
 
 def test_incorrect_password():
     auth_register_v2_request("JamisonFawkes@gigglemail.boom", "Junkrat", "Jamison", "Fawkes")

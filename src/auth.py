@@ -29,6 +29,7 @@ def auth_login_v1(email, password):
 	for user in user_list:
 		if user['email'] == email:
 			user_id = user['u_id']
+			token = user['token']
 			email_registered = True
 			break
 
@@ -42,6 +43,7 @@ def auth_login_v1(email, password):
 
 	return {
 		'auth_user_id': user_id,
+		'token': token,
 	}
 
 # Returns a copy of 'string' with all non-alphanumeric characters removed
