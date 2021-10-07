@@ -1,6 +1,5 @@
-import requests
 import json
-from src import config
+
 
 # Return true if two responses have the same text component
 def resp_comp(a, b):

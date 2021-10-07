@@ -1,3 +1,6 @@
+import requests
+from src import config
+
 # Make request
 def auth_register_v2_request(email, password, name_first, name_last):
 	return requests.post(config.url + 'auth/register/v2', params={
