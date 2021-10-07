@@ -11,16 +11,35 @@ def valid_channel_id(channel_id):
 
 # Returns true if u_id refers to a valid user, else false
 def valid_user_id(u_id):
-    print(f"Valid_user called with {u_id}")
     store = data_store.get()
-
     users = store['users']
-    print(f"Users ccontains {users}")
 
     for user in users:
         if user['u_id'] == u_id:
             return True
     return False
+
+# Returns the user id of the user associated with the token
+# Assumes the token is valid
+def token_user(token):
+    store = data_store.get()
+    users = store['users']
+
+    for user in users:
+        if user['token'] == token:
+            return user['u_id']
+
+    assert False
+
+# Returns true if token refers to a valid user token
+def valid_token(token):
+    store = data_store.get()
+    users = store['users']
+
+    if any(u['token'] == token for u in users):
+        return True
+    return False
+
 
 # Returns true if user u_id is a member of channel c_id, else false
 def user_is_member(u_id, c_id):
