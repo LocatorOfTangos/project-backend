@@ -117,6 +117,9 @@ def channels_create_v1(token, name, is_public):
     
     store['channels'].append(channels_details)
     
+    # Apply changes
+    data_store.set(store)
+
     return {
         'channel_id': channel_id,
     }

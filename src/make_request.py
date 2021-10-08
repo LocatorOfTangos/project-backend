@@ -25,3 +25,9 @@ def channels_create_v2_request(token, name, is_public):
 		'name': name,
 		'is_public': is_public
 	})
+
+def channel_join_v2_request(token, channel_id):
+	return requests.post(config.url + 'channel/join/v2', params={
+		'token': token,
+		'channel_id': channel_id,
+	})

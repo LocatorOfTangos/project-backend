@@ -8,6 +8,9 @@ def clear_v1():
     No exceptions
     No return value
     '''
+
+    print("Clear")
+
     store = data_store.get()
     store['users'] = []
     store['channels'] = []

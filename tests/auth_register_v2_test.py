@@ -1,12 +1,12 @@
 import pytest
 import json
-from src import data_store
 from src.make_request import *
 from tests.helpers import *
 
 @pytest.fixture(autouse=True)
 def clear():
 	clear_v1_request()
+	pass
 
 # Tests for valid registrations
 def test_valid_register():
@@ -22,6 +22,7 @@ def test_multiple_valid_registers():
 	register2_return = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname")
 	login2_return = auth_login_v2_request("user2@mail.com", "password")
 	assert resp_comp(register2_return, login2_return)
+
 
 def test_user_token_unique():
 	used_tokens = set()

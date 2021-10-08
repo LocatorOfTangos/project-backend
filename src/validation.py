@@ -35,7 +35,7 @@ def token_user(token):
 def valid_token(token):
     store = data_store.get()
     users = store['users']
-
+    
     if any(u['token'] == token for u in users):
         return True
     return False
@@ -44,7 +44,6 @@ def valid_token(token):
 # Returns true if user u_id is a member of channel c_id, else false
 def user_is_member(u_id, c_id):
     store = data_store.get()
-
     users = store['channels'][c_id]['all_members']
 
     for user in users:

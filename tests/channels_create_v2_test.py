@@ -1,5 +1,4 @@
 import pytest
-from src.validation import user_is_member
 from src.make_request import channels_create_v2_request, auth_register_v2_request, clear_v1_request
 from tests.helpers import resp_data
 
@@ -10,7 +9,10 @@ def clear():
 
 @pytest.fixture
 def user():
-      return resp_data(auth_register_v2_request("player1@mail.com", "password", "firstname", "lastname"))['token']
+      resp = auth_register_v2_request("player1@mail.com", "password", "firstname", "lastname")
+      user = resp_data(resp)['token']
+      return user
+
 
 # Tests for valid input for channels_create_v2_request 
 
@@ -52,15 +54,13 @@ def test_valid_integer_output(user):
       channel_id6 = resp_data(channels_create_v2_request(user, "firstchannel", True))['channel_id']
       assert isinstance(channel_id6, int)
 
-@pytest.mark.skip(reason='needs to be rewritted using channel/details as user_is_member isn''t blackbox')
+@pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner_in_channel_public(user):
       c_id = resp_data(channels_create_v2_request(user, "newchannel", True))['channel_id']
-      assert user_is_member(u_id, c_id) # TODO this isn't blackbox
 
-@pytest.mark.skip(reason='needs to be rewritted using channel/details as user_is_member isn''t blackbox')
+@pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner_in_channel_private(user):
       c_id = resp_data(channels_create_v2_request(user, "newchannel", False))['channel_id']
-      assert user_is_member(user, c_id)
 
 @pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner(user):

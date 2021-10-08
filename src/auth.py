@@ -2,6 +2,8 @@ from src.data_store import data_store
 from src.error import InputError
 import re
 
+from src.validation import valid_token
+
 def auth_login_v1(email, password):
 	'''
 	Logs a user in by checking and identifying the given email and password combination.
@@ -157,7 +159,8 @@ def auth_register_v1(email, password, name_first, name_last):
 
 	# Add password to data store
 	store['passwords'].append(password)
-	
+
+
 	data_store.set(store)
 	
 	return {
