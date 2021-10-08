@@ -10,7 +10,7 @@ from tests.helpers import *
 # Automatically applied to all tests
 @pytest.fixture(autouse=True)
 def clear_data():
-	clear_v1()
+	clear_v1_request()
 
 @pytest.fixture
 def member():
@@ -19,9 +19,9 @@ def member():
 @pytest.fixture
 def user():
 	# Ensure user isn't global owner
-	auth_register_v2_request("name1@email.com", "password", "firstname", "lastname")
+	auth_register_v2_request("name2@email.com", "password", "firstname", "lastname")
 
-	return resp_data(auth_register_v2_request("name2@email.com", "password", "firstname", "lastname"))['token']
+	return resp_data(auth_register_v2_request("name3@email.com", "password", "firstname", "lastname"))['token']
 
 @pytest.fixture
 def channel(member):
@@ -36,7 +36,6 @@ def private(member):
 
 
 def test_invalid_user(channel):
-	token = resp_data(auth_register_v2_request("name1@email.com", "password", "firstname", "lastname"))['token']
 	assert channel_join_v2_request(1234569, channel).status_code == 403
 
 def test_return_type(user, channel):
@@ -73,7 +72,7 @@ def test_invalid_channel_id(user):
 	# No channels to join
 	assert channel_join_v2_request(user, 0).status_code == 400
 
-	user2 = resp_data(auth_register_v2_request("name2@email.com", "password", "firstname", "lastname"))['token']
+	user2 = resp_data(auth_register_v2_request("name5@email.com", "password", "firstname", "lastname"))['token']
 	channels_create_v2_request(user2, "channelname", True)
 
 	# A channel exists but the given channel_id is invalid
@@ -86,8 +85,7 @@ def test_already_public_channel_member(channel, member, user):
 	channel_join_v2_request(user, channel)
 
 	# Channel member attempts to rejoin
-	with pytest.raises(InputError):
-		assert channel_join_v2_request(user, channel)
+	assert channel_join_v2_request(user, channel).status_code == 400
 
 def test_already_private_channel_member():
 	# Global Owner attempts to rejoin their own private channel
@@ -96,7 +94,7 @@ def test_already_private_channel_member():
 
 	assert channel_join_v2_request(global_owner, channel).status_code == 400
 
-	user2 = resp_data(auth_register_v2_request("name2@email.com", "password", "firstname", "lastname"))['token']
+	user2 = resp_data(auth_register_v2_request("name21@email.com", "password", "firstname", "lastname"))['token']
 	channel2 = resp_data(channels_create_v2_request(user2, "channel2name", False))['channel_id']
 	channel_join_v2_request(global_owner, channel2)
 

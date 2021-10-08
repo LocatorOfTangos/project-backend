@@ -1,6 +1,6 @@
 from src.error import AccessError, InputError
 from src.data_store import data_store
-from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details
+from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
 	'''
@@ -182,13 +182,13 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 		'end': end,
 	}
 
-def channel_join_v1(auth_user_id, channel_id):
+def channel_join_v1(token, channel_id):
 	'''
 	Adds a user to a given channel, provided they have the permissions to join it.
 
 	Arguments:
-		authorised user id (string) 	- id of the user joining the channel
-		channel id (string) 			- id of the channel being joined
+		token (string) 					- token of the user joining the channel
+		channel id (int) 				- id of the channel being joined
 
 	Exceptions:
 		InputError  - Occurs when:
@@ -204,18 +204,17 @@ def channel_join_v1(auth_user_id, channel_id):
 	'''
 
 	store = data_store.get()
-	users = store['users']
 	channels = store['channels']
 	joining_user = {}
 	joining_channel = {}
 
-	# Find user dictionary with corresponding u_id, raise AccessError if it does not exist
-	for user in users:
-		if user['u_id'] == auth_user_id:
-			joining_user = user
-			break
-	if joining_user == {}:
-		raise AccessError("User ID does not belong to a user")
+	# Find user dictionary with corresponding token, raise AccessError if it does not exist
+	if not valid_token(token):
+		raise AccessError(description="Token does not belong to a user")
+
+	auth_user_id = token_user(token)
+
+	joining_user = store['users'][auth_user_id]
 
 	# Find channel dictionary with corresponding c_id, raise InputError if it does not exist
 	for channel in channels:
@@ -223,18 +222,21 @@ def channel_join_v1(auth_user_id, channel_id):
 			joining_channel = channel
 			break
 	if joining_channel == {}:
-		raise InputError("Channel ID does not describe an existing channel")
+		raise InputError(description="Channel ID does not describe an existing channel")
 
 	# Check whether user is already a member of the given channel, raise InputError if the case
 	for member in joining_channel['all_members']:
 		if member == auth_user_id:
-			raise InputError("User is already a member of this channel")
+			raise InputError(description="User is already a member of this channel")
+
 
 	# Check if channel is private and user is not a global owner, raise AccessError if the case
-	if joining_channel['is_public'] == False and joining_user['global_permissions'] != 1:
-		raise AccessError("User does not have permissions to join channel")
+	if not joining_channel['is_public'] and joining_user['global_permissions'] != 1:
+		raise AccessError(description="User does not have permissions to join channel")
 
 	# Append user to the channel all_members list
 	joining_channel['all_members'].append(joining_user['u_id'])
+
+	data_store.set(store)
 	
 	return {}

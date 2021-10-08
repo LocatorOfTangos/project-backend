@@ -1,9 +1,10 @@
 import sys
 import signal
 from json import dumps
-from flask import Flask, request
+from flask import Flask, app, request
 from flask_cors import CORS
 import requests
+from src.channel import channel_join_v1
 from src.error import InputError
 from src import config
 
@@ -49,21 +50,29 @@ def echo():
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
     data = request.args
-    resp = auth_register_v1(**data)
+    resp = auth_register_v1(**data) # Already strings
     return resp
 
 @APP.route('/auth/login/v2', methods=['POST'])
 def auth_login():
     data = request.args
-    resp = auth_login_v1(**data)
+    resp = auth_login_v1(**data) # Already strings
     return resp
 
 '''Channels'''
 @APP.route('/channels/create/v2', methods=['POST'])
 def channels_create():
     data = request.args
-    resp = channels_create_v1(**data)
-    return resp   
+    # data['is_public'] is a string, comparing it to the string 'True' fixes this
+    resp = channels_create_v1(data['token'], data['name'], data['is_public'] == 'True')
+    return resp
+
+'''Channel'''
+@APP.route('/channel/join/v2', methods=['POST'])
+def channel_join():
+    data = request.args
+    resp = channel_join_v1(data['token'], int(data['channel_id']))
+    return resp
 
 '''Clear'''
 @APP.route('/clear/v1', methods=['DELETE'])
