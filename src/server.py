@@ -3,8 +3,13 @@ import signal
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
+import requests
 from src.error import InputError
 from src import config
+
+# Implementation imports
+from src.auth import auth_register_v1, auth_login_v1
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -38,6 +43,25 @@ def echo():
     return dumps({
         'data': data
     })
+
+# Auth
+@APP.route('/auth/register/v2', methods=['POST'])
+def auth_register():
+    data = request.args
+    resp = auth_register_v1(**data)
+    return resp
+
+@APP.route('/auth/login/v2', methods=['POST'])
+def auth_login():
+    data = request.args
+    resp = auth_login_v1(**data)
+    return resp
+
+# Clear
+@APP.route('/clear/v1', methods=['DELETE'])
+def clear():
+    resp = clear_v1()
+    return resp
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
