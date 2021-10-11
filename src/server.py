@@ -4,7 +4,6 @@ from json import dumps
 from flask import Flask, app, request
 from flask_cors import CORS
 import requests
-from src.channel import channel_join_v1
 from src.error import InputError
 from src import config
 
@@ -12,6 +11,7 @@ from src import config
 from src.auth import auth_register_v1, auth_login_v1
 from src.channels import channels_create_v1
 from src.other import clear_v1
+from src.channel import channel_join_v1, channel_details_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -72,6 +72,12 @@ def channels_create():
 def channel_join():
     data = request.args
     resp = channel_join_v1(data['token'], int(data['channel_id']))
+    return resp
+
+@APP.route('/channel/details/v2', methods=['GET'])
+def channel_details():
+    data = request.args
+    resp = channel_details_v1(data['token'], int(data['channel_id']))
     return resp
 
 '''Clear'''

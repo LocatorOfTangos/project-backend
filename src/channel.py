@@ -45,7 +45,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 	}
 
 
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v1(token, channel_id):
 	'''
 	Provides details about a channel that the user is auth_user_id
 
@@ -78,15 +78,17 @@ def channel_details_v1(auth_user_id, channel_id):
 
 	# Check if channel is valid
 	if not valid_channel_id(channel_id):
-		raise InputError("Channel does not exist")
+		raise InputError(description="Channel does not exist")
 
 	# Check if user is valid
-	if not valid_user_id(auth_user_id):
-		raise AccessError("User ID does not belong to a user")
+	if not valid_token(token):
+		raise AccessError(description="User ID does not belong to a user")
+
+	auth_user_id = token_user(token)
 
 	# Check if user is in the channel
 	if not user_is_member(auth_user_id, channel_id):
-		raise AccessError("User is not a member of the channel")	
+		raise AccessError(description="User is not a member of the channel")	
 
 
 	# Implement the function
