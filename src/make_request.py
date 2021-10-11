@@ -31,3 +31,9 @@ def channel_join_v2_request(token, channel_id):
 		'token': token,
 		'channel_id': channel_id,
 	})
+
+def channel_details_v2_request(token, channel_id):
+	return requests.get(config.url + 'channel/details/v2', params={
+		'token': token,
+		'channel_id': channel_id,
+	})
