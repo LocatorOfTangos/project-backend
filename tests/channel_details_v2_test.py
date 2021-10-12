@@ -109,88 +109,33 @@ def test_multiple_users():
     channel_detail = {}
 
     channel_detail = channel_details_v2_request(token, channel_id).json()
-    assert(channel_detail) == {
-        'name': 'test channel',
-        'is_public': True,
-        'owner_members': [
-            {
-                'u_id': int(token),
-                'name_first': 'vu',
-                'name_last': 'luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
-            },
-        ],
-        'all_members': [
-            {
-                'u_id': int(token) ,
-                'name_first': 'vu',
-                'name_last': 'luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
-            },
-            {
-                'u_id': int(token2) ,
-                'name_first': 'david',
-                'name_last': 'smith',
-                'email': 'secondtestemail@gmail.com',
-                'handle_str': 'davidsmith'
-            },
-            {
-                'u_id': int(token3) ,
-                'name_first': 'sam',
-                'name_last': 'nguyen',
-                'email': 'thirdtestemail@gmail.com',
-                'handle_str': 'samnguyen'
-            },
-        ]
-    }
 
-@pytest.mark.skip(reason="channel_invite_v2_request not implemented")
+    assert set(channel_detail.keys()) == {'name', 'is_public', 'owner_members', 'all_members'}
+    assert channel_detail['name'] == 'test channel'
+    assert channel_detail['is_public'] == True
+    assert len(channel_detail['owner_members']) == 1
+    assert len(channel_detail['all_members']) == 3
+
+
 def test_multiple_users_priv():
     token = auth_register_v2_request("testemail@gmail.com", "password", "vu", "luu").json()['token']
-    token2 = auth_register_v2_request("secondtestemail@gmail.com", "password", "david", "smith").json()['token']
-    token3 = auth_register_v2_request("thirdtestemail@gmail.com", "password", "sam", "nguyen").json()['token']
+    
+    auth_register_v2_request("secondtestemail@gmail.com", "password", "david", "smith").json()['token']
+    uid2 = auth_login_v2_request("secondtestemail@gmail.com", "password").json()['auth_user_id']
+    
+    auth_register_v2_request("thirdtestemail@gmail.com", "password", "sam", "nguyen").json()['token']
+    uid3 = auth_login_v2_request("thirdtestemail@gmail.com", "password").json()['auth_user_id']
 
     channel_id = channels_create_v2_request(token, "test channel", False).json()['channel_id']
-    channel_invite_v2_request(token, channel_id, token2)
-    channel_invite_v2_request(token, channel_id, token3)
+
+    channel_invite_v2_request(token, channel_id, uid2)
+    channel_invite_v2_request(token, channel_id, uid3)
     channel_detail = {}
 
     channel_detail = channel_details_v2_request(token, channel_id).json()
-    assert(channel_detail) == {
-        'name': 'test channel',
-        'is_public': False,
-        'owner_members': [
-            {
-                'u_id': int(token),
-                'name_first': 'vu',
-                'name_last': 'luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
-            },
-        ],
-        'all_members': [
-            {
-                'u_id': int(token) ,
-                'name_first': 'vu',
-                'name_last': 'luu',
-                'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
-            },
-            {
-                'u_id': int(token2) ,
-                'name_first': 'david',
-                'name_last': 'smith',
-                'email': 'secondtestemail@gmail.com',
-                'handle_str': 'davidsmith'
-            },
-            {
-                'u_id': int(token3) ,
-                'name_first': 'sam',
-                'name_last': 'nguyen',
-                'email': 'thirdtestemail@gmail.com',
-                'handle_str': 'samnguyen'
-            },
-        ]
-    }
+    
+    assert set(channel_detail.keys()) == {'name', 'is_public', 'owner_members', 'all_members'}
+    assert channel_detail['name'] == 'test channel'
+    assert channel_detail['is_public'] == False
+    assert len(channel_detail['owner_members']) == 1
+    assert len(channel_detail['all_members']) == 3
