@@ -1,23 +1,19 @@
 import pytest
 
-from src.auth import auth_register_v1
-from src.channels import channels_create_v1, channels_listall_v1
-
-# MISCELLANEOUS IMPORTS
-from src.other import clear_v1
-from src.error import AccessError
+from tests.helpers import *
+from src.make_request import *
 
 
 @pytest.fixture(autouse=True)
 def clear():
-    clear_v1()
+    clear_v1_request()
 
 
 def test_basic_listall():
-    inviter_id = auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id']
-    channels_create_v1(inviter_id, 'The Funky Bunch', True)
+    inviter_id = auth_register_v2_request("inviter@email.com", "password", "mister", "inviter").json()['token']
+    channels_create_v2_request(inviter_id, 'The Funky Bunch', True)
 
-    assert channels_listall_v1(inviter_id) == {
+    assert channels_listall_v2_request(inviter_id).json() == {
         'channels': [
             {
                 'channel_id': 0,
@@ -28,13 +24,13 @@ def test_basic_listall():
 
 
 def test_basic_mult_list():
-    inviter_id1 = auth_register_v1("inviter1@email.com", "password", "mister", "inviter1")['auth_user_id']
+    inviter_id1 = auth_register_v2_request("inviter1@email.com", "password", "mister", "inviter1").json()['token']
 
-    channels_create_v1(inviter_id1, 'The Funky Bunch', True)
-    channels_create_v1(inviter_id1, 'The Wonky Bunch', True)
-    channels_create_v1(inviter_id1, 'The Lanky Bunch', True)
+    channels_create_v2_request(inviter_id1, 'The Funky Bunch', True)
+    channels_create_v2_request(inviter_id1, 'The Wonky Bunch', True)
+    channels_create_v2_request(inviter_id1, 'The Lanky Bunch', True)
 
-    assert channels_listall_v1(inviter_id1) == {
+    assert channels_listall_v2_request(inviter_id1).json() == {
         'channels': [
             {
                 'channel_id': 0,
@@ -51,12 +47,12 @@ def test_basic_mult_list():
         ]
     }
 
-    inviter_id2 = auth_register_v1("inviter2@email.com", "password", "mister", "inviter2")['auth_user_id']
-    channels_create_v1(inviter_id2, 'The Funky Bunch', True)
-    channels_create_v1(inviter_id2, 'The Wonky Bunch', True)
-    channels_create_v1(inviter_id2, 'The Lanky Bunch', True)
+    inviter_id2 = auth_register_v2_request("inviter2@email.com", "password", "mister", "inviter2").json()['token']
+    channels_create_v2_request(inviter_id2, 'The Funky Bunch', True)
+    channels_create_v2_request(inviter_id2, 'The Wonky Bunch', True)
+    channels_create_v2_request(inviter_id2, 'The Lanky Bunch', True)
 
-    assert channels_listall_v1(inviter_id1) == {
+    assert channels_listall_v2_request(inviter_id1).json() == {
         'channels': [
             {
                 'channel_id': 0,
@@ -87,13 +83,13 @@ def test_basic_mult_list():
 
 
 def test_private_channels():
-    inviter_id = auth_register_v1("inviter@email.com", "password", "mister", "inviter")['auth_user_id']
+    inviter_id = auth_register_v2_request("inviter@email.com", "password", "mister", "inviter").json()['token']
 
-    channels_create_v1(inviter_id, 'The Funky Bunch', False)
-    channels_create_v1(inviter_id, 'The Wonky Bunch', True)
-    channels_create_v1(inviter_id, 'The Lanky Bunch', False)
+    channels_create_v2_request(inviter_id, 'The Funky Bunch', False)
+    channels_create_v2_request(inviter_id, 'The Wonky Bunch', True)
+    channels_create_v2_request(inviter_id, 'The Lanky Bunch', False)
 
-    assert channels_listall_v1(inviter_id) == {
+    assert channels_listall_v2_request(inviter_id).json() == {
         'channels': [
             {
                 'channel_id': 0,
@@ -112,5 +108,4 @@ def test_private_channels():
 
 
 def test_basic_DNE_id():
-    with pytest.raises(AccessError):
-        channels_listall_v1(22302)
+    channels_listall_v2_request(22302).status_code == 403

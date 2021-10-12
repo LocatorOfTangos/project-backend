@@ -44,3 +44,8 @@ def channel_invite_v2_request(token, channel_id, u_id):
 		'channel_id': channel_id,
 		'u_id': u_id
 	})
+
+def channels_listall_v2_request(token):
+	return requests.get(config.url + 'channels/listall/v2', params={
+		'token': token
+	})
