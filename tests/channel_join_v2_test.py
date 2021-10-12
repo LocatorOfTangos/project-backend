@@ -1,10 +1,6 @@
 import pytest
 
 from src.make_request import *
-from src.channel import channel_details_v1
-from src.error import InputError, AccessError
-from src.other import clear_v1
-from src.validation import user_is_member
 from tests.helpers import *
 
 # Automatically applied to all tests
@@ -31,6 +27,9 @@ def channel(member):
 def private(member):
 	return channels_create_v2_request(member, "channel", False).json()['channel_id']
 
+def check_added(token, channel, user_id):
+    members = channel_details_v2_request(token, channel).json()['all_members']
+    assert any(user['u_id'] == user_id for user in members)
 
 # tests
 
@@ -41,24 +40,23 @@ def test_invalid_user(channel):
 def test_return_type(user, channel):
 	assert channel_join_v2_request(user, channel).json() == {}
 
-@pytest.mark.skip(reason="channel_details_v2 not functional")
 def test_join_successful(user, member, channel,):
 	assert channel_join_v2_request(user, channel).status_code == 200
 
-	# A user can join a public server
-	joined = False
-	for user in channel_details_v1(user1_id, pubchannel_id)['all_members']:
-		if user['u_id'] == user2_id:
-			joined = True
-			break
-	
-	assert joined == True
+	# Get the user's id
+	uid = auth_login_v2_request("name3@email.com", "password").json()['auth_user_id']
 
-@pytest.mark.skip(reason="channel_details_v2 not functional")
+	# Ensure they've been added
+	check_added(user, channel, uid)
+
 def test_join_public(user, member, channel):
 	channel_join_v2_request(user, channel)
 
-	# TODO use details to check if joined
+	# Get the user's id
+	uid = auth_login_v2_request("name3@email.com", "password").json()['auth_user_id']
+
+	# Ensure they've been added
+	check_added(user, channel, uid)
 
 def test_join_global_owner():
 	global_owner = auth_register_v2_request("owner@email.com", "password", "firstname", "lastname").json()['token']
