@@ -49,42 +49,41 @@ def echo():
 '''Auth'''
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
-    data = request.args
-    resp = auth_register_v1(**data) # Already strings
-    return resp
+    data = request.get_json()
+    resp = auth_register_v1(**data)
+    return dumps(resp)
 
 @APP.route('/auth/login/v2', methods=['POST'])
 def auth_login():
-    data = request.args
-    resp = auth_login_v1(**data) # Already strings
-    return resp
+    data = request.get_json()
+    resp = auth_login_v1(**data)
+    return dumps(resp)
 
 '''Channels'''
 @APP.route('/channels/create/v2', methods=['POST'])
 def channels_create():
-    data = request.args
-    # data['is_public'] is a string, comparing it to the string 'True' fixes this
-    resp = channels_create_v1(data['token'], data['name'], data['is_public'] == 'True')
-    return resp
+    data = request.get_json()
+    resp = channels_create_v1(**data)
+    return dumps(resp)
 
 '''Channel'''
 @APP.route('/channel/join/v2', methods=['POST'])
 def channel_join():
-    data = request.args
-    resp = channel_join_v1(data['token'], int(data['channel_id']))
-    return resp
+    data = request.get_json()
+    resp = channel_join_v1(**data)
+    return dumps(resp)
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
-    data = request.args
-    resp = channel_details_v1(data['token'], int(data['channel_id']))
-    return resp
+    data = request.args.get
+    resp = channel_details_v1(**data)
+    return dumps(resp)
 
 '''Clear'''
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     resp = clear_v1()
-    return resp
+    return dumps(resp)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

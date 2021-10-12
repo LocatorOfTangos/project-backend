@@ -14,22 +14,22 @@ def clear_data():
 
 @pytest.fixture
 def member():
-	return resp_data(auth_register_v2_request("name1@email.com", "password", "firstname", "lastname"))['token']
+	return auth_register_v2_request("name1@email.com", "password", "firstname", "lastname").json()['token']
 
 @pytest.fixture
 def user():
 	# Ensure user isn't global owner
 	auth_register_v2_request("name2@email.com", "password", "firstname", "lastname")
 
-	return resp_data(auth_register_v2_request("name3@email.com", "password", "firstname", "lastname"))['token']
+	return auth_register_v2_request("name3@email.com", "password", "firstname", "lastname").json()['token']
 
 @pytest.fixture
 def channel(member):
-	return resp_data(channels_create_v2_request(member, "channel", True))['channel_id']
+	return channels_create_v2_request(member, "channel", True).json()['channel_id']
 
 @pytest.fixture
 def private(member):
-	return resp_data(channels_create_v2_request(member, "channel", False))['channel_id']
+	return channels_create_v2_request(member, "channel", False).json()['channel_id']
 
 
 # tests
@@ -39,7 +39,7 @@ def test_invalid_user(channel):
 	assert channel_join_v2_request(1234569, channel).status_code == 403
 
 def test_return_type(user, channel):
-	assert resp_data(channel_join_v2_request(user, channel)) == {}
+	assert channel_join_v2_request(user, channel).json() == {}
 
 @pytest.mark.skip(reason="channel_details_v2 not functional")
 def test_join_successful(user, member, channel,):
@@ -61,9 +61,9 @@ def test_join_public(user, member, channel):
 	# TODO use details to check if joined
 
 def test_join_global_owner():
-	global_owner = resp_data(auth_register_v2_request("owner@email.com", "password", "firstname", "lastname"))['token']
-	user2 = resp_data(auth_register_v2_request("user@mail.com", "password", "first", "last"))['token']
-	channel = resp_data(channels_create_v2_request(user2, "channel", False))['channel_id']
+	global_owner = auth_register_v2_request("owner@email.com", "password", "firstname", "lastname").json()['token']
+	user2 = auth_register_v2_request("user@mail.com", "password", "first", "last").json()['token']
+	channel = channels_create_v2_request(user2, "channel", False).json()['channel_id']
 	assert channel_join_v2_request(global_owner, channel).status_code == 200
 
 	# TODO use details to check if joined
@@ -72,7 +72,7 @@ def test_invalid_channel_id(user):
 	# No channels to join
 	assert channel_join_v2_request(user, 0).status_code == 400
 
-	user2 = resp_data(auth_register_v2_request("name5@email.com", "password", "firstname", "lastname"))['token']
+	user2 = auth_register_v2_request("name5@email.com", "password", "firstname", "lastname").json()['token']
 	channels_create_v2_request(user2, "channelname", True)
 
 	# A channel exists but the given channel_id is invalid
@@ -89,13 +89,13 @@ def test_already_public_channel_member(channel, member, user):
 
 def test_already_private_channel_member():
 	# Global Owner attempts to rejoin their own private channel
-	global_owner = resp_data(auth_register_v2_request("owner@email.com", "password", "firstname", "lastname"))['token']
-	channel = resp_data(channels_create_v2_request(global_owner, "channel", False))['channel_id']
+	global_owner = auth_register_v2_request("owner@email.com", "password", "firstname", "lastname").json()['token']
+	channel = channels_create_v2_request(global_owner, "channel", False).json()['channel_id']
 
 	assert channel_join_v2_request(global_owner, channel).status_code == 400
 
-	user2 = resp_data(auth_register_v2_request("name21@email.com", "password", "firstname", "lastname"))['token']
-	channel2 = resp_data(channels_create_v2_request(user2, "channel2name", False))['channel_id']
+	user2 = auth_register_v2_request("name21@email.com", "password", "firstname", "lastname").json()['token']
+	channel2 = channels_create_v2_request(user2, "channel2name", False).json()['channel_id']
 	channel_join_v2_request(global_owner, channel2)
 
 	# Global Owner attempts to rejoin a member's private channel

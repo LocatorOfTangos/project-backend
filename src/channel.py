@@ -225,6 +225,7 @@ def channel_join_v1(token, channel_id):
 			break
 	if joining_channel == {}:
 		raise InputError(description="Channel ID does not describe an existing channel")
+	print(f"joining channel = {joining_channel}")
 
 	# Check whether user is already a member of the given channel, raise InputError if the case
 	for member in joining_channel['all_members']:

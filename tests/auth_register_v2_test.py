@@ -27,38 +27,38 @@ def test_multiple_valid_registers():
 def test_user_token_unique():
 	used_tokens = set()
 
-	data = resp_data(auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname").json()
 	assert data['token'] not in used_tokens
 	used_tokens.add(data['token'])
 
-	data = resp_data(auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname").json()
 	assert data['token'] not in used_tokens
 	used_tokens.add(data['token'])
 
-	data = resp_data(auth_register_v2_request("user3@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user3@mail.com", "password", "firstname", "lastname").json()
 	assert data['token'] not in used_tokens
 	used_tokens.add(data['token'])
 
-	data = resp_data(auth_register_v2_request("user4@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user4@mail.com", "password", "firstname", "lastname").json()
 	assert data['token'] not in used_tokens
 	used_tokens.add(data['token'])
 
 def test_user_id():
 	used_ids = set()
 
-	data = resp_data(auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname").json()
 	assert data['auth_user_id'] not in used_ids
 	used_ids.add(data['auth_user_id'])
 
-	data = resp_data(auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname").json()
 	assert data['auth_user_id'] not in used_ids
 	used_ids.add(data['auth_user_id'])
 
-	data = resp_data(auth_register_v2_request("user3@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user3@mail.com", "password", "firstname", "lastname").json()
 	assert data['auth_user_id'] not in used_ids
 	used_ids.add(data['auth_user_id'])
 
-	data = resp_data(auth_register_v2_request("user4@mail.com", "password", "firstname", "lastname"))
+	data = auth_register_v2_request("user4@mail.com", "password", "firstname", "lastname").json()
 	assert data['auth_user_id'] not in used_ids
 	used_ids.add(data['auth_user_id'])
 
