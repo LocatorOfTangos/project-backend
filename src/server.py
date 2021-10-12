@@ -11,7 +11,7 @@ from src import config
 from src.auth import auth_register_v1, auth_login_v1
 from src.channels import channels_create_v1
 from src.other import clear_v1
-from src.channel import channel_join_v1, channel_details_v1
+from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -71,6 +71,12 @@ def channels_create():
 def channel_join():
     data = request.get_json()
     resp = channel_join_v1(**data)
+    return dumps(resp)
+
+@APP.route('/channel/invite/v2', methods=['POST'])
+def channel_invite():
+    data = request.get_json()
+    resp = channel_invite_v1(**data)
     return dumps(resp)
 
 @APP.route('/channel/details/v2', methods=['GET'])

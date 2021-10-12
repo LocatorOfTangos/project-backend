@@ -2,7 +2,7 @@ from src.error import AccessError, InputError
 from src.data_store import data_store
 from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user
 
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v1(token, channel_id, u_id):
 	'''
 	Adds the user given by u_id to a channel given by channel_id
 	User is added to the channel immediately
@@ -27,14 +27,22 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 	'''
 
 	data = data_store.get()
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
 
-	channel_details_v1(auth_user_id, channel_id)  # errors will be raised via channel_details
+	if not valid_user_id(u_id):
+		raise InputError(description='Invited user does not exist')
 
-	if not any(u_id == user['u_id'] for user in data['users']):
-		raise InputError('This user does not exist')
+	if not valid_channel_id(channel_id):
+		raise InputError(description='Channel does not exist')
+
+	auth_user_id = token_user(token)
+
+	if not user_is_member(auth_user_id, channel_id):
+		raise AccessError(description='Inviter is not a member of the channel')
 
 	if user_is_member(u_id, channel_id):
-		raise InputError('This user has already been added to the channel')
+		raise InputError(description='This user has already been added to the channel')
 
 	for channel in data['channels']:
 		if channel['channel_id'] == channel_id:
