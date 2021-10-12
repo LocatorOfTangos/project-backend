@@ -49,3 +49,8 @@ def channels_listall_v2_request(token):
 	return requests.get(config.url + 'channels/listall/v2', params={
 		'token': token
 	})
+
+def channels_list_v2_request(token):
+	return requests.get(config.url + 'channels/list/v2', params={
+		'token': token
+	})
