@@ -75,8 +75,9 @@ def channel_join():
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
-    data = request.args.get
-    resp = channel_details_v1(**data)
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    resp = channel_details_v1(token, channel_id)
     return dumps(resp)
 
 '''Clear'''
