@@ -13,6 +13,9 @@ def user():
       user = resp.json()['token']
       return user
 
+def check_added(token, channel, user_id):
+    members = channel_details_v2_request(token, channel).json()['all_members']
+    assert any(user['u_id'] == user_id for user in members)
 
 # Tests for valid input for channels_create_v2_request 
 
@@ -54,139 +57,76 @@ def test_valid_integer_output(user):
       channel_id6 = channels_create_v2_request(user, "firstchannel", True).json()['channel_id']
       assert isinstance(channel_id6, int)
 
-@pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner_in_channel_public(user):
       c_id = channels_create_v2_request(user, "newchannel", True).json()['channel_id']
+      user_id = auth_login_v2_request("player1@mail.com", "password").json()['auth_user_id']
+      check_added(user, c_id, user_id)
 
-@pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner_in_channel_private(user):
       c_id = channels_create_v2_request(user, "newchannel", False).json()['channel_id']
+      user_id = auth_login_v2_request("player1@mail.com", "password").json()['auth_user_id']
+      check_added(user, c_id, user_id)
 
-@pytest.mark.skip(reason='channel_details_v2 not yet implemented')
 def test_owner(user):
       c_id = channels_create_v2_request(user, "newchannel", True).json()['channel_id']
 
       details = channel_details_v2_request(user, c_id).json()
       owners = details['owner_members']
-      members = details['all_members']
 
-      # Find user in owner_members matching c_id TODO not blackbox, use token rather than u_id
-      assert owners == [
-            {
-                  'u_id': u_id,
-                  'email': 'user@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            }
-      ]
-      
-      assert members == [
-            {
-                  'u_id': u_id,
-                  'email': 'user@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            }
-      ]
+      # Get the channel creator's ID
+      user_id = auth_login_v2_request("player1@mail.com", "password").json()['auth_user_id']
 
-@pytest.mark.skip(reason='channel_details_v2, channel_join_v2 not yet implemented')
+      # Ensure the creator is an owner
+      assert any(owner['u_id'] == user_id for owner in owners)
+
 def test_owner_with_other_members():
-      u_id1 = auth_register_v2_request("user1@mail.com", "password", "first", "last").json()['auth_user_id']
-      c_id = channels_create_v2_request(u_id1, "newchannel", True)['channel_id']
+      token1 = auth_register_v2_request("user1@mail.com", "password", "first", "last").json()['token']
+      uid1 = auth_login_v2_request("user1@mail.com", "password").json()['auth_user_id']
+      c_id = channels_create_v2_request(token1, "newchannel", True).json()['channel_id']
       
-      u_id2 = auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['auth_user_id']
-      channel_join_v2_request(u_id2, c_id)
+      token2 = auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['token']
+      uid2 = auth_login_v2_request("user2@mail.com", "password").json()['auth_user_id']
+      channel_join_v2_request(token2, c_id)
       
-      u_id3 = auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['auth_user_id']
-      channel_join_v2_request(u_id3, c_id)
+      token3 = auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['token']
+      uid3 = auth_login_v2_request("user3@mail.com", "password").json()['auth_user_id']
+      channel_join_v2_request(token3, c_id)
 
-      details = channel_details_v2_request(u_id1, c_id).json()
+      details = channel_details_v2_request(token1, c_id).json()
       owners = details['owner_members']
-      members = details['all_members']
 
-      # Find user in owner_members matching c_id
-      assert owners == [
-            {
-                  'u_id': u_id1,
-                  'email': 'user1@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            }
-      ]
-      
-      assert members == [
-            {
-                  'u_id': u_id1,
-                  'email': 'user1@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            },
-            {
-                  'u_id': u_id2,
-                  'email': 'user2@mail.com',
-                  'name_first': 'blake',
-                  'name_last': 'morris',
-                  'handle_str': 'blakemorris'
-            },
-            {
-                  'u_id': u_id3,
-                  'email': 'user3@mail.com',
-                  'name_first': 'redmond',
-                  'name_last': 'mobbs',
-                  'handle_str': 'redmondmobbs'
-            }
-      ]
+      # Check that all 3 users are channel members
+      check_added(token1, c_id, uid1)
+      check_added(token1, c_id, uid2)
+      check_added(token1, c_id, uid3)
 
-@pytest.mark.skip(reason='channel_details_v2, channel_invite_v2 not yet implemented')
+      # Check that correct member is owner
+      assert any(owner['u_id'] == uid1 for owner in owners)
+      assert not any(owner['u_id'] == uid2 for owner in owners)
+      assert not any(owner['u_id'] == uid3 for owner in owners)
+
 def test_owner_with_other_members_private():
-      u_id1 = auth_register_v2_request("user1@mail.com", "password", "first", "last").json()['auth_user_id']
-      c_id = channels_create_v2_request(u_id1, "newchannel", False).json()['channel_id']
+      token1 = auth_register_v2_request("user1@mail.com", "password", "first", "last").json()['token']
+      uid1 = auth_login_v2_request("user1@mail.com", "password").json()['auth_user_id']
+      c_id = channels_create_v2_request(token1, "newchannel", False).json()['channel_id']
       
-      u_id2 = auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['auth_user_id']
-      channel_invite_v2_request(u_id1, c_id, u_id2)
+      token2 = auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['token']
+      uid2 = auth_login_v2_request("user2@mail.com", "password").json()['auth_user_id']
+      channel_invite_v2_request(token1, c_id, uid2)
       
-      u_id3 = auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['auth_user_id']
-      channel_invite_v2_request(u_id1, c_id, u_id3)
+      token3 = auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['token']
+      uid3 = auth_login_v2_request("user3@mail.com", "password").json()['auth_user_id']
+      channel_invite_v2_request(token1, c_id, uid3)
 
-      details = channel_details_v2_request(u_id1, c_id).json()
+      details = channel_details_v2_request(token1, c_id).json()
       owners = details['owner_members']
-      members = details['all_members']
 
-      # Find user in owner_members matching c_id
-      assert owners == [
-            {
-                  'u_id': u_id1,
-                  'email': 'user1@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            }
-      ]
-      
-      assert members == [
-            {
-                  'u_id': u_id1,
-                  'email': 'user1@mail.com',
-                  'name_first': 'first',
-                  'name_last': 'last',
-                  'handle_str': 'firstlast'
-            },
-            {
-                  'u_id': u_id2,
-                  'email': 'user2@mail.com',
-                  'name_first': 'blake',
-                  'name_last': 'morris',
-                  'handle_str': 'blakemorris'
-            },
-            {
-                  'u_id': u_id3,
-                  'email': 'user3@mail.com',
-                  'name_first': 'redmond',
-                  'name_last': 'mobbs',
-                  'handle_str': 'redmondmobbs'
-            }
-      ]
+      # Check that all 3 users are channel members
+      check_added(token1, c_id, uid1)
+      check_added(token1, c_id, uid2)
+      check_added(token1, c_id, uid3)
+
+      # Check that correct member is owner
+      assert any(owner['u_id'] == uid1 for owner in owners)
+      assert not any(owner['u_id'] == uid2 for owner in owners)
+      assert not any(owner['u_id'] == uid3 for owner in owners)
