@@ -9,7 +9,7 @@ from src import config
 
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1
-from src.channels import channels_create_v1, channels_listall_v1
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1
 
@@ -36,7 +36,9 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-'''Example'''
+
+########### Example ############
+
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
@@ -46,7 +48,9 @@ def echo():
         'data': data
     })
 
-'''Auth'''
+
+########### Auth ############
+
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
     data = request.get_json()
@@ -59,7 +63,9 @@ def auth_login():
     resp = auth_login_v1(**data)
     return dumps(resp)
 
-'''Channels'''
+
+########### Channels ############
+
 @APP.route('/channels/create/v2', methods=['POST'])
 def channels_create():
     data = request.get_json()
@@ -72,7 +78,15 @@ def channels_listall():
     resp = channels_listall_v1(token)
     return dumps(resp)
 
-'''Channel'''
+@APP.route('/channels/list/v2', methods=['GET'])
+def channels_list():
+    token = request.args.get('token')
+    resp = channels_list_v1(token)
+    return dumps(resp)
+
+
+########### Channel ############
+
 @APP.route('/channel/join/v2', methods=['POST'])
 def channel_join():
     data = request.get_json()
@@ -92,7 +106,9 @@ def channel_details():
     resp = channel_details_v1(token, channel_id)
     return dumps(resp)
 
-'''Clear'''
+
+########### Clear ############
+
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     resp = clear_v1()

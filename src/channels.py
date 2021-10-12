@@ -2,7 +2,7 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.validation import valid_user_id, valid_token, token_user
 
-def channels_list_v1(auth_user_id):
+def channels_list_v1(token):
     '''
 	Provides the list of channels with associated details that an authorised user is part of.
 
@@ -19,9 +19,11 @@ def channels_list_v1(auth_user_id):
 	'''
 
     #check for valid user_id
-    if not valid_user_id(auth_user_id):
+    if not valid_token(token):
         raise AccessError(description="User ID does not exist")
     
+    auth_user_id = token_user(token)
+
     #empty list for dictionary of channels
     list_channels = []
 
