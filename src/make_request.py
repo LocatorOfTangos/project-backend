@@ -37,3 +37,10 @@ def channel_details_v2_request(token, channel_id):
 		'token': token,
 		'channel_id': channel_id,
 	})
+
+def channel_invite_v2_request(token, channel_id, u_id):
+	return requests.post(config.url + 'channel/invite/v2', json={
+		'token': token,
+		'channel_id': channel_id,
+		'u_id': u_id
+	})
