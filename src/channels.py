@@ -40,7 +40,7 @@ def channels_list_v1(auth_user_id):
     }
 
 
-def channels_listall_v1(auth_user_id):
+def channels_listall_v1(token):
     '''
 	Provides a list of all existing channels
 
@@ -55,8 +55,9 @@ def channels_listall_v1(auth_user_id):
         Each channel in the list is a dictionary with keys 'channel_id' and 'name'
 	'''
 
-    if not valid_user_id(auth_user_id):
-        raise AccessError(description="User ID does not exist")
+    if not valid_token(token):
+        raise AccessError(description="Invalid user token")
+
 
     channels = data_store.get()['channels']
     owners_channels = {
