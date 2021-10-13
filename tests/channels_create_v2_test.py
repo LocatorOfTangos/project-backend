@@ -110,11 +110,11 @@ def test_owner_with_other_members_private():
       uid1 = auth_login_v2_request("user1@mail.com", "password").json()['auth_user_id']
       c_id = channels_create_v2_request(token1, "newchannel", False).json()['channel_id']
       
-      token2 = auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['token']
+      auth_register_v2_request("user2@mail.com", "password", "blake", "morris").json()['token']
       uid2 = auth_login_v2_request("user2@mail.com", "password").json()['auth_user_id']
       channel_invite_v2_request(token1, c_id, uid2)
       
-      token3 = auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['token']
+      auth_register_v2_request("user3@mail.com", "password", "redmond", "mobbs").json()['token']
       uid3 = auth_login_v2_request("user3@mail.com", "password").json()['auth_user_id']
       channel_invite_v2_request(token1, c_id, uid3)
 
