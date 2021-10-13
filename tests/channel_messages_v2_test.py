@@ -38,3 +38,7 @@ def test_invalid_start(clear, user, channel):
 def test_not_member(clear, channel):
 	user_unauthorised = auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['auth_user_id']
 	assert channel_messages_v2_request(user_unauthorised, channel, 0).status_code == 403
+
+@pytest.mark.skip(reason="Send message not implemented yet")
+def messages_test():
+	pass
