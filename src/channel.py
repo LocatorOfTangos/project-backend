@@ -136,7 +136,7 @@ def channel_details_v1(token, channel_id):
 
 
 
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v1(token, channel_id, start):
 	'''
 	Returns a page of messages from the channel matching channel_id.
 	Returns up to 50 messages, starting from index 'start' (where 0
@@ -162,8 +162,10 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 	'''
 
 	# Error cases
-	if not valid_user_id(auth_user_id):
+	if not valid_token(token):
 		raise AccessError("User ID does not belong to a user")
+
+	auth_user_id = token_user(token)
 
 	if not valid_channel_id(channel_id):
 		raise InputError("Channel does not exist")

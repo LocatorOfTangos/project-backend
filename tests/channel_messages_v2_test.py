@@ -13,7 +13,7 @@ def user():
 
 @pytest.fixture
 def channel(user):
-	c_id = channels_create_v2_request(user, "channel", True)['channel_id'] # User automatically added to channel
+	c_id = channels_create_v2_request(user, "channel", True).json()['channel_id'] # User automatically added to channel
 	return c_id
 
 # Tests:
