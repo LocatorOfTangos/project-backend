@@ -54,3 +54,10 @@ def channels_list_v2_request(token):
 	return requests.get(config.url + 'channels/list/v2', params={
 		'token': token
 	})
+
+def channel_messages_v2_request(token, channel_id, start):
+	return requests.get(config.url + 'channel/messages/v2', params={
+		'token': token,
+		'channel_id': channel_id,
+		'start': start
+	})
