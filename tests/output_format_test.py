@@ -1,34 +1,34 @@
 import pytest
-from src.make_request import *
+from src.make_request_test import *
 from tests.helpers import resp_data
 
 
 @pytest.fixture(autouse=True)
 def clear():
-	clear_v1_test()
+	clear_v1_request()
 
 @pytest.fixture
 def user():
-	return auth_register_v2_test("user@mail.com", "password", "first", "last").json()['token']
+	return auth_register_v2_request("user@mail.com", "password", "first", "last").json()['token']
 
 @pytest.fixture
 def user_2():
-	return auth_register_v2_test("user2@mail.com", "password", "first", "last").json()['token']
+	return auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['token']
 
 @pytest.fixture
 def user_2_id(user_2):
-	return  auth_login_v2_test("user2@mail.com", "password").json()['auth_user_id']
+	return  auth_login_v2_request("user2@mail.com", "password").json()['auth_user_id']
 
 @pytest.fixture
 def channel(user):
-	return channels_create_v2_test(user, "channel", True).json()['channel_id']
+	return channels_create_v2_request(user, "channel", True).json()['channel_id']
 
 @pytest.fixture
 def priv_channel(user):
-	return channels_create_v2_test(user, "channel", False).json()['channel_id']
+	return channels_create_v2_request(user, "channel", False).json()['channel_id']
 
 def test_auth_register():
-	out = auth_register_v2_test("user@mail.com", "password", "first", "last").json()
+	out = auth_register_v2_request("user@mail.com", "password", "first", "last").json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'auth_user_id', 'token'}
 	assert isinstance(out['auth_user_id'], int)
@@ -36,7 +36,7 @@ def test_auth_register():
 
 
 def test_auth_login(user):
-	out = auth_login_v2_test("user@mail.com", "password").json()
+	out = auth_login_v2_request("user@mail.com", "password").json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'auth_user_id', 'token'}
 	assert isinstance(out['auth_user_id'], int)
@@ -44,21 +44,21 @@ def test_auth_login(user):
 
 
 def test_channels_create(user):
-	out = channels_create_v2_test(user, "channel", True).json()
+	out = channels_create_v2_request(user, "channel", True).json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'channel_id'}
 	assert isinstance(out['channel_id'], int)
 
 
 def test_channels_list_empty(user_2):
-	out = channels_list_v2_test(user_2).json()
+	out = channels_list_v2_request(user_2).json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'channels'}
 	assert isinstance(out['channels'], list)
 
 
 def test_channels_list_not_empty(user, channel, priv_channel):
-	out = channels_list_v2_test(user).json()
+	out = channels_list_v2_request(user).json()
 	channel = out['channels'][0]
 	assert isinstance(channel, dict)
 	assert set(channel.keys()) == {'channel_id', 'name'}
@@ -68,14 +68,14 @@ def test_channels_list_not_empty(user, channel, priv_channel):
 
 
 def test_channels_listall_empty(user_2):
-	out = channels_listall_v2_test(user_2).json()
+	out = channels_listall_v2_request(user_2).json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'channels'}
 	assert isinstance(out['channels'], list)
 
 
 def test_channels_listall_not_empty(user, channel, priv_channel):
-	out = channels_listall_v2_test(user).json()
+	out = channels_listall_v2_request(user).json()
 	channel = out['channels'][0]
 	assert isinstance(channel, dict)
 	assert set(channel.keys()) == {'channel_id', 'name'}
@@ -85,7 +85,7 @@ def test_channels_listall_not_empty(user, channel, priv_channel):
 
 
 def test_channel_details(user, channel):
-	out = channel_details_v2_test(user, channel).json()
+	out = channel_details_v2_request(user, channel).json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'name', 'is_public', 'owner_members', 'all_members'}
 	assert isinstance(out['name'], str)
@@ -113,19 +113,19 @@ def test_channel_details(user, channel):
 
 
 def test_channel_join(user_2, channel):
-	out = channel_join_v2_test(user_2, channel).json()
+	out = channel_join_v2_request(user_2, channel).json()
 	assert isinstance(out, dict)
 	assert len(out.keys()) == 0
 
 
 def test_channel_invite(user, user_2_id, channel):
-	out = channel_invite_v2_test(user, channel, user_2_id).json()
+	out = channel_invite_v2_request(user, channel, user_2_id).json()
 	assert isinstance(out, dict)
 	assert len(out.keys()) == 0
 
 
 def test_channel_messages(user, channel):
-	out = channel_messages_v2_test(user, channel, 0).json()
+	out = channel_messages_v2_request(user, channel, 0).json()
 	assert isinstance(out, dict)
 	assert set(out.keys()) == {'messages', 'start', 'end'}
 	assert isinstance(out['messages'], list)
@@ -137,6 +137,6 @@ def test_channel_messages(user, channel):
 
 
 def test_clear():
-	out = clear_v1_test().json()
+	out = clear_v1_request().json()
 	assert isinstance(out, dict)
 	assert len(out.keys()) == 0
