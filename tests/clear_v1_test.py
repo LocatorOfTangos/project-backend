@@ -1,39 +1,32 @@
 import pytest
 
-from src.other import clear_v1
-from src.auth import auth_register_v1
-from src.auth import auth_login_v1
-from src.channels import channels_create_v1
-from src.channel import channel_details_v1
-from src.error import InputError
+from src.make_request import *
 
 @pytest.fixture(autouse=True)
 def clear_data():
-	clear_v1()
+	clear_v1_request()
 
 #@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_users_clear():
 	# Successfully register and login a user
-	user = auth_register_v1("user@mail.com", "password", "first", "last")
-	assert auth_login_v1("user@mail.com", "password") == user
+	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()
+	assert auth_login_v2_request("user@mail.com", "password").json() == user
 
-	clear_v1()
+	clear_v1_request()
 
-	with pytest.raises(InputError):
-		assert auth_login_v1("user@mail.com", "password")
+	assert auth_login_v2_request("user@mail.com", "password").status_code == 400
 
 #@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_channels_clear():
 	# Successfully register and login a user
-	user = auth_register_v1("user@mail.com", "password", "first", "last")
-	assert auth_login_v1("user@mail.com", "password") == user
+	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()
+	assert auth_login_v2_request("user@mail.com", "password").json() == user
 
 	# Successfully create a channel and get its details
-	channel = channels_create_v1(user['auth_user_id'], "channel_name", True)
-	assert channel_details_v1(user['auth_user_id'], channel['channel_id'])['name'] == "channel_name"
+	channel = channels_create_v2_request(user['token'], "channel_name", True).json()
+	assert channel_details_v2_request(user['token'], channel['channel_id']).status_code == 200
 
-	clear_v1()
+	clear_v1_request()
 
-	with pytest.raises(InputError):
-		assert channel_details_v1(user['auth_user_id'], channel['channel_id'])['name']
+	assert channel_details_v2_request(user['token'], channel['channel_id']).status_code == 400
 
