@@ -61,3 +61,8 @@ def channel_messages_v2_request(token, channel_id, start):
 		'channel_id': channel_id,
 		'start': start
 	})
+
+def auth_logout_v1_request(token):
+	return requests.post(config.url + 'auth/logout/v1', json={
+		'token': token
+	})

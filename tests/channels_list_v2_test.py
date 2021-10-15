@@ -98,10 +98,3 @@ def test_channels_list_private():
 # Tests for valid user ID
 def test_invalid_auth_id():
     assert channels_list_v2_request(1234).status_code == 403
-
-
-@pytest.mark.skip(reason='Logout not yet implemented')
-def test_bad_sessions_id():
-    # Get a token, logout the user to invalidate the session ID, 
-    # then assert a channels/list request causes a 403
-    pass

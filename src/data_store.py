@@ -34,6 +34,10 @@ initial_object = {
     # Each corresponds with the session_id of an active token
     'sessions': [],
 
+    # ID to give to the next session (so that IDs aren't reused)
+    # Increment after use
+    'curr_session_id': 0,
+
     # List of passwords, indexed by ID
     'passwords': [],
 
