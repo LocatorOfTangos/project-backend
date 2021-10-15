@@ -2,8 +2,19 @@ from src.data_store import data_store
 from src.error import InputError
 import re
 import hashlib
+import jwt
 
 from src.validation import valid_token
+
+SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
+
+# Creates a JWT token for a user's session
+def create_token(u_id):
+	store = data_store.get()
+	s_id = len(store['sessions'])
+	store['sessions'].append(s_id)
+	token = jwt.encode({'u_id': u_id, 's_id': s_id}, SECRET, algorithm='HS256')
+	return token
 
 def auth_login_v1(email, password):
 	'''
@@ -47,7 +58,7 @@ def auth_login_v1(email, password):
 
 	return {
 		'auth_user_id': user_id,
-		'token': token,
+		'token': create_token(user_id),
 	}
 
 # Returns a copy of 'string' with all non-alphanumeric characters removed
@@ -147,7 +158,7 @@ def auth_register_v1(email, password, name_first, name_last):
 	# User is global owner if joined first (if id is 0)
 	perm_id = 1 if u_id == 0 else 2
 
-	token = f'{u_id}' # Temporary #TODO
+	token = create_token(u_id)
 
 	users.append({
 		'u_id': u_id,

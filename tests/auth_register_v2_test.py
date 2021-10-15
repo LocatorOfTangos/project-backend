@@ -10,18 +10,21 @@ def clear():
 
 # Tests for valid registrations
 def test_valid_register():
-	register_return = auth_register_v2_request("user@mail.com", "password", "firstname", "lastname")
-	login_return = auth_login_v2_request("user@mail.com", "password")
-	assert resp_comp(register_return, login_return)
+	register_return = auth_register_v2_request("user@mail.com", "password", "firstname", "lastname").json()
+	login_return = auth_login_v2_request("user@mail.com", "password").json()
+	assert register_return['auth_user_id'] == login_return['auth_user_id']
+	assert register_return['token'] != login_return['token']
 
 def test_multiple_valid_registers():
-	register1_return = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname")
-	login1_return = auth_login_v2_request("user1@mail.com", "password")
-	assert resp_comp(register1_return, login1_return)
+	register1_return = auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname").json()
+	login1_return = auth_login_v2_request("user1@mail.com", "password").json()
+	assert register1_return['auth_user_id'] == login1_return['auth_user_id']
+	assert register1_return['token'] != login1_return['token']
 
-	register2_return = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname")
-	login2_return = auth_login_v2_request("user2@mail.com", "password")
-	assert resp_comp(register2_return, login2_return)
+	register2_return = auth_register_v2_request("user2@mail.com", "password", "firstname", "lastname").json()
+	login2_return = auth_login_v2_request("user2@mail.com", "password").json()
+	assert register2_return['auth_user_id'] == login2_return['auth_user_id']
+	assert register2_return['token'] != login2_return['token']
 
 
 def test_user_token_unique():
