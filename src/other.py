@@ -8,8 +8,10 @@ def clear_v1():
     No exceptions
     No return value
     '''
+
     store = data_store.get()
     store['users'] = []
+    store['sessions'] = []
     store['channels'] = []
     store['passwords'] = []
     data_store.set(store)

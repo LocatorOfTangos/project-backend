@@ -1,4 +1,7 @@
+import jwt
+import src.auth
 from src.data_store import data_store
+from src.error import AccessError
 
 # Returns true if channel_id refers to a valid channel, else false
 def valid_channel_id(channel_id):
@@ -11,21 +14,47 @@ def valid_channel_id(channel_id):
 
 # Returns true if u_id refers to a valid user, else false
 def valid_user_id(u_id):
-    print(f"Valid_user called with {u_id}")
     store = data_store.get()
-
     users = store['users']
-    print(f"Users ccontains {users}")
 
     for user in users:
         if user['u_id'] == u_id:
             return True
     return False
 
+# Returns the user id of the user associated with the token
+# Assumes the token is valid
+def token_user(token):
+    return jwt.decode(token, src.auth.SECRET, algorithms=['HS256'])['u_id']
+
+# Returns true if token refers to a valid user token
+def valid_token(token):
+    store = data_store.get()
+    users = store['users']
+    sessions = store['sessions']
+
+    try:
+        decoded_jwt = jwt.decode(token, src.auth.SECRET, algorithms=['HS256']) 
+    except Exception:
+        return False
+
+    u_id = decoded_jwt['u_id']
+    s_id = decoded_jwt['s_id']
+    
+    # Is the user valid?
+    if not any(u['u_id'] == u_id for u in users):
+        return False
+    
+    # Is the session valid?
+    if not any(s == s_id for s in sessions):
+        return False
+    
+    return True
+
+
 # Returns true if user u_id is a member of channel c_id, else false
 def user_is_member(u_id, c_id):
     store = data_store.get()
-
     users = store['channels'][c_id]['all_members']
 
     for user in users:

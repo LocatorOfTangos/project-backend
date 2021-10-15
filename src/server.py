@@ -1,7 +1,7 @@
 import sys
 import signal
 from json import dumps
-from flask import Flask, request
+from flask import Flask, app, request
 from flask_cors import CORS
 import requests
 from src.error import InputError
@@ -9,7 +9,9 @@ from src import config
 
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
+from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -34,7 +36,9 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-# Example
+
+########### Example ############
+
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
@@ -44,24 +48,78 @@ def echo():
         'data': data
     })
 
-# Auth
+
+########### Auth ############
+
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register():
-    data = request.args
+    data = request.get_json()
     resp = auth_register_v1(**data)
-    return resp
+    return dumps(resp)
 
 @APP.route('/auth/login/v2', methods=['POST'])
 def auth_login():
-    data = request.args
+    data = request.get_json()
     resp = auth_login_v1(**data)
-    return resp
+    return dumps(resp)
 
-# Clear
+
+########### Channels ############
+
+@APP.route('/channels/create/v2', methods=['POST'])
+def channels_create():
+    data = request.get_json()
+    resp = channels_create_v1(**data)
+    return dumps(resp)
+
+@APP.route('/channels/listall/v2', methods=['GET'])
+def channels_listall():
+    token = request.args.get('token')
+    resp = channels_listall_v1(token)
+    return dumps(resp)
+
+@APP.route('/channels/list/v2', methods=['GET'])
+def channels_list():
+    token = request.args.get('token')
+    resp = channels_list_v1(token)
+    return dumps(resp)
+
+
+########### Channel ############
+
+@APP.route('/channel/join/v2', methods=['POST'])
+def channel_join():
+    data = request.get_json()
+    resp = channel_join_v1(**data)
+    return dumps(resp)
+
+@APP.route('/channel/invite/v2', methods=['POST'])
+def channel_invite():
+    data = request.get_json()
+    resp = channel_invite_v1(**data)
+    return dumps(resp)
+
+@APP.route('/channel/details/v2', methods=['GET'])
+def channel_details():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    resp = channel_details_v1(token, channel_id)
+    return dumps(resp)
+
+@APP.route('/channel/messages/v2', methods=['GET'])
+def channel_messages():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
+    resp = channel_messages_v1(token, channel_id, start)
+    return dumps(resp)
+
+########### Clear ############
+
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     resp = clear_v1()
-    return resp
+    return dumps(resp)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
