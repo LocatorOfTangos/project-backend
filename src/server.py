@@ -7,6 +7,10 @@ import requests
 from src.error import InputError
 from src import config
 
+# For periodic backup
+from src.backup import interval_backup
+import threading
+
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
@@ -145,5 +149,9 @@ def clear():
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
+    # Start periodic backup
+    thread = threading.Thread(target=interval_backup, args=())
+    thread.start()
+
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
