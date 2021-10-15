@@ -9,8 +9,8 @@ def clear_data():
 #@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_users_clear():
 	# Successfully register and login a user
-	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()
-	assert auth_login_v2_request("user@mail.com", "password").json() == user
+	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()['auth_user_id']
+	assert auth_login_v2_request("user@mail.com", "password").json()['auth_user_id'] == user
 
 	clear_v1_request()
 
@@ -20,7 +20,8 @@ def test_users_clear():
 def test_channels_clear():
 	# Successfully register and login a user
 	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()
-	assert auth_login_v2_request("user@mail.com", "password").json() == user
+	u_id = user['auth_user_id']
+	assert auth_login_v2_request("user@mail.com", "password").json()['auth_user_id'] == u_id
 
 	# Successfully create a channel and get its details
 	channel = channels_create_v2_request(user['token'], "channel_name", True).json()

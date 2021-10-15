@@ -11,6 +11,7 @@ def clear_v1():
 
     store = data_store.get()
     store['users'] = []
+    store['sessions'] = []
     store['channels'] = []
     store['passwords'] = []
     data_store.set(store)

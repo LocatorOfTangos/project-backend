@@ -1,6 +1,5 @@
 import pytest
 from src.make_request_test import *
-from tests.helpers import resp_data
 
 # Clears existing data for all tests
 @pytest.fixture(autouse=True)

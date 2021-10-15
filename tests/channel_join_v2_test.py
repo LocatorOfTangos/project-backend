@@ -1,7 +1,7 @@
 import pytest
 
 from src.make_request_test import *
-from tests.helpers import *
+
 
 # Automatically applied to all tests
 @pytest.fixture(autouse=True)
