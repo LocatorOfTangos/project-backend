@@ -1,6 +1,7 @@
 from src.data_store import data_store
 from src.error import InputError
 import re
+import hashlib
 
 from src.validation import valid_token
 
@@ -40,7 +41,8 @@ def auth_login_v1(email, password):
 		raise InputError(description='No user is registered with this Email')
 		
 	#Raise InputError if password is incorrect
-	if password_list[user_id] != password:
+	hashed_pword = hashlib.sha256(password.encode()).hexdigest()
+	if password_list[user_id] != hashed_pword:
 		raise InputError(description='Incorrect Password')
 
 	return {
@@ -158,7 +160,8 @@ def auth_register_v1(email, password, name_first, name_last):
 	})
 
 	# Add password to data store
-	store['passwords'].append(password)
+	hashed_pword = hashlib.sha256(password.encode()).hexdigest()
+	store['passwords'].append(hashed_pword)
 
 
 	data_store.set(store)
