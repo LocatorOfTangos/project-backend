@@ -35,8 +35,8 @@ def valid_token(token):
 
     try:
         decoded_jwt = jwt.decode(token, src.auth.SECRET, algorithms=['HS256']) 
-    except Exception as bad_token:
-        raise AccessError(description='Token is invalid') from bad_token
+    except Exception:
+        return False
 
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']

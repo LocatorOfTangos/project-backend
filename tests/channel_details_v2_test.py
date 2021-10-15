@@ -1,7 +1,6 @@
 import pytest
 
 from src.make_request_test import *
-from tests.helpers import *
 
 @pytest.fixture(autouse=True)
 def clear():
