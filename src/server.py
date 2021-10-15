@@ -8,7 +8,7 @@ from src.error import InputError
 from src import config
 
 # Implementation imports
-from src.auth import auth_register_v1, auth_login_v1
+from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
@@ -61,6 +61,12 @@ def auth_register():
 def auth_login():
     data = request.get_json()
     resp = auth_login_v1(**data)
+    return dumps(resp)
+
+@APP.route('/auth/logout/v1', methods=['POST'])
+def auth_logout():
+    data = request.get_json()
+    resp = auth_logout_v1(**data)
     return dumps(resp)
 
 
