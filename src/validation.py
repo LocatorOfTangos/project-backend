@@ -1,6 +1,7 @@
 import jwt
 import src.auth
 from src.data_store import data_store
+from src.error import AccessError
 
 # Returns true if channel_id refers to a valid channel, else false
 def valid_channel_id(channel_id):
@@ -32,7 +33,11 @@ def valid_token(token):
     users = store['users']
     sessions = store['sessions']
 
-    decoded_jwt = jwt.decode(token, src.auth.SECRET, algorithms=['HS256'])
+    try:
+        decoded_jwt = jwt.decode(token, src.auth.SECRET, algorithms=['HS256']) 
+    except Exception as bad_token:
+        raise AccessError(description='Token is invalid') from bad_token
+
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']
     

@@ -43,7 +43,6 @@ def auth_login_v1(email, password):
 	for user in user_list:
 		if user['email'] == email:
 			user_id = user['u_id']
-			token = user['token']
 			email_registered = True
 			break
 

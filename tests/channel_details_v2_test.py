@@ -36,7 +36,9 @@ def test_valid_channel_id():
     '''
     Test for valid channel id and user id
     '''
-    token = auth_register_v2_request("testemail@gmail.com", "password", "vu", "luu").json()['token']
+    reg = auth_register_v2_request("testemail@gmail.com", "password", "vu", "luu").json()
+    u_id = reg['auth_user_id']
+    token = reg['token']
     channel_id = channels_create_v2_request(token, "test channel", True).json()['channel_id']
     channel_detail = {}
     channel_detail = channel_details_v2_request(token, channel_id).json()
@@ -45,7 +47,7 @@ def test_valid_channel_id():
         'is_public': True,
         'owner_members': [
             {
-                'u_id': int(token),
+                'u_id': u_id,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
@@ -54,7 +56,7 @@ def test_valid_channel_id():
         ],
         'all_members': [
             {
-                'u_id': int(token) ,
+                'u_id': u_id ,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
@@ -67,7 +69,9 @@ def test_private_channel():
     '''
     Test for valid channel id and user id
     '''
-    token = auth_register_v2_request("testemail@gmail.com", "password", "vu", "luu").json()['token']
+    reg = auth_register_v2_request("testemail@gmail.com", "password", "vu", "luu").json()
+    u_id = reg['auth_user_id']
+    token = reg['token']
     channel_id = channels_create_v2_request(token, "test channel", False).json()['channel_id']
     channel_detail = {}
     channel_detail = channel_details_v2_request(token, channel_id).json()
@@ -76,7 +80,7 @@ def test_private_channel():
         'is_public': False,
         'owner_members': [
             {
-                'u_id': int(token),
+                'u_id': u_id,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
@@ -85,7 +89,7 @@ def test_private_channel():
         ],
         'all_members': [
             {
-                'u_id': int(token) ,
+                'u_id': u_id ,
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
