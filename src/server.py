@@ -7,9 +7,11 @@ import requests
 from src.error import InputError
 from src import config
 
-# For periodic backup
+# For data persistence
 from src.backup import interval_backup
 import threading
+import pickle
+from src.data_store import data_store
 
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
@@ -149,9 +151,17 @@ def clear():
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
+    # Load in saved data
+    try:
+        # If previous data exists, load it in to the data store
+        data = pickle.load(open("data.p", "rb"))
+        data_store.set(data)
+    except:
+        # Otherwise, do nothing
+        pass
+
     # Start periodic backup
-    thread = threading.Thread(target=interval_backup, args=())
-    thread.start()
+    threading.Thread(target=interval_backup, args=()).start()
 
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
