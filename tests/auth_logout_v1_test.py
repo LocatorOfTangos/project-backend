@@ -42,3 +42,31 @@ def test_logout_with_functions(user):
 
 def test_logout_tampered_token(user):
 	assert auth_logout_v1_request(user['token'] + 'a').status_code == 403
+
+def test_multiple_sessions(user):
+	session1 = user['token']
+	session2 = auth_login_v2_request("u@mail.com", "password").json()['token']
+	session3 = auth_login_v2_request("u@mail.com", "password").json()['token']
+
+	assert channels_list_v2_request(session1).status_code == 200
+	assert channels_listall_v2_request(session2).status_code == 200
+	assert channels_create_v2_request(session3, 'channel', True).status_code == 200
+
+	# Log out only one session
+	auth_logout_v1_request(session2)
+
+	assert channels_list_v2_request(session1).status_code == 200
+	assert channels_listall_v2_request(session2).status_code == 403
+	assert channels_create_v2_request(session3, 'channel', True).status_code == 200
+
+	auth_logout_v1_request(session3)
+
+	assert channels_list_v2_request(session1).status_code == 200
+	assert channels_listall_v2_request(session2).status_code == 403
+	assert channels_create_v2_request(session3, 'channel', True).status_code == 403
+	
+	auth_logout_v1_request(session1)
+
+	assert channels_list_v2_request(session1).status_code == 403
+	assert channels_listall_v2_request(session2).status_code == 403
+	assert channels_create_v2_request(session3, 'channel', True).status_code == 403
