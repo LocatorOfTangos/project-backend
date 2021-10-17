@@ -46,14 +46,14 @@ APP.register_error_handler(Exception, defaultHandler)
 
 ########### Example ############
 
-@APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({
-        'data': data
-    })
+# @APP.route("/echo", methods=['GET'])
+# def echo():
+#     data = request.args.get('data')
+#     if data == 'echo':
+#    	    raise InputError(description='Cannot echo "echo"')
+#     return dumps({
+#         'data': data
+#     })
 
 
 ########### Auth ############
