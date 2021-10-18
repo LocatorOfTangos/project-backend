@@ -74,6 +74,22 @@ def test_not_sender_edit(user, ch_pub, msg):
 	channel_join_v2_request(user, ch_pub)
 	assert message_edit_v1_request(user, msg, "new_message").status_code == 403
 
+def test_message_contents(ch_owner, msg, ch_pub):
+	assert channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]['message'] == 'message'
+	message_edit_v1_request(ch_owner, msg, "new_message")
+	assert channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]['message'] == 'new_message'
+	message_edit_v1_request(ch_owner, msg, "asdjkhfahsdgkjfhagsdfg")
+	assert channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]['message'] == 'asdjkhfahsdgkjfhagsdfg'
+
+def test_message_contents_global_owner(global_owner, msg, ch_pub):
+	channel_join_v2_request(global_owner, ch_pub)
+	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'][0]['message'] == 'message'
+	message_edit_v1_request(global_owner, msg, "new_message")
+	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'][0]['message'] == 'new_message'
+	message_edit_v1_request(global_owner, msg, "lkjhklsfdhglskdfjhg")
+	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'][0]['message'] == 'lkjhklsfdhglskdfjhg'
+
+
 
 @pytest.mark.skip(reason="Delete not yet implemented")
 def test_delete(ch_owner, msg, ch_pub):
