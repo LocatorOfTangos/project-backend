@@ -12,7 +12,7 @@ from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
-from src.message import message_send_v1
+from src.message import message_edit_v1, message_send_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -127,6 +127,12 @@ def channel_messages():
 def message_send():
     data = request.get_json()
     resp = message_send_v1(**data)
+    return dumps(resp)
+
+@APP.route('/message/edit/v1', methods=['PUT'])
+def message_edit():
+    data = request.get_json()
+    resp = message_edit_v1(**data)
     return dumps(resp)
 
 ########### Clear ############
