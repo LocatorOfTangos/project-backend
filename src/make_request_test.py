@@ -73,3 +73,10 @@ def message_send_v1_request(token, channel_id, message):
 		'channel_id': channel_id,
 		'message': message
 	})
+
+def message_edit_v1_request(token, message_id, message):
+	return requests.put(config.url + 'message/edit/v1', json={
+		'token': token,
+		'message_id': message_id,
+		'message': message		
+	})
