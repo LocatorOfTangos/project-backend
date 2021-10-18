@@ -47,7 +47,11 @@ initial_object = {
     # Messages is a list of message dictionaries
     #   Add messages to front of list - most recent message should be at index 0
     #   Message dictionaries contain: message_id, u_id, message, time_created
-    'channels': []
+    'channels': [],
+
+    # ID to give to the next message (so that IDs aren't reused)
+    # Increment after use
+    'curr_message_id': 0
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
