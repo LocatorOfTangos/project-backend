@@ -1,9 +1,11 @@
-from src.data_store import data_store
-from src.error import InputError
-import re
 import hashlib
-import jwt
+import re
 
+import jwt
+import src
+
+from src.data_store import data_store
+from src.error import AccessError, InputError
 from src.validation import valid_token
 
 SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
@@ -11,9 +13,19 @@ SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 # Creates a JWT token for a user's session
 def create_token(u_id):
 	store = data_store.get()
-	s_id = len(store['sessions'])
+
+	# Get the next sequential ID to use
+	s_id = store['curr_session_id']
+
 	store['sessions'].append(s_id)
+
+	# Increment sequential ID for next session to use
+	store['curr_session_id'] += 1
+
+	# Create the JSW token with the user ID and session ID
 	token = jwt.encode({'u_id': u_id, 's_id': s_id}, SECRET, algorithm='HS256')
+
+	data_store.set(store)
 	return token
 
 def auth_login_v1(email, password):
@@ -179,3 +191,32 @@ def auth_register_v1(email, password, name_first, name_last):
 		'auth_user_id': u_id,
 		'token': token,
 	}
+
+def auth_logout_v1(token):
+	'''
+	Logs out a user by invalidating the token for their current session
+
+	Arguments:
+		token (string)		- JWT token of the user session to end
+
+
+	Exceptions:
+		AccessError  - Occurs when:
+			> Token does not reference a valid session or valid auth_user_id
+	Return Value:
+		Returns an empty dictionary
+	'''
+
+	store = data_store.get()
+	sessions = store['sessions']
+
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
+	
+	# Find the session ID associated with the token, and delete it
+	s_id = jwt.decode(token, src.auth.SECRET, algorithms=['HS256'])['s_id']
+	sessions.remove(s_id)
+
+	data_store.set(store)
+	
+	return {}

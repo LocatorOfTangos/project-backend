@@ -34,6 +34,10 @@ initial_object = {
     # Each corresponds with the session_id of an active token
     'sessions': [],
 
+    # ID to give to the next session (so that IDs aren't reused)
+    # Increment after use
+    'curr_session_id': 0,
+
     # List of passwords, indexed by ID
     'passwords': [],
 
@@ -43,7 +47,11 @@ initial_object = {
     # Messages is a list of message dictionaries
     #   Add messages to front of list - most recent message should be at index 0
     #   Message dictionaries contain: message_id, u_id, message, time_created
-    'channels': []
+    'channels': [],
+
+    # ID to give to the next message (so that IDs aren't reused)
+    # Increment after use
+    'curr_message_id': 0
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
