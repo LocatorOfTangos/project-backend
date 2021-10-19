@@ -73,3 +73,10 @@ def message_send_v1_request(token, channel_id, message):
 		'channel_id': channel_id,
 		'message': message
 	})
+
+def message_senddm_v1_request(token, dm_id, message):
+	return requests.post(config.url + 'message/senddm/v1', json={
+		'token': token,
+		'dm_id': dm_id,
+		'message': message
+	})

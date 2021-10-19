@@ -36,23 +36,34 @@ def test_return_type(ch_owner, ch_pub):
 
 def test_message_ids_unique_single_channel(ch_owner, ch_pub):
 	used_ids = set()
-	assert message_send_v1_request(ch_owner, ch_pub, "m").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "n").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "o").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "p").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "q").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "r").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "s").json()['message_id'] not in used_ids
+	m_id = message_send_v1_request(ch_owner, ch_pub, "m").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_pub, "n").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_pub, "o").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_pub, "p").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	
 
 def test_message_ids_unique_multiple_channels(ch_owner, ch_pub, ch_priv):
 	used_ids = set()
-	assert message_send_v1_request(ch_owner, ch_pub, "m").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_priv, "n").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "o").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_priv, "p").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "q").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_priv, "r").json()['message_id'] not in used_ids
-	assert message_send_v1_request(ch_owner, ch_pub, "s").json()['message_id'] not in used_ids
+	m_id = message_send_v1_request(ch_owner, ch_pub, "m").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_priv, "n").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_pub, "o").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
+	m_id = message_send_v1_request(ch_owner, ch_priv, "p").json()['message_id']
+	assert m_id not in used_ids
+	used_ids.add(m_id)
 
 def test_invalid_ch_id(ch_owner):
 	assert message_send_v1_request(ch_owner, 12346578, "message").status_code == 400
