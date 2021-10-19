@@ -66,3 +66,10 @@ def auth_logout_v1_request(token):
 	return requests.post(config.url + 'auth/logout/v1', json={
 		'token': token
 	})
+
+def message_send_v1_request(token, channel_id, message):
+	return requests.post(config.url + 'message/send/v1', json={
+		'token': token,
+		'channel_id': channel_id,
+		'message': message
+	})
