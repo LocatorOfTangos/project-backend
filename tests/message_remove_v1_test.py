@@ -33,7 +33,7 @@ def test_status_code(ch_owner, msg):
 def test_return_type(ch_owner, msg):
 	assert message_remove_v1_request(ch_owner, msg).json() == {}
 
-def test_invalid_token(ch_owner, msg, ch_pub):
+def test_invalid_token(ch_owner, msg):
 	# Not a token
 	assert message_remove_v1_request(ch_owner, msg).status_code == 200
 	assert message_remove_v1_request("QWERTY", msg).status_code == 403
@@ -41,8 +41,7 @@ def test_invalid_token(ch_owner, msg, ch_pub):
 	# Tampered token
 	assert message_remove_v1_request(ch_owner[:-1] + '~', msg).status_code == 403
 	
-	# Session ended
-	assert message_remove_v1_request(ch_owner, msg).status_code == 200
+def test_session_ended(ch_owner, msg):
 	auth_logout_v1_request(ch_owner)
 	assert message_remove_v1_request(ch_owner, msg).status_code == 403
 
@@ -72,6 +71,7 @@ def test_message_gone(ch_owner, msg, ch_pub):
 	assert channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'] == []
 
 def test_message_gone_global_owner(global_owner, msg, ch_pub):
+	channel_join_v2_request(global_owner, ch_pub)
 	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'][0]['message'] == 'message'
 	message_remove_v1_request(global_owner, msg)
 	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'] == []
