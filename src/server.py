@@ -139,7 +139,8 @@ def message_send():
 def message_send():
     data = request.get_json()
     resp = message_senddm_v1(**data)
-    
+    return dumps(resp)
+
 @APP.route('/message/edit/v1', methods=['PUT'])
 def message_edit():
     data = request.get_json()
