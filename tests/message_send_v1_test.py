@@ -1,5 +1,7 @@
 import pytest
 from src.make_request_test import *
+from datetime import datetime, timezone
+from time import sleep
 
 @pytest.fixture(autouse=True)
 def clear():
@@ -97,6 +99,31 @@ def test_not_member_public(user, ch_pub):
 
 def test_not_member_private(user, ch_priv):
 	assert message_send_v1_request(user, ch_priv, "message").status_code == 403
+
+def test_message_times(ch_owner, ch_pub):
+	curr_time = int(datetime.now(timezone.utc).timestamp())
+	message_send_v1_request(ch_owner, ch_pub, "hello world")
+	
+	message = channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]
+
+	# Times may differ by 1 if the clock ticks over between sending and getting
+	assert abs(message['time_created'] - curr_time) <= 1
+
+	sleep(1.5)
+
+	curr_time = int(datetime.now(timezone.utc).timestamp())
+	message_send_v1_request(ch_owner, ch_pub, "goodbye world")
+	
+	message = channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]
+
+	assert abs(message['time_created'] - curr_time) <= 1
+
+def test_message_u_id(ch_owner, ch_pub):
+	u_id = auth_login_v2_request('u@mail.com', 'password').json()['auth_user_id']
+	message_send_v1_request(ch_owner, ch_pub, "hello world")
+	message = channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'][0]
+	assert message['u_id'] == u_id
+
 
 @pytest.mark.skip(reason='Requires channel/leave')
 def test_left_channel(ch_owner, ch_pub):

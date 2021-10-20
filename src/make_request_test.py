@@ -80,3 +80,16 @@ def message_senddm_v1_request(token, dm_id, message):
 		'dm_id': dm_id,
 		'message': message
 	})
+	
+def message_edit_v1_request(token, message_id, message):
+	return requests.put(config.url + 'message/edit/v1', json={
+		'token': token,
+		'message_id': message_id,
+		'message': message		
+	})
+
+def message_remove_v1_request(token, message_id):
+	return requests.delete(config.url + 'message/remove/v1', json={
+		'token': token,
+		'message_id': message_id
+	})
