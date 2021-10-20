@@ -61,3 +61,28 @@ def message_send_v1(token, channel_id, message):
 
 	return {'message_id': message_id}
 
+
+def message_send_v1(token, dm_id, message):
+	'''
+	Sends a message to a dm (dm_id) from a user (token).
+	The message is saved with a message_id, the u_id of the sender, the message contents and
+	time_created as an integer Unix timestamp.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) sending the message
+		dm_id (int)			- id of the dm to which the message is being sent
+		message (string)	- contents of the message to send
+
+	Exceptions:
+		InputError - Occurs when:
+			> dm_id does not refer to a valid dm
+			> length of message is not 1..1000 characters (inclusive)
+		
+		AccessError - Occers when:
+			> token is invalid
+			> user is not a member of the (valid) dm
+
+	Return Value:
+		Returns a dictionary containing a unique integer 'message_id'
+	'''
+
