@@ -19,6 +19,7 @@ from src.channels import channels_create_v1, channels_listall_v1, channels_list_
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
 from src.message import message_send_v1
+from src.user import user_profile_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -134,6 +135,16 @@ def message_send():
     data = request.get_json()
     resp = message_send_v1(**data)
     return dumps(resp)
+
+########### User ############
+
+@APP.route('/user/profile/v1', methods=['GET'])
+def user_profile():
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
+    resp = user_profile_v1(token, u_id)
+    return dumps(resp)
+
 
 ########### Clear ############
 

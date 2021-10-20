@@ -42,11 +42,11 @@ def test_profile_bad_token(user):
 	
 	# Session ended
 	assert user_profile_v1_request(user['token'], user['auth_user_id']).status_code == 200
-	auth_logout_v1_request(user)
+	auth_logout_v1_request(user['token'])
 	assert user_profile_v1_request(user['token'], user['auth_user_id']).status_code == 403
 
 def test_profile_bad_u_id(user):
-	assert user_profile_v1_request(user['token'], 999999).status_code == 200
+	assert user_profile_v1_request(user['token'], 999999).status_code == 400
 
 @pytest.mark.skip(reason="Profile set functions not yet implemented")
 def test_profile_changed(user):
