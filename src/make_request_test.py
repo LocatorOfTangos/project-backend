@@ -73,3 +73,9 @@ def message_send_v1_request(token, channel_id, message):
 		'channel_id': channel_id,
 		'message': message
 	})
+
+def user_profile_v1_request(token, u_id):
+	return requests.get(config.url + 'user/profile/v1', params={
+		'token': token,
+		'u_id': u_id
+	})
