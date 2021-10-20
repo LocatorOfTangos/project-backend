@@ -58,9 +58,9 @@ def test_profile_changed(user):
 		'handle_str': 'firstlast' 
 	}
 
-	user_profile_setname_v1_request(user['token'], "jake", "borris")
-	user_profile_setemail_v1_request(user['token'], "z5555555@unsw.edu.au")
-	user_profile_sethandle_v1_request(user['token'], "xx_vi_user_xx")
+	#user_profile_setname_v1_request(user['token'], "jake", "borris")
+	#user_profile_setemail_v1_request(user['token'], "z5555555@unsw.edu.au")
+	#user_profile_sethandle_v1_request(user['token'], "xx_vi_user_xx")
 
 	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user'] == {
 		'u_id': user['auth_user_id'],
