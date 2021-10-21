@@ -55,3 +55,24 @@ def dm_create_v1(token, u_ids):
 	return {
 	    'dm_id': dm_id,
 	}
+
+
+def dm_leave_v1(token, dm_id):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError('Invalid token')
+
+	for dm in store['dms']:
+		if dm_id == dm['dm_id']:
+			u_id = token_user(token)
+			if u_id not in dm['all_members']:
+				raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
+
+			dm['all_members'].remove(u_id)
+			break
+
+	else:
+		raise InputError('dm_id does not refer to a valid DM.')
+
+	return {}
