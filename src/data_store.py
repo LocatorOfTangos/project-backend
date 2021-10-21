@@ -49,6 +49,9 @@ initial_object = {
     #   Message dictionaries contain: message_id, u_id, message, time_created
     'channels': [],
 
+    # Same format as channels
+    'dms': [],
+
     # ID to give to the next message (so that IDs aren't reused)
     # Increment after use
     'curr_message_id': 0

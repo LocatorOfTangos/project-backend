@@ -9,9 +9,11 @@ def clear():
 def owner():
 	return auth_register_v2_request("u@mail.com", "password", "blake", "morris").json()['token']
 
+@pytest.fixture
 def user1():
 	return auth_register_v2_request("u2@mail.com", "password", "redmond", "mobbs").json()['auth_user_id']
 
+@pytest.fixture
 def user2():
 	return auth_register_v2_request("u3@mail.com", "password", "tyler", "gan").json()['auth_user_id']
 	
@@ -124,12 +126,12 @@ def test_create_multiple_u_ids(owner, user1, user2):
 def test_name_sort():																	 # Handle:
 	owner = auth_register_v2_request('u@m.com', 'psword', 'zzz', 'zzz').json()['token']		 # zzzzzz (6th)
 	u1 = auth_register_v2_request('u1@m.com', 'psword', 'xxx', 'xxx').json()['auth_user_id'] # xxxxxx (5th)
-	u2 = auth_register_v2_request('u2@m.com', 'psword', 'xxx', 'aaa').json()['auth_user_id'] # xxxaaa1 (3rd)
-	u3 = auth_register_v2_request('u3@m.com', 'psword', 'xxx', 'aaa').json()['auth_user_id'] # xxxaaa2 (4th)
+	u2 = auth_register_v2_request('u2@m.com', 'psword', 'xxx', 'aaa').json()['auth_user_id'] # xxxaaa (3rd)
+	u3 = auth_register_v2_request('u3@m.com', 'psword', 'xxx', 'aaa').json()['auth_user_id'] # xxxaaa0 (4th)
 	u4 = auth_register_v2_request('u4@m.com', 'psword', 'MMM', 'MMM').json()['auth_user_id'] # mmmmmm (2nd)
 	u5 = auth_register_v2_request('u5@m.com', 'psword', 'aaa', 'aaa').json()['auth_user_id'] # aaaaaa (1st)
 
 	dm = dm_create_v1_request(owner, [u1, u2, u3, u4, u5]).json()['dm_id']
 
-	assert dm_details_v1_request(owner, dm).json()['name'] == 'aaaaaa, mmmmmm, xxxaaa1, xxxaaa2, xxxxxx, zzzzzz'
+	assert dm_details_v1_request(owner, dm).json()['name'] == 'aaaaaa, mmmmmm, xxxaaa, xxxaaa0, xxxxxx, zzzzzz'
 '''
