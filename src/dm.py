@@ -63,17 +63,18 @@ def dm_leave_v1(token, dm_id):
 	if not valid_token(token):
 		raise AccessError('Invalid token')
 
-	for dm in store['dms']:
-		if dm_id == dm['dm_id']:
-			u_id = token_user(token)
-			if u_id not in dm['all_members']:
-				raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
-
-			dm['all_members'].remove(u_id)
-			data_store.set(store)
-			break
-
-	else:
+	if not 0 <= dm_id < len(store['dms']):
 		raise InputError('dm_id does not refer to a valid DM.')
+
+	u_id = token_user(token)
+	dm = store['dms'][dm_id]
+	if u_id not in dm['all_members']:
+		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
+
+	if u_id in dm['owner_members']:
+		dm['owner_members'].remove(u_id)
+	dm['all_members'].remove(u_id)
+
+	data_store.set(store)
 
 	return {}
