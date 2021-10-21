@@ -49,6 +49,9 @@ initial_object = {
     #   Message dictionaries contain: message_id, u_id, message, time_created
     'channels': [],
 
+    # Same format as channels
+    'dms': [],
+    
     # Dictionary mapping message_ids to their sender and channel/dm_id
     'message_info': {},
 
