@@ -1,3 +1,4 @@
+import json
 import requests
 from src import config
 
@@ -72,4 +73,10 @@ def message_send_v1_request(token, channel_id, message):
 		'token': token,
 		'channel_id': channel_id,
 		'message': message
+	})
+
+def dm_create_v1_request(token, u_ids):
+	return requests.post(config.url + 'dm/create/v1', json={
+		'token': token,
+		'u_ids': u_ids
 	})
