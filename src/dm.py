@@ -70,6 +70,7 @@ def dm_leave_v1(token, dm_id):
 				raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
 
 			dm['all_members'].remove(u_id)
+			data_store.set(store)
 			break
 
 	else:
