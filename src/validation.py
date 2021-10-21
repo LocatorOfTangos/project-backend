@@ -53,14 +53,30 @@ def valid_token(token):
 
 
 # Returns true if user u_id is a member of channel c_id, else false
-def user_is_member(u_id, c_id):
+# if optional third arg is 'dms', checks dms instead of channels
+def user_is_member(u_id, c_id, chat_type='channels'):
     store = data_store.get()
-    users = store['channels'][c_id]['all_members']
+    users = store[chat_type][c_id]['all_members']
 
     for user in users:
         if user == u_id:
             return True
     return False
+
+# Returns true if user u_id is a global owner and a member of the channel,
+# or is an owner of the channel
+# if optional third arg is 'dms', checks dms instead of channels
+def user_has_owner_perms(u_id, c_id, chat_type='channels'):
+    store = data_store.get()
+
+    if store['users'][u_id]['global_permissions'] == 1 and user_is_member(u_id, c_id):
+        return True
+
+    if any(u == u_id for u in store[chat_type][c_id]['owner_members']):
+        return True
+    
+    return False
+
 
 # Return user's details as a dict given u_id
 def get_user_details(u_id):
@@ -78,3 +94,4 @@ def get_user_details(u_id):
 
             }
     return user_details
+
