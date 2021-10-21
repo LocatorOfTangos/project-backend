@@ -67,6 +67,9 @@ def dm_leave_v1(token, dm_id):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
 	dm = store['dms'][dm_id]
 	if u_id not in dm['all_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
