@@ -55,3 +55,13 @@ def dm_create_v1(token, u_ids):
 	return {
 	    'dm_id': dm_id,
 	}
+
+
+def dm_details_v1(token, dm_id):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError('Invalid token')
+
+	if not 0 <= dm_id < len(store['dms']):
+		raise InputError('dm_id does not refer to a valid DM.')
