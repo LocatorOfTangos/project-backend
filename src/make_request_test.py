@@ -79,3 +79,10 @@ def user_profile_v1_request(token, u_id):
 		'token': token,
 		'u_id': u_id
 	})
+	
+def message_edit_v1_request(token, message_id, message):
+	return requests.put(config.url + 'message/edit/v1', json={
+		'token': token,
+		'message_id': message_id,
+		'message': message		
+	})
