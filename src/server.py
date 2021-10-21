@@ -18,8 +18,9 @@ from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
-from src.message import message_send_v1
 from src.dm import dm_create_v1
+from src.user import user_profile_v1
+from src.message import message_edit_v1, message_send_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -136,12 +137,26 @@ def message_send():
     resp = message_send_v1(**data)
     return dumps(resp)
 
+@APP.route('/message/edit/v1', methods=['PUT'])
+def message_edit():
+    data = request.get_json()
+    resp = message_edit_v1(**data)
+    return dumps(resp)
+
 ########### DM ############
 
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create():
     data = request.get_json()
     resp = dm_create_v1(**data)
+
+########### User ############
+
+@APP.route('/user/profile/v1', methods=['GET'])
+def user_profile():
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
+    resp = user_profile_v1(token, u_id)
     return dumps(resp)
 
 ########### Clear ############
