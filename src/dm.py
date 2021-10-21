@@ -55,3 +55,22 @@ def dm_create_v1(token, u_ids):
 	return {
 	    'dm_id': dm_id,
 	}
+
+
+def dm_remove_v1(token, dm_id):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError('Invalid token')
+
+	if not 0 <= dm_id < len(store['dms']):
+		raise InputError('dm_id does not refer to a valid DM.')
+
+	u_id = token_user(token)
+	if u_id not in store['dms'][dm_id]['owner_members']:
+		raise AccessError('dm_id is valid, but the authorised user is not an owner of the DM.')
+
+	del store['dms'][dm_id]
+	data_store.set(store)
+
+	return {}
