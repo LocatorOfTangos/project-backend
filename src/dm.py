@@ -63,20 +63,22 @@ def dm_messages_v1(token, dm_id, start):
 	if not valid_token(token):
 		raise AccessError('Invalid token')
 
-	for dm in store['dms']:
-		if dm_id == dm['dm_id']:
-			u_id = token_user(token)
-			if u_id not in dm['all_members']:
-				raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
-
-			if start >= len(dm['messages']):
-				raise InputError('start is greater than the total number of messages in the channel.')
-
-			return {
-				'messages': dm['messages'][start:] if start + 50 >= len(dm['messages']) else dm['messages'][start: start +  50],
-				'start': start,
-				'end': -1 if start + 50 >= len(dm['messages']) else start + 50
-			}
-
-	else:
+	if not 0 <= dm_id < len(store['dms']):
 		raise InputError('dm_id does not refer to a valid DM.')
+
+	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
+	dm = store['dms'][dm_id]
+	if u_id not in dm['all_members']:
+		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
+
+	if start >= len(dm['messages']):
+		raise InputError('start is greater than the total number of messages in the channel.')
+
+	return {
+		'messages': dm['messages'][start:] if start + 50 >= len(dm['messages']) else dm['messages'][start: start +  50],
+		'start': start,
+		'end': -1 if start + 50 >= len(dm['messages']) else start + 50
+	}
