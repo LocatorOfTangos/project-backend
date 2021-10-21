@@ -64,6 +64,9 @@ def dm_list_v1(token):
 		raise AccessError(description='Invalid token')
 
 	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
 	dms = list(filter(lambda dm: u_id in dm['all_members'], store['dms']))
 
 	return {
