@@ -149,6 +149,7 @@ def message_edit():
 def dm_create():
     data = request.get_json()
     resp = dm_create_v1(**data)
+    return dumps(resp)
 
 ########### User ############
 
