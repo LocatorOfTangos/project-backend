@@ -155,3 +155,9 @@ def dm_leave_v1_request(token, dm_id):
 		'token': token,
 		'dm_id': dm_id
 	})
+
+def dm_remove_v1_request(token, dm_id):
+	return requests.delete(config.url + 'dm/remove/v1', json={
+		'token': token,
+		'dm_id': dm_id
+	})
