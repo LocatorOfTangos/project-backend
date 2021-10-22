@@ -86,6 +86,12 @@ def test_successful_owner_removes_member1(owner, member1, member2, channel):
 	assert user_profile_setemail_v1_request(member2['token'], 'name3@email.com').status_code == 200
 	assert user_profile_sethandle_v1_request(member2['token'], 'l8rallig8r').status_code == 200
 
+	# check that profile of removed user has been updated
+	profile = user_profile_v1_request(owner['token'], member1['auth_user_id']).json()['user']
+	print(profile)
+	assert profile['name_first'] == 'Removed'
+	assert profile['name_last'] == 'user'
+
 def test_successful_owner_removes_owner(owner, member1, member2, channel):
 	# Make member1 an owner
 	admin_userpermission_change_v1_request(owner['token'], member1['auth_user_id'], 1)
@@ -130,3 +136,28 @@ def test_successful_owner_removes_owner(owner, member1, member2, channel):
 	# check email and handle reusable
 	assert user_profile_setemail_v1_request(member2['token'], 'name3@email.com').status_code == 200
 	assert user_profile_sethandle_v1_request(member2['token'], 'l8rallig8r').status_code == 200
+
+def test_messages_updated(owner, member1, channel):
+	channel_join_v2_request(owner['token'], channel)
+	channel_join_v2_request(member1['token'], channel)
+
+	message_send_v1_request(member1['token'], channel, "hello world")
+	message_send_v1_request(member1['token'], channel, "hello again")
+
+	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][1]['message'] == "hello world"
+	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][0]['message'] == "hello again"
+
+	admin_user_remove_v1_request(owner['token'], member1['auth_user_id'])
+	
+	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][1]['message'] == "Removed user"
+	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][0]['message'] == "Removed user"
+
+def test_removed_session(owner, member1):
+	assert channels_listall_v2_request(member1['token']).status_code == 200
+	admin_user_remove_v1_request(owner['token'], member1['auth_user_id'])
+	assert channels_listall_v2_request(member1['token']).status_code == 403
+
+def test_removed_login(owner, member1):
+	assert auth_login_v2_request("name3@email.com", "password").status_code == 200
+	admin_user_remove_v1_request(owner['token'], member1['auth_user_id'])
+	assert auth_login_v2_request("name3@email.com", "password").status_code == 400

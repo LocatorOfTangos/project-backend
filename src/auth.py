@@ -63,8 +63,12 @@ def auth_login_v1(email, password):
 		
 	#Raise InputError if password is incorrect
 	hashed_pword = hashlib.sha256(password.encode()).hexdigest()
+
 	if password_list[user_id] != hashed_pword:
 		raise InputError(description='Incorrect Password')
+
+	if user_list[user_id]['global_permissions'] == 3:
+		raise InputError(description="User has been removed")
 
 	return {
 		'auth_user_id': user_id,
