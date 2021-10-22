@@ -24,7 +24,7 @@ def user_profile_v1(token, u_id):
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
-	if not valid_user_id(u_id):
+	if not valid_user_id(u_id, include_removed=True):
 		raise InputError(description="Invalid u_id")
 
 	return {'user': get_user_details(u_id)}

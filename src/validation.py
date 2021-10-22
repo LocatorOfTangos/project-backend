@@ -22,12 +22,14 @@ def valid_dm_id(dm_id):
     return False
 
 # Returns true if u_id refers to a valid user, else false
-def valid_user_id(u_id):
+def valid_user_id(u_id, include_removed=False):
     store = data_store.get()
     users = store['users']
 
     for user in users:
         if user['u_id'] == u_id:
+            if user['global_permissions'] == 3 and not include_removed:
+                return False
             return True
     return False
 
