@@ -1,5 +1,4 @@
 import pytest
-from src.error import InputError
 from src.other import clear_v1
 
 from src.make_request_test import *
