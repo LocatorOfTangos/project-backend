@@ -26,23 +26,20 @@ def test_not_member(owner, user1):
     dm = dm_create_v1_request(owner, []).json()['dm_id']
     assert dm_leave_v1_request(user1_token, dm).status_code == 403
 
-@pytest.mark.skip(reason="dm_list not written")
 def test_valid(owner, user1):
-    pass
-    '''
     dm = dm_create_v1_request(owner, [user1]).json()['dm_id']
     user1_token = auth_login_v2_request('testemail2@gmail.com', 'password').json()['token']
     dm_leave_v1_request(user1_token, dm)
     dm_details_v1_request(owner, dm) 
-    assert dm_list_v1_request(user1_token) == {'dms': []}
+    assert dm_list_v1_request(user1_token).json() == {'dms': []}
 
-@pytest.mark.skip(reason="dm_list not written")
+
 def test_owner_leave_dm_empty(owner):
     dm = dm_create_v1_request(owner, []).json()['dm_id']
     dm_leave_v1_request(owner, dm)
-    assert dm_list_v1_request(owner) == {'dms': []}
+    assert dm_list_v1_request(owner).json() == {'dms': []}
     
-@pytest.mark.skip(reason="dm_list not written")
+
 def test_owner_leave_dm_with_users(owner, user1, user2):
     user1_token = auth_login_v2_request('testemail2@gmail.com', 'password').json()['token']
     dm = dm_create_v1_request(owner, [user1, user2]).json()['dm_id']
@@ -60,14 +57,14 @@ def test_owner_leave_dm_with_users(owner, user1, user2):
             {
 				'u_id': user2,
 				'email': 'testemail3@gmail.com',
-				'name_first': 'sam ',
+				'name_first': 'sam',
 				'name_last': 'nguyen',
 				'handle_str': 'samnguyen'
 			}
 		]
 	}
 
-@pytest.mark.skip(reason="dm_list not written")
+
 def test_multiple_dm(owner, user1, user2):
     user1_token = auth_login_v2_request('testemail2@gmail.com', 'password').json()['token']
     dm_1 = dm_create_v1_request(owner, [user1]).json()['dm_id']
@@ -75,7 +72,7 @@ def test_multiple_dm(owner, user1, user2):
     dm_3 = dm_create_v1_request(user1_token, [user2]).json()['dm_id']
 
     dm_leave_v1_request(user1_token, dm_1)
-    assert dm_list_v1_request(user1_token) == {'dms': [
+    assert dm_list_v1_request(user1_token).json() == {'dms': [
         {
         'dm_id': dm_2,
         'name': 'davidsmith, vuluu'
@@ -86,9 +83,3 @@ def test_multiple_dm(owner, user1, user2):
         }
         ]   
     }
-    '''
-
-
-
-
-     

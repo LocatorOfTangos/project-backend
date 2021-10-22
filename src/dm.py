@@ -131,3 +131,19 @@ def dm_leave_v1(token, dm_id):
 	data_store.set(store)
 
 	return {}
+
+def dm_list_v1(token):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
+
+	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
+	dms = list(filter(lambda dm: u_id in dm['all_members'], store['dms']))
+
+	return {
+		'dms': [{'dm_id': d['dm_id'], 'name': d['name']} for d in dms]
+	}
