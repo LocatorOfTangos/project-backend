@@ -93,3 +93,9 @@ def message_edit_v1_request(token, message_id, message):
 		'message_id': message_id,
 		'message': message		
 	})
+
+def dm_details_v1_request(token, dm_id):
+	return requests.get(config.url + 'dm/details/v1', params={
+		'token': token,
+		'dm_id': dm_id
+	})
