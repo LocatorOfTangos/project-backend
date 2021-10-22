@@ -83,7 +83,7 @@ def dm_create_v1_request(token, u_ids):
 	})
 
 def dm_details_v1_request(token, dm_id):
-	return requests.post(config.url + 'dm/details/v1', json={
+	return requests.post(config.url + 'dm/details/v1', params={
 		'token': token,
 		'dm_id': dm_id
 	})
