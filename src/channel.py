@@ -279,24 +279,30 @@ def channel_addowner_v1(token, channel_id, u_id):
 		Returns an empty dictionary
 	'''
 	# Validating Input
+	store = data_store.get()
+	channels = store['channels']
 
 	if not valid_channel_id(channel_id):
-		raise InputError(description="Channel doesn't exist")
+		raise InputError("Channel doesn't exist")
 
 	if not valid_user_id(u_id):
-		raise InputError(description='User cannot be added as owner as they do not exist')
+		raise InputError('User cannot be added as owner as they do not exist')
 
 	if not valid_token(token):
-		raise AccessError(description="User ID does not belong to a user")
+		raise AccessError("User ID does not belong to a user")
 	
+	auth_user_id = token_user(token)
+
 	if not user_is_member(auth_user_id, channel_id):
-		raise AccessError(description="User is currently not a member of the channel")
+		raise AccessError("Authorising user is currently not a member of the channel")
+	
+	#If user is already an owner
+	for owner in channels[channel_id]['owner_members']:
+		if owner == u_id:
+			raise InputError("User is already an owner of this channel")
 
 	store = data_store.get()
 
 	store['channels'][channel_id]['owner_members'].append(u_id)
 
-	data_store.set(store)
-
 	return {}
-	
