@@ -155,7 +155,7 @@ def dm_remove_v1(token, dm_id):
 	if not valid_token(token):
 		raise AccessError('Invalid token')
 
-	if not valid_channel_id(dm_id, chat_type='dms'):
+	if not valid_dm_id(dm_id):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
