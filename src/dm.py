@@ -67,8 +67,6 @@ def dm_details_v1(token, dm_id):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
-	if not valid_user_id(u_id):
-		raise InputError('Not a valid u_id.')
 
 	dm = store['dms'][dm_id]
 	if u_id not in dm['all_members']:
@@ -90,8 +88,6 @@ def dm_messages_v1(token, dm_id, start):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
-	if not valid_user_id(u_id):
-		raise InputError('Not a valid u_id.')
 
 	dm = store['dms'][dm_id]
 	if u_id not in dm['all_members']:
@@ -117,8 +113,6 @@ def dm_leave_v1(token, dm_id):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
-	if not valid_user_id(u_id):
-		raise InputError('Not a valid u_id.')
 
 	dm = store['dms'][dm_id]
 	if u_id not in dm['all_members']:
@@ -139,8 +133,6 @@ def dm_list_v1(token):
 		raise AccessError(description='Invalid token')
 
 	u_id = token_user(token)
-	if not valid_user_id(u_id):
-		raise InputError('Not a valid u_id.')
 
 	dms = list(filter(lambda dm: u_id in dm['all_members'], store['dms']))
 
@@ -158,8 +150,6 @@ def dm_remove_v1(token, dm_id):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
-	if not valid_user_id(u_id):
-		raise InputError('Not a valid u_id.')
 
 	if u_id not in store['dms'][dm_id]['owner_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not an owner of the DM.')

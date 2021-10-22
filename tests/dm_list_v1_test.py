@@ -1,5 +1,6 @@
 import pytest
 from src.make_request_test import *
+from tests.dm_messages_v1_test import dm
 
 @pytest.fixture(autouse=True)
 def clear():
@@ -16,6 +17,9 @@ def user1():
 @pytest.fixture
 def user2():
 	return auth_register_v2_request("testemail3@gmail.com", "password", "sam", "nguyen").json()['auth_user_id']
+
+def test_invalid_token():
+    assert dm_list_v1_request("qwerty").status_code == 403
 
 def test_dm_list_empty(owner):
     assert dm_list_v1_request(owner).json() == {'dms': []}

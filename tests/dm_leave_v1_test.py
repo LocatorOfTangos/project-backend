@@ -17,6 +17,10 @@ def user1():
 def user2():
 	return auth_register_v2_request("testemail3@gmail.com", "password", "sam", "nguyen").json()['auth_user_id']
 
+def test_invalid_token(owner, user1):
+    dm = dm_create_v1_request(owner, [user1]).json()['dm_id']
+    assert dm_leave_v1_request("qwerty", dm).status_code == 403
+
 def test_invalid_dm_id(owner):
     assert dm_details_v1_request(owner, -1).status_code == 400
     assert dm_details_v1_request(owner, 9999).status_code == 400

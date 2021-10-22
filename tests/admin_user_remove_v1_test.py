@@ -58,12 +58,11 @@ def test_successful_owner_removes_member1(owner, member1, member2, channel):
 
 	# have member1 make a dm with member2 and have them send a message
 	dm_id = dm_create_v1_request(member1['token'], [owner['auth_user_id'], member2['auth_user_id']]).json()['dm_id']
-	# TODO: Uncomment when send dm is working
-	#message_senddm_v1_request(member1['token'], dm_id, 'Change da worl')
-	#message_senddm_v1_request(member1['token'], dm_id, 'My final message...')
-	#message_senddm_v1_request(member1['token'], dm_id, 'Goodbye')
-	#message_senddm_v1_request(member2['token'], dm_id, 'lmfao delete this cringel0rd')
-	#message_senddm_v1_request(owner['token'], dm_id, 'way ahead of you')
+	message_senddm_v1_request(member1['token'], dm_id, 'Change da worl')
+	message_senddm_v1_request(member1['token'], dm_id, 'My final message...')
+	message_senddm_v1_request(member1['token'], dm_id, 'Goodbye')
+	message_senddm_v1_request(member2['token'], dm_id, 'lmfao delete this cringel0rd')
+	message_senddm_v1_request(owner['token'], dm_id, 'way ahead of you')
 
 	# Have member2 make a dm with member1, and another with owner
 	dm_create_v1_request(member2['token'], [member1['auth_user_id']])
@@ -104,12 +103,11 @@ def test_successful_owner_removes_owner(owner, member1, member2, channel):
 
 	# Have member1 make a dm with member2 and have them send a message
 	dm_id = dm_create_v1_request(member1['token'], [owner['auth_user_id'], member2['auth_user_id']]).json()['dm_id']
-	# TODO: Uncomment when send dm is working
-	#message_senddm_v1_request(member1['token'], dm_id, 'Change da worl')
-	#message_senddm_v1_request(member1['token'], dm_id, 'My final message...')
-	#message_senddm_v1_request(member1['token'], dm_id, 'Goodbye')
-	#message_senddm_v1_request(member2['token'], dm_id, 'lmfao delete this cringel0rd')
-	#message_senddm_v1_request(owner['token'], dm_id, 'way ahead of you')
+	message_senddm_v1_request(member1['token'], dm_id, 'Change da worl')
+	message_senddm_v1_request(member1['token'], dm_id, 'My final message...')
+	message_senddm_v1_request(member1['token'], dm_id, 'Goodbye')
+	message_senddm_v1_request(member2['token'], dm_id, 'lmfao delete this cringel0rd')
+	message_senddm_v1_request(owner['token'], dm_id, 'way ahead of you')
 
 	# Have member2 make a dm with member1, and another with owner
 	dm_create_v1_request(member2['token'], [member1['auth_user_id']])
