@@ -144,3 +144,9 @@ def dm_messages_v1_request(token, dm_id, start):
 		'dm_id': dm_id,
 		'start': start
 	})
+	
+def dm_leave_v1_request(token, dm_id):
+	return requests.post(config.url + 'dm/leave/v1', json={
+		'token': token,
+		'dm_id': dm_id
+	})
