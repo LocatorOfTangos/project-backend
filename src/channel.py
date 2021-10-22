@@ -253,3 +253,50 @@ def channel_join_v1(token, channel_id):
 	data_store.set(store)
 	
 	return {}
+
+
+def channel_addowner_v1(token, channel_id, u_id): 
+	'''
+	Make a user an owner of the channel
+
+	Arguments:
+		token (string) 					- id of user making request
+		channel id (int) 				- id of the channel user is to be added as owner
+		u_id (int)						- id of user being added as owner
+
+
+	Exceptions:
+		InputError  - Occurs when:
+			> Channel_id does not refer to a valid channel
+			> U_id does not refer to a valid user
+			> U_id refers to a user who is not a member of the channel
+			> U_id refers to a user who is already an owner of the channel
+		AccessError - Occurs when:
+			> Channel_id is valid and the authorised user does not have owner
+			permissions in the channel
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+	# Validating Input
+
+	if not valid_channel_id(channel_id):
+		raise InputError(description="Channel doesn't exist")
+
+	if not valid_user_id(u_id):
+		raise InputError(description='User cannot be added as owner as they do not exist')
+
+	if not valid_token(token):
+		raise AccessError(description="User ID does not belong to a user")
+	
+	if not user_is_member(auth_user_id, channel_id):
+		raise AccessError(description="User is currently not a member of the channel")
+
+	store = data_store.get()
+
+	store['channels'][channel_id]['owner_members'].append(u_id)
+
+	data_store.set(store)
+
+	return {}
+	
