@@ -16,21 +16,20 @@ def c_id(owner_tkn):
 	return c_id
 
 @pytest.fixture
-def user_owner_id(c_id):
-    user_owner_tkn = auth_register_v2_request("useremail@gmail.com", "pass111", "first", "user").json['token']
+def user_owner_id(c_id, owner_tkn):
+    user_owner_tkn = auth_register_v2_request("useremail@gmail.com", "pass111", "first", "user").json()['token']
     channel_join_v2_request(user_owner_tkn, c_id).json()
     user_owner_id = auth_login_v2_request('useremail@gmail.com', 'pass111').json()['auth_user_id']
-    channel_addowner_v1_request(user_owner_tkn, c_id, user_owner_id).json()
+    channel_addowner_v1_request(owner_tkn, c_id, user_owner_id).json()
     return user_owner_id
 
 @pytest.fixture
 def user_not_owner_tkn():
-    auth_register_v2_request("user2email@gmail.com", "pass444", "second", "user")
     return auth_register_v2_request("user2email@gmail.com", "pass444", "second", "user").json()['token']
 
 @pytest.fixture
-def user_not_owner_id(c_id):
-    channel_join_v2_request(user_tkn2, c_id).json()
+def user_not_owner_id(c_id, user_not_owner_tkn):
+    channel_join_v2_request(user_not_owner_tkn, c_id).json()
     return auth_login_v2_request('user2email@gmail.com', 'pass444').json()['auth_user_id']
 
 @pytest.fixture
@@ -63,16 +62,16 @@ def test_user_not_in_channel(owner_tkn, c_id, user_not_in_channel):
 
 # User is not an owner to be removed
 def test_not_existing_owner(owner_tkn, c_id, user_not_owner_id):
-    assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 400
+    assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 403
 
 # Authorised user does not have owner permissions
 def test_no_owner_permissions(user_not_owner_tkn, c_id, user_owner_id):
     assert channel_removeowner_v1_request(user_not_owner_tkn, c_id, user_owner_id).status_code == 403
 
 # Test remove owner
-def test_add_multiple_owners(owner_tkn, c_id, user_owner_id, user_not_owner_tkn, user_not_owner_id):
+def test_add_multiple_owners(owner_tkn, c_id, user_owner_id, user_not_owner_id):
     assert channel_removeowner_v1_request(owner_tkn, c_id, user_owner_id).status_code == 200
-    channel_addowner_v1_request(user_owner_tkn, c_id, user_not_owner_id).json()
+    channel_addowner_v1_request(owner_tkn, c_id, user_not_owner_id).json()
     assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 200
     check_user_removed_as_owner(owner_tkn, c_id, user_owner_id)
     check_user_removed_as_owner(owner_tkn, c_id, user_not_owner_id)

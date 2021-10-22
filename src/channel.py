@@ -352,7 +352,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
 	print(user_has_owner_perms(token_user(token), channel_id))
 	if not user_has_owner_perms(token_user(token), channel_id):
-		raise AccessError("User is not authorised to add an owner")
+		raise AccessError("User is not authorised to remove an owner")
 
 	if not user_is_member(u_id, channel_id):
 		raise InputError("User is currently not a member of the channel")
@@ -360,9 +360,9 @@ def channel_removeowner_v1(token, channel_id, u_id):
 	if not valid_user_id(u_id):
 		raise InputError('User cannot be added as owner as they do not exist')
 
-	#If user is not an owner of the channel
-	if u_id not in channels[channel_id]['owner_members']:
-		raise InputError("User is not an owner of this channel")
+	print(user_has_owner_perms(u_id, channel_id))
+	if not user_has_owner_perms(u_id, channel_id):
+		raise AccessError("User is not an owner to be removed")
 
 	store['channels'][channel_id]['owner_members'].remove(u_id)
 
