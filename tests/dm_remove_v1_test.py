@@ -55,7 +55,7 @@ def test_many_dm(owner, user1, user2):
     dm_3 = dm_create_v1_request(owner, [user2]).json()['dm_id']
 
     dm_remove_v1_request(owner, dm)
-    assert dm_list_v1_request(owner) == {'dms': [
+    assert dm_list_v1_request(owner).json() == {'dms': [
         {
             'dm_id': dm_2,
             'name': 'davidsmith, samnguyen, vuluu'
@@ -66,7 +66,7 @@ def test_many_dm(owner, user1, user2):
         }]
     }
 
-    assert dm_list_v1_request(user1_token) == {'dms': [
+    assert dm_list_v1_request(user1_token).json() == {'dms': [
         {
             'dm_id': dm_2,
             'name': 'davidsmith, samnguyen, vuluu'
