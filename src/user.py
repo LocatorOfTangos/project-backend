@@ -104,3 +104,37 @@ def user_profile_setemail_v1(token, email):
 
 	data_store.set(store)
 	return {}
+
+def user_profile_setname_v1(token, name_first, name_last):
+	'''
+	Replaces the user's first and last names.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) requesting an email change
+		name_first (string)	- new first name to use
+		name_last (string)	- new last name to use
+
+	Exceptions:
+		InputError - Occurs when:
+			> either name is not 1..50 characters
+		
+		AccessError - Occers when:
+			> token is invalid
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not (1 <= len(name_first) <= 50 and 1 <= len(name_last) <= 50):
+		raise InputError(description="Both names must be between 1 and 50 chars long (inc.)")
+
+	store = data_store.get()
+
+	store['users'][token_user(token)]['name_first'] = name_first
+	store['users'][token_user(token)]['name_last'] = name_last
+
+	data_store.set(store)
+	return {}
