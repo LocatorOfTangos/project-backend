@@ -1,5 +1,5 @@
 from src.error import InputError, AccessError
-from src.validation import valid_token, valid_user_id, token_user, get_user_details, valid_dm_id
+from src.validation import valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
 from src.data_store import data_store
 
 def dm_create_v1(token, u_ids):
