@@ -47,7 +47,6 @@ def channel_invite_v1(token, channel_id, u_id):
 	for channel in data['channels']:
 		if channel['channel_id'] == channel_id:
 			channel['all_members'].append(u_id)
-			break
 
 	return {
 	}
@@ -302,8 +301,7 @@ def channel_addowner_v1(token, channel_id, u_id):
 		raise InputError("User is currently not a member of the channel")
 		
 
-	if not valid_user_id(u_id):
-		raise InputError('User cannot be added as owner as they do not exist')
+	# if not valid_user_id(u_id): This case is handled by user_is_member
 
 	
 	#If user is already an owner
