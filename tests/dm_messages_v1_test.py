@@ -39,7 +39,7 @@ def test_invalid_start(user, dm):
 	assert dm_messages_v1_request(user, dm, -5).status_code == 400
 
 def test_not_member(dm):
-	user_unauthorised = auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['auth_user_id']
+	user_unauthorised = auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['token']
 	assert dm_messages_v1_request(user_unauthorised, dm, 0).status_code == 403
 
 

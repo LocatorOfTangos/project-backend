@@ -21,6 +21,8 @@ def user1():
 def user2():
     return auth_register_v2_request("testemail3@gmail.com", "password", "sam", "nguyen").json()['auth_user_id']
 
+def test_invalid_token():
+    assert dm_remove_v1_request("qwerty", 1234).status_code == 403
 
 def test_invalid_dm_id(owner):
     assert dm_remove_v1_request(owner, -1).status_code == 400
