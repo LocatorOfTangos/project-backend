@@ -80,6 +80,10 @@ def test_remove_twice(ch_owner, msg):
 	assert message_remove_v1_request(ch_owner, msg).status_code == 200
 	assert message_remove_v1_request(ch_owner, msg).status_code == 400
 
-@pytest.mark.skip(reason="DMs not yet implemented")
 def test_dm():
-	pass
+	dm_owner = auth_register_v2_request("e@mail.com", "psword", "first", "last").json()['token']
+	dm = dm_create_v1_request(dm_owner, []).json()['dm_id']
+	msg = message_senddm_v1_request(dm_owner, dm, "hello").json()['message_id']
+	assert dm_messages_v1_request(dm_owner, dm, 0).json()['messages'][0]['message'] == "hello"
+	message_remove_v1_request(dm_owner, msg)
+	assert dm_messages_v1_request(dm_owner, dm, 0).json()['messages'] == []

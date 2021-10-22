@@ -29,7 +29,7 @@ def dm_create_v1(token, u_ids):
 	
 	u_id = token_user(token)
 	members = [u_id] + u_ids
-	
+
 	store = data_store.get()
 
 	# Create dm_id
@@ -101,8 +101,9 @@ def dm_messages_v1(token, dm_id, start):
 	if start > len(dm['messages']) or start < 0:
 		raise InputError('start is greater than the total number of messages in the channel.')
 
+
 	return {
-		'messages': dm['messages'][start:] if start + 50 >= len(dm['messages']) else dm['messages'][start: start +  50],
+		'messages': dm['messages'][start: start +  50],
 		'start': start,
 		'end': -1 if start + 50 >= len(dm['messages']) else start + 50
 	}
