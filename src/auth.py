@@ -57,8 +57,6 @@ def auth_login_v1(email, password):
 			email_registered = True
 			break
 
-	print(user_list[user_id])
-
 	#Raise InputError if no user if found with corresponding email
 	if email_registered == False:
 		raise InputError(description='No user is registered with this Email')
