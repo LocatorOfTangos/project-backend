@@ -50,8 +50,14 @@ def valid_token(token):
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']
     
+    print (users[u_id])
+
     # Is the user valid?
     if not any(u['u_id'] == u_id for u in users):
+        return False
+
+    # Has the user been removed?
+    if users[u_id]['global_permissions'] == 3:
         return False
     
     # Is the session valid?

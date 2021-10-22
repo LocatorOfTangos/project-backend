@@ -57,14 +57,20 @@ def auth_login_v1(email, password):
 			email_registered = True
 			break
 
+	print(user_list[user_id])
+
 	#Raise InputError if no user if found with corresponding email
 	if email_registered == False:
 		raise InputError(description='No user is registered with this Email')
 		
 	#Raise InputError if password is incorrect
 	hashed_pword = hashlib.sha256(password.encode()).hexdigest()
+
 	if password_list[user_id] != hashed_pword:
 		raise InputError(description='Incorrect Password')
+
+	if user_list[user_id]['global_permissions'] == 3:
+		raise InputError(description="User has been removed")
 
 	return {
 		'auth_user_id': user_id,

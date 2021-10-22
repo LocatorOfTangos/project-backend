@@ -137,14 +137,14 @@ def admin_user_remove_v1(token, u_id):
 				if message['u_id'] == u_id:
 					message['message'] = 'Removed user'
 
+
 	for user in store['users']:
 		if user['u_id'] == u_id:
 			user['email'] = ''
 			user['handle_str'] = ''
 			user['name_first'] = 'Removed'
 			user['name_last'] = 'user'
-			# TODO: Uncomment once global permission 3 for a removed user is implemented system-wide
-			#user['global_permissions'] = 3
+			user['global_permissions'] = 3
 
 	# Apply changes made to the store
 	data_store.set(store)
