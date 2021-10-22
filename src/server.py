@@ -129,6 +129,13 @@ def channel_messages():
     resp = channel_messages_v1(token, channel_id, start)
     return dumps(resp)
 
+@APP.route('/channel/addowner/v1', methods=['POST'])
+def channel_addowner_v1():
+    data = request.get_json()
+    resp = channel_invite_v1(**data)
+    return dumps(resp)
+
+
 ########### Message ############
 
 @APP.route('/message/send/v1', methods=['POST'])
