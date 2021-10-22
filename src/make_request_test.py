@@ -81,7 +81,13 @@ def dm_create_v1_request(token, u_ids):
 		'token': token,
 		'u_ids': u_ids
 	})
-	
+
+def dm_details_v1_request(token, dm_id):
+	return requests.post(config.url + 'dm/create/v1', json={
+		'token': token,
+		'dm_id': dm_id
+	})
+
 def user_profile_v1_request(token, u_id):
 	return requests.get(config.url + 'user/profile/v1', params={
 		'token': token,
