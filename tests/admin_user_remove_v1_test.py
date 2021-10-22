@@ -151,3 +151,13 @@ def test_messages_updated(owner, member1, channel):
 	
 	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][1]['message'] == "Removed user"
 	assert channel_messages_v2_request(owner['token'], channel, 0).json()['messages'][0]['message'] == "Removed user"
+
+def test_removed_session(owner, member1):
+	assert channels_listall_v2_request(member1['token']).status_code == 200
+	admin_user_remove_v1_request(owner['token'], member1['auth_user_id'])
+	assert channels_listall_v2_request(member1['token']).status_code == 403
+
+def test_removed_login(owner, member1):
+	assert auth_login_v2_request("name2@email.com", "password").status_code == 200
+	admin_user_remove_v1_request(owner['token'], member1['auth_user_id'])
+	assert auth_login_v2_request("name2@email.com", "password").status_code == 403
