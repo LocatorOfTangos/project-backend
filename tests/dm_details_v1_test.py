@@ -11,16 +11,16 @@ def owner():
 
 @pytest.fixture
 def user1():
-	return auth_register_v2_request("testemail2@gmail.com", "password", "david", "smith").json()['auth_user_id']
+	return auth_register_v2_request("testemail2@gmail.com", "password", "david", "smith").json()['token']
 
 
 def test_invalid_dm_id(owner):
-    assert dm_details_v1_request(owner, [-1]).status_code == 400
-    assert dm_details_v1_request(owner, [9999]).status_code == 400
+    assert dm_details_v1_request(owner, -1).status_code == 400
+    assert dm_details_v1_request(owner, 9999).status_code == 400
 
 def test_invalid_token(owner):
     dm = dm_create_v1_request(owner, []).json()['dm_id']
-    assert dm_details_v1_request([-1], dm).status_code == 400 
+    assert dm_details_v1_request('aaaaa', dm).status_code == 403 
 
 def test_not_member(owner, user1):
     dm = dm_create_v1_request(owner, []).json()['dm_id']
@@ -43,8 +43,8 @@ def test_owner(owner):
 	}
 
 def test_multiple_members(owner, user1):
-    u_id = auth_login_v2_request('testemail@gmail.com', 'password').json()['auth_user_id']
-    dm = dm_create_v1_request(owner, [user1]).json()['dm_id']
+    user1_id = auth_login_v2_request('testemail2@gmail.com', 'password').json()['auth_user_id']
+    dm = dm_create_v1_request(owner, [user1_id]).json()['dm_id']
     assert dm_details_v1_request(owner, dm).json() == {
 		'name': 'davidsmith, vuluu',
 		'members': [
@@ -56,7 +56,7 @@ def test_multiple_members(owner, user1):
 				'handle_str': 'vuluu'
 			},
             {
-				'u_id': user1,
+				'u_id': user1_id,
 				'email': 'testemail2@gmail.com',
 				'name_first': 'david',
 				'name_last': 'smith',
