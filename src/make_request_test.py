@@ -97,6 +97,13 @@ def message_senddm_v1_request(token, dm_id, message):
 		'message': message
 	})
 	
+def admin_userpermission_change_v1_request(token, u_id, permission_id):
+	return requests.post(config.url + 'admin/userpermission/change/v1', json={
+		'token': token,
+		'u_id' : u_id,
+		'permission_id' : permission_id
+	})
+
 def dm_create_v1_request(token, u_ids):
 	return requests.post(config.url + 'dm/create/v1', json={
 		'token': token,
