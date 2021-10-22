@@ -43,13 +43,14 @@ def test_owner(owner):
 	}
 
 def test_multiple_members(owner, user1):
+    owner_id = auth_login_v2_request('testemail@gmail.com', 'password').json()['auth_user_id']
     user1_id = auth_login_v2_request('testemail2@gmail.com', 'password').json()['auth_user_id']
     dm = dm_create_v1_request(owner, [user1_id]).json()['dm_id']
     assert dm_details_v1_request(owner, dm).json() == {
 		'name': 'davidsmith, vuluu',
 		'members': [
 			{
-				'u_id': u_id,
+				'u_id': owner_id,
 				'email': 'testemail@gmail.com',
 				'name_first': 'vu',
 				'name_last': 'luu',
