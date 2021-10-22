@@ -301,8 +301,6 @@ def channel_addowner_v1(token, channel_id, u_id):
 		if owner == u_id:
 			raise InputError("User is already an owner of this channel")
 
-	store = data_store.get()
-
 	store['channels'][channel_id]['owner_members'].append(u_id)
 
 	return {}
