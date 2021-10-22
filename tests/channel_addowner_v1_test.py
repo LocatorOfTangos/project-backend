@@ -11,7 +11,7 @@ def owner_tkn():
 	return auth_register_v2_request("owneremail@gmail.com", "pass123", "trish", "vman").json()['token']
 
 @pytest.fixture
-def channel(owner_tkn):
+def c_id(owner_tkn):
 	c_id = channels_create_v2_request(owner_tkn, "channelname", True).json()['channel_id']
 	return c_id
 
@@ -20,19 +20,19 @@ def user_tkn():
     return auth_register_v2_request("useremail@gmail.com", "pass111", "first", "user").json()['token']
 
 @pytest.fixture
-def user_id(user_tkn):
-    channel_join_v2_request(user_tkn, c_id).json()['channel_id']
+def user_id(user_tkn, c_id):
+    channel_join_v2_request(user_tkn, c_id).json()
     return auth_login_v2_request('useremail@gmail.com', 'pass111').json()['auth_user_id']
 
 @pytest.fixture
-def user_id2():
-    user_tkn2 = auth_register_v2_request('user2@email.com', 'pass444', 'second', 'user').json()['token']
-    channel_join_v2_request(user_tkn2, c_id).json()['channel_id']
+def user_id2(c_id):
+    user_tkn2 = auth_register_v2_request('user2@gmail.com', 'pass444', 'second', 'user').json()['token']
+    channel_join_v2_request(user_tkn2, c_id).json()
     return auth_login_v2_request('user2@gmail.com', 'pass444').json()['auth_user_id']
 
 @pytest.fixture
 def user_not_in_channel():
-    user_tkn3 = auth_register_v2_request('user3@email.com', 'pass333', 'third', 'user').json()['token']
+    user_tkn3 = auth_register_v2_request('user3@gmail.com', 'pass333', 'third', 'user').json()['token']
     return auth_login_v2_request('user3@gmail.com', 'pass333').json()['auth_user_id']
 
 def check_user_added_as_owner(owner_tkn, c_id, user_id):
