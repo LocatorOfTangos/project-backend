@@ -20,7 +20,7 @@ from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
 from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_setemail_v1, user_profile_setname_v1
 from src.message import message_edit_v1, message_send_v1, message_remove_v1, message_senddm_v1
-from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1
 from src.users import users_all_v1
 
 def quit_gracefully(*args):
@@ -164,6 +164,7 @@ def dm_create():
     resp = dm_create_v1(**data)
     return dumps(resp)
 
+
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
     token = request.args.get('token')
@@ -183,6 +184,12 @@ def dm_messages():
 def dm_list():
     token = request.args.get('token')
     resp = dm_list_v1(token)
+    return dumps(resp)
+    
+@APP.route('/dm/leave/v1', methods=['POST'])
+def dm_leave():
+    data = request.get_json()
+    resp = dm_leave_v1(**data)
     return dumps(resp)
 
 ########### User ############
