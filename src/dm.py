@@ -80,7 +80,6 @@ def dm_details_v1(token, dm_id):
 	}
 
 
-
 def dm_messages_v1(token, dm_id, start):
 	store = data_store.get()
 
@@ -106,4 +105,45 @@ def dm_messages_v1(token, dm_id, start):
 		'messages': dm['messages'][start: start +  50],
 		'start': start,
 		'end': -1 if start + 50 >= len(dm['messages']) else start + 50
+	}
+
+def dm_leave_v1(token, dm_id):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError('Invalid token')
+
+	if not 0 <= dm_id < len(store['dms']):
+		raise InputError('dm_id does not refer to a valid DM.')
+
+	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
+	dm = store['dms'][dm_id]
+	if u_id not in dm['all_members']:
+		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
+
+	if u_id in dm['owner_members']:
+		dm['owner_members'].remove(u_id)
+	dm['all_members'].remove(u_id)
+
+	data_store.set(store)
+
+	return {}
+
+def dm_list_v1(token):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
+
+	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
+	dms = list(filter(lambda dm: u_id in dm['all_members'], store['dms']))
+
+	return {
+		'dms': [{'dm_id': d['dm_id'], 'name': d['name']} for d in dms]
 	}
