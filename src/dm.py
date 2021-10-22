@@ -1,5 +1,5 @@
 from src.error import InputError, AccessError
-from src.validation import valid_token, valid_user_id, token_user
+from src.validation import valid_token, valid_user_id, token_user, get_user_details
 from src.data_store import data_store
 
 def dm_create_v1(token, u_ids):
@@ -54,4 +54,27 @@ def dm_create_v1(token, u_ids):
 
 	return {
 	    'dm_id': dm_id,
+	}
+
+
+def dm_details_v1(token, dm_id):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError('Invalid token')
+
+	if not 0 <= dm_id < len(store['dms']):
+		raise InputError('dm_id does not refer to a valid DM.')
+
+	u_id = token_user(token)
+	if not valid_user_id(u_id):
+		raise InputError('Not a valid u_id.')
+
+	dm = store['dms'][dm_id]
+	if u_id not in dm['all_members']:
+		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
+
+	return {
+		'name': dm['name'],
+		'members': [get_user_details(member) for member in dm['all_members']],
 	}
