@@ -99,3 +99,9 @@ def user_profile_sethandle_v1_request(token, handle_str):
 		'token': token,
 		'handle_str': handle_str
 	})
+
+def user_profile_setemail_v1_request(token, email):
+	return requests.put(config.url + 'user/profile/setemail/v1', json={
+		'token': token,
+		'eiam': email
+	})
