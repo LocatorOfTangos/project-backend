@@ -47,6 +47,20 @@ def channel_invite_v2_request(token, channel_id, u_id):
 		'u_id': u_id
 	})
 
+def channel_addowner_v1_request(token, channel_id, u_id):
+	return requests.post(config.url + 'channel/addowner/v1', json={
+		'token': token,
+		'channel_id': channel_id,
+		'u_id': u_id
+	})
+
+def channel_removeowner_v1_request(token, channel_id, u_id):
+	return requests.post(config.url + 'channel/removeowner/v1', json={
+		'token': token,
+		'channel_id': channel_id,
+		'u_id': u_id
+	})
+
 def channels_listall_v2_request(token):
 	return requests.get(config.url + 'channels/listall/v2', params={
 		'token': token
