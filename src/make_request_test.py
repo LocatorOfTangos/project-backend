@@ -144,8 +144,20 @@ def dm_messages_v1_request(token, dm_id, start):
 		'start': start
 	})
 
+def dm_list_v1_request(token):
+	return requests.get(config.url + 'dm/list/v1', params={
+		'token': token
+	})
+
+
 def dm_remove_v1_request(token, dm_id):
 	return requests.delete(config.url + 'dm/remove/v1', params={
+		'token': token,
+		'dm_id': dm_id
+	})
+
+def dm_leave_v1_request(token, dm_id):
+	return requests.post(config.url + 'dm/leave/v1', json={
 		'token': token,
 		'dm_id': dm_id
 	})
