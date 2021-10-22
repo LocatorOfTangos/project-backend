@@ -80,7 +80,7 @@ def dm_messages_v1(token, dm_id, start):
 	if u_id not in dm['all_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
 
-	if start > len(dm['messages']):
+	if start > len(dm['messages']) or start < 0:
 		raise InputError('start is greater than the total number of messages in the channel.')
 
 	return {
