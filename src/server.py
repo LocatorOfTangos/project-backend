@@ -19,7 +19,7 @@ from src.channels import channels_create_v1, channels_listall_v1, channels_list_
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1
 from src.dm import dm_create_v1
-from src.user import user_profile_v1
+from src.user import user_profile_v1, user_profile_sethandle_v1
 from src.message import message_edit_v1, message_send_v1
 
 def quit_gracefully(*args):
@@ -158,6 +158,12 @@ def user_profile():
     token = request.args.get('token')
     u_id = int(request.args.get('u_id'))
     resp = user_profile_v1(token, u_id)
+    return dumps(resp)
+
+@APP.route('/user/profile/sethandle/v1', methods=['PUT'])
+def user_profile_sethandle():
+    data = request.get_json()
+    resp = user_profile_sethandle_v1(**data)
     return dumps(resp)
 
 ########### Clear ############

@@ -16,9 +16,9 @@ def test_return(user):
 	assert user_profile_sethandle_v1_request(user['token'], "newhandle").json() == {}
 
 def test_handle_changed(user):
-	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['handle_str'] == "firstlast"
+	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['handle_str'] == "firstlast"
 	user_profile_sethandle_v1_request(user['token'], "newhandle").json()
-	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['handle_str'] == "newhandle"
+	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['handle_str'] == "newhandle"
 
 def test_invalid_length(user):
 	assert user_profile_sethandle_v1_request(user['token'], "").status_code == 400
@@ -36,11 +36,17 @@ def test_not_alnum(user):
 	assert user_profile_sethandle_v1_request(user['token'], "ab_de").status_code == 400
 	assert user_profile_sethandle_v1_request(user['token'], "abc%^&*").status_code == 400
 
-def test_handle_in_user(user):
+def test_handle_in_use(user):
 	u2 = auth_register_v2_request("u2@m.com", "psword", "blake", "morris").json()['token']
 	assert user_profile_sethandle_v1_request(user['token'], "blakemorris").status_code == 400
 	user_profile_sethandle_v1_request(u2, "notblakemorris")
 	assert user_profile_sethandle_v1_request(user['token'], "blakemorris").status_code == 200
-	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['handle_str'] == "blakemorris"
+	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['handle_str'] == "blakemorris"
 
+def test_invalid_token(user):
+	assert user_profile_sethandle_v1_request('sdfjgkl', 'newhandle').status_code == 403
 
+	assert user_profile_sethandle_v1_request(user['token'][:-1] + '~', 'newhandle').status_code == 403
+
+	auth_logout_v1_request(user['token'])
+	assert user_profile_sethandle_v1_request(user['token'], 'newhandle').status_code == 403
