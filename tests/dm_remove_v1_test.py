@@ -44,7 +44,7 @@ def test_not_authorised(owner, user1):
 def test_1_dm(owner):
     dm = dm_create_v1_request(owner, []).json()['dm_id']
     dm_remove_v1_request(owner, dm)
-    assert dm_list_v1_request(owner) == {'dms': []}
+    assert dm_list_v1_request(owner).json() == {'dms': []}
 
 
 def test_many_dm(owner, user1, user2):
