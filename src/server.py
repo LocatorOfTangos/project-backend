@@ -164,7 +164,6 @@ def dm_create():
     resp = dm_create_v1(**data)
     return dumps(resp)
 
-
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
     token = request.args.get('token')
@@ -180,7 +179,7 @@ def dm_messages():
     resp = dm_messages_v1(token, dm_id, start)
     return dumps(resp)
 
-@APP.route('dm/list/v1', methods=['GET'])
+@APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
     token = request.args.get('token')
     resp = dm_list_v1(token)

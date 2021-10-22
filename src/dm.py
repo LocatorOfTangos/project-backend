@@ -122,5 +122,5 @@ def dm_list_v1(token):
 	dms = list(filter(lambda dm: u_id in dm['all_members'], store['dms']))
 
 	return {
-		'dms': dms,
+		'dms': [{'dm_id': d['dm_id'], 'name': d['name']} for d in dms]
 	}

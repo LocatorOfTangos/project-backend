@@ -144,3 +144,8 @@ def dm_messages_v1_request(token, dm_id, start):
 		'dm_id': dm_id,
 		'start': start
 	})
+	
+def dm_list_v1_request(token):
+	return requests.get(config.url + 'dm/list/v1', params={
+		'token': token
+	})
