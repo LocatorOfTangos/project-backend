@@ -89,9 +89,6 @@ def test_message_contents_global_owner(global_owner, msg, ch_pub):
 	message_edit_v1_request(global_owner, msg, "lkjhklsfdhglskdfjhg")
 	assert channel_messages_v2_request(global_owner, ch_pub, 0).json()['messages'][0]['message'] == 'lkjhklsfdhglskdfjhg'
 
-
-
-@pytest.mark.skip(reason="Delete not yet implemented")
 def test_delete(ch_owner, msg, ch_pub):
 	assert message_edit_v1_request(ch_owner, msg, "").status_code == 200
 	# Ensure that no message matching the ID exists

@@ -93,3 +93,9 @@ def message_edit_v1_request(token, message_id, message):
 		'message_id': message_id,
 		'message': message		
 	})
+
+def user_profile_sethandle_v1_request(token, handle_str):
+	return requests.put(config.url + 'user/profile/sethandle/v1', json={
+		'token': token,
+		'handle_str': handle_str
+	})
