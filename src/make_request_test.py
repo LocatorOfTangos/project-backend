@@ -90,12 +90,25 @@ def message_send_v1_request(token, channel_id, message):
 		'message': message
 	})
 
+def message_senddm_v1_request(token, dm_id, message):
+	return requests.post(config.url + 'message/senddm/v1', json={
+		'token': token,
+		'dm_id': dm_id,
+		'message': message
+	})
+	
 def dm_create_v1_request(token, u_ids):
 	return requests.post(config.url + 'dm/create/v1', json={
 		'token': token,
 		'u_ids': u_ids
 	})
-	
+
+def dm_details_v1_request(token, dm_id):
+	return requests.get(config.url + 'dm/details/v1', params={
+		'token': token,
+		'dm_id': dm_id
+	})
+
 def user_profile_v1_request(token, u_id):
 	return requests.get(config.url + 'user/profile/v1', params={
 		'token': token,
@@ -132,4 +145,27 @@ def message_remove_v1_request(token, message_id):
 	return requests.delete(config.url + 'message/remove/v1', json={
 		'token': token,
 		'message_id': message_id
+	})
+
+def users_all_v1_request(token):
+	return requests.get(config.url + 'users/all/v1', params={
+		'token': token
+	})
+
+def dm_messages_v1_request(token, dm_id, start):
+	return requests.get(config.url + 'dm/messages/v1', params={
+		'token': token,
+		'dm_id': dm_id,
+		'start': start
+	})
+
+def dm_list_v1_request(token):
+	return requests.get(config.url + 'dm/list/v1', params={
+		'token': token
+	})
+	
+def dm_leave_v1_request(token, dm_id):
+	return requests.post(config.url + 'dm/leave/v1', json={
+		'token': token,
+		'dm_id': dm_id
 	})

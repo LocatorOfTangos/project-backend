@@ -92,6 +92,10 @@ def test_delete(ch_owner, msg, ch_pub):
 	assert not any(m['message_id'] == msg for m in \
 		channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages'])
 
-@pytest.mark.skip(reason="DMs not yet implemented")
 def test_dm():
-	pass
+	dm_owner = auth_register_v2_request("e@mail.com", "psword", "first", "last").json()['token']
+	dm = dm_create_v1_request(dm_owner, []).json()['dm_id']
+	msg = message_senddm_v1_request(dm_owner, dm, "hello").json()['message_id']
+	assert dm_messages_v1_request(dm_owner, dm, 0).json()['messages'][0]['message'] == "hello"
+	message_edit_v1_request(dm_owner, msg, "newmessage")
+	assert dm_messages_v1_request(dm_owner, dm, 0).json()['messages'][0]['message'] == "newmessage"
