@@ -13,6 +13,14 @@ def valid_channel_id(channel_id):
             return True
     return False
 
+def valid_dm_id(dm_id):
+    store = data_store.get()
+    dms = store['dms']
+    for dm in dms:
+        if dm['dm_id'] == dm_id:
+            return True
+    return False
+
 # Returns true if u_id refers to a valid user, else false
 def valid_user_id(u_id):
     store = data_store.get()
