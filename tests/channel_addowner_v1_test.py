@@ -63,6 +63,11 @@ def test_no_owner_permissions(user_tkn, c_id, user_id, user_id2):
     assert channel_addowner_v1_request(user_tkn, c_id, user_id).status_code == 403
     assert channel_addowner_v1_request(user_tkn, c_id, user_id2).status_code == 403
 
+def test_not_a_member(c_id, user_id):
+    user = auth_register_v2_request("e@mail.com", "psword", "first", "last").json()['token']
+    assert channel_addowner_v1_request(user, c_id, user_id).status_code == 403
+
+
 def test_add_multiple_owners(owner_tkn, c_id, user_id, user_id2):
     assert channel_addowner_v1_request(owner_tkn, c_id, user_id).status_code == 200
     assert channel_addowner_v1_request(owner_tkn, c_id, user_id2).status_code == 200
