@@ -21,6 +21,7 @@ from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, 
 from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_setemail_v1, user_profile_setname_v1
 from src.message import message_edit_v1, message_send_v1, message_remove_v1
 from src.dm import dm_create_v1, dm_details_v1
+from src.users import users_all_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -190,6 +191,14 @@ def user_profile_setemail():
 def user_profile_setname():
     data = request.get_json()
     resp = user_profile_setname_v1(**data)
+    return dumps(resp)
+
+########### Users ############
+
+@APP.route('/users/all/v1', methods=['GET'])
+def users_all():
+    token = request.args.get('token')
+    resp = users_all_v1(token)
     return dumps(resp)
 
 ########### Clear ############
