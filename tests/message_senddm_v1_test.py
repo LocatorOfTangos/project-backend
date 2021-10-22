@@ -16,9 +16,6 @@ def dm(dm_owner):
 def test_status_code(dm_owner, dm):
 	assert message_senddm_v1_request(dm_owner, dm, "hello world").status_code == 200
 
-def test_return_type(dm_owner, dm):
-	assert message_senddm_v1_request(dm_owner, dm, "hello world").json() == {}
-
 def test_dm_ids_unique(dm_owner, dm):
 	used_ids = set()
 	m_id = message_senddm_v1_request(dm_owner, dm, "a").json()['message_id']
@@ -83,6 +80,9 @@ def test_not_member(dm):
 
 @pytest.mark.skip(reason='Requires dm/leave')
 def test_left_dm(dm_owner, dm):
+	pass
+	'''
 	assert message_senddm_v1_request(dm_owner, dm, "ok").status_code == 200
 	dm_leave_v1_request(dm_owner, dm)
 	assert message_senddm_v1_request(dm_owner, dm, "ok").status_code == 403
+	'''

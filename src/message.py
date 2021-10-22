@@ -99,7 +99,7 @@ def message_senddm_v1(token, dm_id, message):
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
-	if not valid_channel_id(dm_id, 'dms'):
+	if not valid_dm_id(dm_id):
 		raise InputError(description="Invalid dm_id")
 
 	u_id = token_user(token)

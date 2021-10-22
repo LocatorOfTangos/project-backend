@@ -6,7 +6,6 @@ from src.make_request_test import *
 def clear_data():
 	clear_v1_request()
 
-#@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_users_clear():
 	# Successfully register and login a user
 	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()['auth_user_id']
@@ -16,7 +15,6 @@ def test_users_clear():
 
 	assert auth_login_v2_request("user@mail.com", "password").status_code == 400
 
-#@pytest.mark.skip(reason="Requires unimplemented functions")
 def test_channels_clear():
 	# Successfully register and login a user
 	user = auth_register_v2_request("user@mail.com", "password", "first", "last").json()

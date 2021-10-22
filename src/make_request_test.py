@@ -1,3 +1,5 @@
+import json
+from flask.globals import request
 import requests
 from src import config
 
@@ -81,6 +83,24 @@ def message_senddm_v1_request(token, dm_id, message):
 		'message': message
 	})
 	
+def dm_create_v1_request(token, u_ids):
+	return requests.post(config.url + 'dm/create/v1', json={
+		'token': token,
+		'u_ids': u_ids
+	})
+
+def dm_details_v1_request(token, dm_id):
+	return requests.get(config.url + 'dm/details/v1', params={
+		'token': token,
+		'dm_id': dm_id
+	})
+
+def user_profile_v1_request(token, u_id):
+	return requests.get(config.url + 'user/profile/v1', params={
+		'token': token,
+		'u_id': u_id
+	})
+	
 def message_edit_v1_request(token, message_id, message):
 	return requests.put(config.url + 'message/edit/v1', json={
 		'token': token,
@@ -88,8 +108,39 @@ def message_edit_v1_request(token, message_id, message):
 		'message': message		
 	})
 
+def user_profile_sethandle_v1_request(token, handle_str):
+	return requests.put(config.url + 'user/profile/sethandle/v1', json={
+		'token': token,
+		'handle_str': handle_str
+	})
+
+def user_profile_setemail_v1_request(token, email):
+	return requests.put(config.url + 'user/profile/setemail/v1', json={
+		'token': token,
+		'email': email
+	})
+
+def user_profile_setname_v1_request(token, name_first, name_last):
+	return requests.put(config.url + 'user/profile/setname/v1', json={
+		'token': token,
+		'name_first': name_first,
+		'name_last': name_last
+	})
+
 def message_remove_v1_request(token, message_id):
 	return requests.delete(config.url + 'message/remove/v1', json={
 		'token': token,
 		'message_id': message_id
+	})
+
+def users_all_v1_request(token):
+	return requests.get(config.url + 'users/all/v1', params={
+		'token': token
+	})
+
+def dm_messages_v1_request(token, dm_id, start):
+	return requests.get(config.url + 'dm/messages/v1', params={
+		'token': token,
+		'dm_id': dm_id,
+		'start': start
 	})
