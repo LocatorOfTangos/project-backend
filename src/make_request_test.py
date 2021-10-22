@@ -113,3 +113,9 @@ def user_profile_setname_v1_request(token, name_first, name_last):
 		'name_first': name_first,
 		'name_last': name_last
 	})
+
+def message_remove_v1_request(token, message_id):
+	return requests.delete(config.url + 'message/remove/v1', json={
+		'token': token,
+		'message_id': message_id
+	})

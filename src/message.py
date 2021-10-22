@@ -56,7 +56,7 @@ def message_send_v1(token, channel_id, message):
 		'message_id': message_id,
 		'u_id': u_id,
 		'message': message,
-		'time_created': datetime.now(timezone.utc).timestamp()
+		'time_created': int(datetime.now(timezone.utc).timestamp())
 	}
 	channel['messages'].insert(0, msg)
 
@@ -77,6 +77,13 @@ def set_message_contents(message_id, to, chat_type, contents):
 	for i, msg in enumerate(store[chat_type][to]['messages']):
 		if msg['message_id'] == message_id:
 			store[chat_type][to]['messages'][i]['message'] = contents
+	data_store.set(store)
+
+def remove_message(message_id, to, chat_type):
+	store = data_store.get()
+	for i, msg in enumerate(store[chat_type][to]['messages']):
+		if msg['message_id'] == message_id:
+			store[chat_type][to]['messages'].pop(i)
 	data_store.set(store)
 
 def message_edit_v1(token, message_id, message):
@@ -141,7 +148,7 @@ def message_edit_v1(token, message_id, message):
 
 	# If the new message is empty, the message is deleted
 	if message == "":
-		message_remove_v1(token, message_id)
+		remove_message(message_id, to, chat_type)
 		return {}
 
 	set_message_contents(message_id, to, chat_type, message)
@@ -149,4 +156,60 @@ def message_edit_v1(token, message_id, message):
 	return {}
 
 def message_remove_v1(token, message_id):
-	pass
+	'''
+	Removes a message (message_id) from a channel or dm.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) removing the message
+		message_id (int)	- id of the message to remove
+
+	Exceptions:
+		InputError - Occurs when:
+			> message_id does not refer to a valid message within a channel/dm that the user
+			  has joined
+		
+		AccessError - Occers when:
+			> token is invalid
+			> message_id is valid AND user is a member of the channel
+			  AND message was not sent by the user AND user does not have owner permissions
+			  in the channel
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	u_id = token_user(token)
+
+	store = data_store.get()
+	
+	# Get the message_id -> details mapping
+	msgs = store['message_info']
+
+	if message_id not in msgs.keys():
+		raise InputError(description="Message does not exist")
+
+	# Determine whether the message is in a channel or a dm
+	chat_type = msgs[message_id]['type']
+	
+	# Determine the specific channel or dm the message is in
+	to = msgs[message_id]['to']
+
+	if not user_is_member(u_id, to, chat_type):
+		raise InputError(description="Message does not exist")
+	
+	sender = msgs[message_id]['sender']
+
+	# Access error if the user isn't either the sender of the message or a channel/global owner
+	if not (sender == u_id or user_has_owner_perms(u_id, to, chat_type)):
+		raise AccessError(description="User does not have permission to edit this message")
+	
+	# Remove the message from the chat
+	remove_message(message_id, to, chat_type)
+
+	# Remove the message from the message info mapping
+	msgs.pop(message_id)
+
+	data_store.set(store)
+	return {}
