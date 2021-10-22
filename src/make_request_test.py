@@ -119,3 +119,8 @@ def message_remove_v1_request(token, message_id):
 		'token': token,
 		'message_id': message_id
 	})
+
+def users_all_v1_request(token):
+	return requests.get(config.url + 'users/all/v1', params={
+		'token': token
+	})
