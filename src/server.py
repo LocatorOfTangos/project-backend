@@ -236,6 +236,12 @@ def admin_userpermission_change():
     resp = admin_userpermission_change_v1(**data)
     return dumps(resp)
 
+@APP.route('/admin/user/remove/v1', methods=['DELETE'])
+def admin_user_remove():
+    data = request.get_json()
+    resp = admin_user_remove_v1(**data)
+    return dumps(resp)
+
 ########### Clear ############
 
 @APP.route('/clear/v1', methods=['DELETE'])
