@@ -1,6 +1,6 @@
 from src.error import AccessError, InputError
 from src.data_store import data_store
-from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user
+from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user, user_has_owner_perms
 
 def channel_invite_v1(token, channel_id, u_id):
 	'''
@@ -279,22 +279,32 @@ def channel_addowner_v1(token, channel_id, u_id):
 		Returns an empty dictionary
 	'''
 	# Validating Input
+
 	store = data_store.get()
 	channels = store['channels']
-
-	if not valid_channel_id(channel_id):
-		raise InputError("Channel doesn't exist")
-
-	if not valid_user_id(u_id):
-		raise InputError('User cannot be added as owner as they do not exist')
 
 	if not valid_token(token):
 		raise AccessError("User ID does not belong to a user")
 	
+	if not valid_channel_id(channel_id):
+		raise InputError("Channel doesn't exist")
+
 	auth_user_id = token_user(token)
 
 	if not user_is_member(auth_user_id, channel_id):
 		raise AccessError("Authorising user is currently not a member of the channel")
+
+	print(user_has_owner_perms(token_user(token), channel_id))
+	if not user_has_owner_perms(token_user(token), channel_id):
+		raise AccessError("User is not authorised to add an owner")
+
+	if not user_is_member(u_id, channel_id):
+		raise InputError("User is currently not a member of the channel")
+		
+
+	if not valid_user_id(u_id):
+		raise InputError('User cannot be added as owner as they do not exist')
+
 	
 	#If user is already an owner
 	for owner in channels[channel_id]['owner_members']:

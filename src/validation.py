@@ -58,11 +58,7 @@ def valid_token(token):
 def user_is_member(u_id, c_id, chat_type='channels'):
     store = data_store.get()
     users = store[chat_type][c_id]['all_members']
-
-    for user in users:
-        if user == u_id:
-            return True
-    return False
+    return u_id in users
 
 # Returns true if user u_id is a global owner and a member of the channel,
 # or is an owner of the channel

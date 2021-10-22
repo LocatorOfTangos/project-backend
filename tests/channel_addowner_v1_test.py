@@ -17,6 +17,7 @@ def c_id(owner_tkn):
 
 @pytest.fixture
 def user_tkn():
+    auth_register_v2_request("user2email@gmail.com", "pass111", "first", "user")
     return auth_register_v2_request("useremail@gmail.com", "pass111", "first", "user").json()['token']
 
 @pytest.fixture
@@ -32,7 +33,7 @@ def user_id2(c_id):
 
 @pytest.fixture
 def user_not_in_channel():
-    user_tkn3 = auth_register_v2_request('user3@gmail.com', 'pass333', 'third', 'user').json()['token']
+    auth_register_v2_request('user3@gmail.com', 'pass333', 'third', 'user')
     return auth_login_v2_request('user3@gmail.com', 'pass333').json()['auth_user_id']
 
 def check_user_added_as_owner(owner_tkn, c_id, user_id):
@@ -58,15 +59,15 @@ def test_already_owner(owner_tkn, c_id, user_id):
     assert channel_addowner_v1_request(owner_tkn, c_id, user_id).status_code == 200
     assert channel_addowner_v1_request(owner_tkn, c_id, user_id).status_code == 400
 
-def test_no_owner_permissions(user_tkn, c_id, user_id):
-    assert channel_invite_v2_request(user_tkn, c_id, user_id).status_code == 403
-    assert channel_invite_v2_request(user_tkn, c_id, user_id2).status_code == 403
+def test_no_owner_permissions(user_tkn, c_id, user_id, user_id2):
+    assert channel_addowner_v1_request(user_tkn, c_id, user_id).status_code == 403
+    assert channel_addowner_v1_request(user_tkn, c_id, user_id2).status_code == 403
 
 def test_add_multiple_owners(owner_tkn, c_id, user_id, user_id2):
     assert channel_addowner_v1_request(owner_tkn, c_id, user_id).status_code == 200
-    assert channel_addowner_v1_request(owner_tkn2, c_id, user_id2).status_code == 200
-    check_owner_added(owner_tkn, c_id, user_id)
-    check_owner_added(owner_tkn2, c_id, user_id2)
+    assert channel_addowner_v1_request(owner_tkn, c_id, user_id2).status_code == 200
+    check_user_added_as_owner(owner_tkn, c_id, user_id)
+    check_user_added_as_owner(owner_tkn, c_id, user_id2)
 
 
 
