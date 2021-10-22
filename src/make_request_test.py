@@ -1,4 +1,5 @@
 import json
+from flask.globals import request
 import requests
 from src import config
 
@@ -92,6 +93,25 @@ def message_edit_v1_request(token, message_id, message):
 		'token': token,
 		'message_id': message_id,
 		'message': message		
+	})
+
+def user_profile_sethandle_v1_request(token, handle_str):
+	return requests.put(config.url + 'user/profile/sethandle/v1', json={
+		'token': token,
+		'handle_str': handle_str
+	})
+
+def user_profile_setemail_v1_request(token, email):
+	return requests.put(config.url + 'user/profile/setemail/v1', json={
+		'token': token,
+		'email': email
+	})
+
+def user_profile_setname_v1_request(token, name_first, name_last):
+	return requests.put(config.url + 'user/profile/setname/v1', json={
+		'token': token,
+		'name_first': name_first,
+		'name_last': name_last
 	})
 
 def message_remove_v1_request(token, message_id):
