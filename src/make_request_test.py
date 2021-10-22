@@ -91,7 +91,7 @@ def admin_userpermission_change_v1_request(token, u_id, permission_id):
 	})
 
 def admin_user_remove_v1_request(token, u_id):
-	return requests.post(config.url + 'admin/user/remove/v1', json={
+	return requests.delete(config.url + 'admin/user/remove/v1', json={
 		'token': token,
 		'u_id' : u_id
 	})
