@@ -1,12 +1,11 @@
 import hashlib
-import re
 
 import jwt
 import src
 
 from src.data_store import data_store
 from src.error import AccessError, InputError
-from src.validation import valid_token
+from src.validation import valid_token, email_is_valid
 
 SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 
@@ -112,10 +111,6 @@ def email_is_unique(email):
 
 	return True
 
-# Returns true if email address matches the format for a valid email address
-def email_is_valid(email):
-	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
-	return True if re.fullmatch(pattern, email) else False
 
 def auth_register_v1(email, password, name_first, name_last):
 	'''

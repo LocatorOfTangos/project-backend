@@ -2,6 +2,7 @@ import jwt
 import src.auth
 from src.data_store import data_store
 from src.error import AccessError
+import re
 
 # Returns true if channel_id refers to a valid channel, else false
 def valid_channel_id(channel_id, chat_type='channels'):
@@ -9,6 +10,14 @@ def valid_channel_id(channel_id, chat_type='channels'):
     channels = store[chat_type]
     for channel in channels:
         if channel['channel_id'] == channel_id:
+            return True
+    return False
+
+def valid_dm_id(dm_id):
+    store = data_store.get()
+    dms = store['dms']
+    for dm in dms:
+        if dm['dm_id'] == dm_id:
             return True
     return False
 
@@ -95,3 +104,7 @@ def get_user_details(u_id):
             }
     return user_details
 
+# Returns true if email address matches the format for a valid email address
+def email_is_valid(email):
+	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
+	return True if re.fullmatch(pattern, email) else False

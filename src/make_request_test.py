@@ -1,4 +1,5 @@
 import json
+from flask.globals import request
 import requests
 from src import config
 
