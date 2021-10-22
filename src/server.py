@@ -152,7 +152,7 @@ def dm_create():
     return dumps(resp)
 
 
-@APP.route('dm/list/v1', methods=['GET'])
+@APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
     token = request.args.get('token')
     resp = dm_list_v1(token)
