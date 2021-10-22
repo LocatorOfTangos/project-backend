@@ -66,7 +66,7 @@ def channels_listall_v1(token):
         'channels' : [{
             'channel_id': channel['channel_id'],
             'name': channel['name']
-        } for channel in channels]
+        } for channel in channels if channel['channel_id'] != None]
     }
 
     return owners_channels

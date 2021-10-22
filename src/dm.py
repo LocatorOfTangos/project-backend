@@ -1,5 +1,5 @@
 from src.error import InputError, AccessError
-from src.validation import valid_token, valid_user_id, token_user
+from src.validation import valid_token, valid_user_id, token_user, valid_channel_id
 from src.data_store import data_store
 
 def dm_create_v1(token, u_ids):
@@ -63,7 +63,7 @@ def dm_remove_v1(token, dm_id):
 	if not valid_token(token):
 		raise AccessError('Invalid token')
 
-	if not 0 <= dm_id < len(store['dms']):
+	if not valid_channel_id(dm_id, chat_type='dms'):
 		raise InputError('dm_id does not refer to a valid DM.')
 
 	u_id = token_user(token)
@@ -73,7 +73,15 @@ def dm_remove_v1(token, dm_id):
 	if u_id not in store['dms'][dm_id]['owner_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not an owner of the DM.')
 
-	del store['dms'][dm_id]
+	# Set to an empty channel
+	store['dms'][dm_id] = {
+		'dm_id': None,
+		'name': 'Deleted',
+		'owner_members': [],
+		'all_members': [],
+		'messages': []
+	}
+
 	data_store.set(store)
 
 	return {}
