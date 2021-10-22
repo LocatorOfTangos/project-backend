@@ -23,7 +23,7 @@ from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_se
 from src.message import message_edit_v1, message_send_v1, message_remove_v1, message_senddm_v1
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1, dm_remove_v1
 from src.users import users_all_v1
-from src.admin import admin_userpermission_change_v1
+from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -249,6 +249,12 @@ def users_all():
 def admin_userpermission_change():
     data = request.get_json()
     resp = admin_userpermission_change_v1(**data)
+    return dumps(resp)
+
+@APP.route('/admin/user/remove/v1', methods=['DELETE'])
+def admin_user_remove():
+    data = request.get_json()
+    resp = admin_user_remove_v1(**data)
     return dumps(resp)
 
 ########### Clear ############
