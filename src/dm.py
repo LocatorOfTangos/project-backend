@@ -1,5 +1,5 @@
 from src.error import InputError, AccessError
-from src.validation import valid_token, valid_user_id, token_user
+from src.validation import valid_token, valid_user_id, token_user, get_user_details
 from src.data_store import data_store
 
 def dm_create_v1(token, u_ids):
@@ -76,5 +76,5 @@ def dm_details_v1(token, dm_id):
 
 	return {
 		'name': dm['name'],
-		'members': dm['all_members'],
+		'members': [get_user_details(member) for member in dm['all_members']],
 	}
