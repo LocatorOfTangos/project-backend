@@ -124,3 +124,9 @@ def users_all_v1_request(token):
 	return requests.get(config.url + 'users/all/v1', params={
 		'token': token
 	})
+
+def dm_leave_v1_request(token, dm_id):
+	return requests.post(config.url + 'dm/leave/v1', json={
+		'token': token,
+		'dm_id': dm_id
+	})
