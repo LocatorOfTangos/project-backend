@@ -58,6 +58,12 @@ def dm_create_v1(token, u_ids):
 
 
 def dm_details_v1(token, dm_id):
+	return {
+		'name': dm_id['name'],
+		'members': dm_id['all_members'],
+	}
+
+def dm_messages_v1(token, dm_id, start):
 	store = data_store.get()
 
 	if not valid_token(token):
@@ -74,7 +80,11 @@ def dm_details_v1(token, dm_id):
 	if u_id not in dm['all_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
 
+	if start > len(dm['messages']):
+		raise InputError('start is greater than the total number of messages in the channel.')
+
 	return {
-		'name': dm['name'],
-		'members': dm['all_members'],
+		'messages': dm['messages'][start:] if start + 50 >= len(dm['messages']) else dm['messages'][start: start +  50],
+		'start': start,
+		'end': -1 if start + 50 >= len(dm['messages']) else start + 50
 	}

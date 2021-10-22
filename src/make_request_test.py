@@ -126,7 +126,7 @@ def users_all_v1_request(token):
 	})
 
 def dm_messages_v1_request(token, dm_id, start):
-	return requests.get(config.url + 'dm/message/v1', params={
+	return requests.get(config.url + 'dm/messages/v1', params={
 		'token': token,
 		'dm_id': dm_id,
 		'start': start
