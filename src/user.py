@@ -1,5 +1,5 @@
 from src.error import AccessError, InputError
-from src.validation import valid_token, token_user, valid_user_id, get_user_details
+from src.validation import email_is_valid, valid_token, token_user, valid_user_id, get_user_details
 from src.data_store import data_store
 
 def user_profile_v1(token, u_id):
@@ -39,7 +39,9 @@ def user_profile_sethandle_v1(token, handle_str):
 
 	Exceptions:
 		InputError - Occurs when:
-			> u_id does not refer to a valid user
+			> handle_str is not between 3 and 20 chars (inc.)
+			> handle_str is already in use
+			> handle_str is not entirely alphanumeric
 		
 		AccessError - Occers when:
 			> token is invalid
@@ -63,6 +65,42 @@ def user_profile_sethandle_v1(token, handle_str):
 		raise InputError(description="This handle is already in use")
 
 	store['users'][token_user(token)]['handle_str'] = handle_str
+
+	data_store.set(store)
+	return {}
+
+def user_profile_setemail_v1(token, email):
+	'''
+	Replaces the user's email with email.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) requesting an email change
+		email (string)		- new email to use
+
+	Exceptions:
+		InputError - Occurs when:
+			> email is not a valid email format
+			> email is already in use
+		
+		AccessError - Occers when:
+			> token is invalid
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not email_is_valid(email):
+		raise InputError(description="Email does not match a valid format")
+
+	store = data_store.get()
+
+	if any(u['email'] == email for u in store['users']):
+		raise InputError(description="This email is already in use")
+
+	store['users'][token_user(token)]['email'] = email
 
 	data_store.set(store)
 	return {}

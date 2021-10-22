@@ -18,7 +18,7 @@ def test_return(user):
 def test_email_changed(user):
 	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['email'] == "u@m.com"
 	user_profile_setemail_v1_request(user['token'], "new@email.com").json()
-	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['handle_str'] == "new@email.com"
+	assert user_profile_v1_request(user['token'], user['auth_user_id']).json()['user']['email'] == "new@email.com"
 
 def test_invalid_email_format(user):
 	assert user_profile_setemail_v1_request(user['token'], "usermail.com").status_code == 400	
