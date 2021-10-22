@@ -4,9 +4,9 @@ from src.data_store import data_store
 from src.error import AccessError
 
 # Returns true if channel_id refers to a valid channel, else false
-def valid_channel_id(channel_id):
+def valid_channel_id(channel_id, chat_type='channels'):
     store = data_store.get()
-    channels = store['channels']
+    channels = store[chat_type]
     for channel in channels:
         if channel['channel_id'] == channel_id:
             return True
