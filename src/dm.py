@@ -29,7 +29,7 @@ def dm_create_v1(token, u_ids):
 	
 	u_id = token_user(token)
 	members = [u_id] + u_ids
-	
+
 	store = data_store.get()
 
 	# Create dm_id
