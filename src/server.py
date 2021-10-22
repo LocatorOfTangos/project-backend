@@ -153,7 +153,7 @@ def dm_create():
 
 
 @APP.route('dm/messages/v1', methods=['GET'])
-def user_profile():
+def dm_messages():
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
