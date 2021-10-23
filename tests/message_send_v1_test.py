@@ -125,8 +125,7 @@ def test_message_u_id(ch_owner, ch_pub):
 	assert message['u_id'] == u_id
 
 
-@pytest.mark.skip(reason='Requires channel/leave')
 def test_left_channel(ch_owner, ch_pub):
 	assert message_send_v1_request(ch_owner, ch_pub, "message").status_code == 200
-	#channel_leave_v1_request(ch_owner, ch_pub)
+	channel_leave_v1_request(ch_owner, ch_pub)
 	assert message_send_v1_request(ch_owner, ch_pub, "message").status_code == 403

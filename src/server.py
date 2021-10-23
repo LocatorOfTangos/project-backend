@@ -17,7 +17,7 @@ from src.data_store import data_store
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.other import clear_v1
-from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1
+from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.dm import dm_create_v1
 from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_setemail_v1, user_profile_setname_v1
 from src.message import message_edit_v1, message_send_v1, message_remove_v1, message_senddm_v1
@@ -136,6 +136,12 @@ def channel_messages():
 def channel_addowner():
     data = request.get_json()
     resp = channel_addowner_v1(**data)
+    return dumps(resp)
+
+@APP.route('/channel/leave/v1', methods=['POST'])
+def channel_leave():
+    data = request.get_json()
+    resp = channel_leave_v1(**data)
     return dumps(resp)
 
 @APP.route('/channel/removeowner/v1', methods=['POST'])

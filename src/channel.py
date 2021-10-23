@@ -253,6 +253,50 @@ def channel_join_v1(token, channel_id):
 	
 	return {}
 
+def channel_leave_v1(token, channel_id):
+	'''
+	Remove self from a given channel. The user's messages should remain, along with the
+	channel itself even if that user was the last channel owner.
+
+	Arguments:
+		token (string) 					- id of user making request
+		channel id (int) 				- id of the channel user is ti be removed from
+
+	Exceptions:
+		InputError  - Occurs when:
+			> channel_id does not refer to a valid channel
+		AccessError  - Occurs when:
+			> channel_id is valid and the user is not a member of the channel
+			> the token is invalid
+
+	Return value:
+		Returns an empty dictionary
+	'''
+
+	# Check that arguments are valid
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
+
+	if not valid_channel_id(channel_id):
+		raise InputError(description='Invalid channel_id')
+
+	caller_id = token_user(token)
+
+	if not user_is_member(caller_id, channel_id):
+		raise AccessError(description='User must be channel member to leave channel')
+
+	store = data_store.get()
+
+	store['channels'][channel_id]['all_members'].remove(caller_id)
+
+	if caller_id in store['channels'][channel_id]['owner_members']:
+		store['channels'][channel_id]['owner_members'].remove(caller_id)
+
+	# Apply changes made to the store
+	data_store.set(store)
+
+	return {}
+
 
 def channel_addowner_v1(token, channel_id, u_id): 
 	'''
