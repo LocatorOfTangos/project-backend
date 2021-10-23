@@ -138,17 +138,16 @@ def channel_addowner():
     resp = channel_addowner_v1(**data)
     return dumps(resp)
 
-<<<<<<< HEAD
 @APP.route('/channel/leave/v1', methods=['POST'])
 def channel_leave():
     data = request.get_json()
     resp = channel_leave_v1(**data)
-=======
+    return dumps(resp)
+
 @APP.route('/channel/removeowner/v1', methods=['POST'])
 def channel_removeowner():
     data = request.get_json()
     resp = channel_removeowner_v1(**data)
->>>>>>> master
     return dumps(resp)
 
 ########### Message ############

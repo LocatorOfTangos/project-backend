@@ -272,6 +272,29 @@ def channel_leave_v1(token, channel_id):
 	Return value:
 		Returns an empty dictionary
 	'''
+
+	# Check that arguments are valid
+	if not valid_token(token):
+		raise AccessError(description='Invalid token')
+
+	if not valid_channel_id(channel_id):
+		raise InputError(description='Invalid channel_id')
+
+	caller_id = token_user(token)
+
+	if not user_is_member(caller_id, channel_id):
+		raise AccessError(description='User must be channel member to leave channel')
+
+	store = data_store.get()
+
+	store['channels'][channel_id]['all_members'].remove(caller_id)
+
+	if caller_id in store['channels'][channel_id]['owner_members']:
+		store['channels'][channel_id]['owner_members'].remove(caller_id)
+
+	# Apply changes made to the store
+	data_store.set(store)
+
 	return {}
 
 

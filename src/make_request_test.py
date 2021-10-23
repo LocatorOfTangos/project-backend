@@ -79,7 +79,7 @@ def channel_messages_v2_request(token, channel_id, start):
 	})
 
 def channel_leave_v1_request(token, channel_id):
-	return requests.post(config.url + 'channel/leave/v1', params={
+	return requests.post(config.url + 'channel/leave/v1', json={
 		'token': token,
 		'channel_id': channel_id
 	})
