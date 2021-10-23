@@ -1,6 +1,4 @@
 import pytest
-from src.other import clear_v1
-
 from src.make_request_test import *
 
 # Reset application data before each test is run
