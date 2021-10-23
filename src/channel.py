@@ -162,24 +162,24 @@ def channel_messages_v1(token, channel_id, start):
 
 	# Error cases
 	if not valid_token(token):
-		raise AccessError("User ID does not belong to a user")
+		raise AccessError(description="User ID does not belong to a user")
 
 	auth_user_id = token_user(token)
 
 	if not valid_channel_id(channel_id):
-		raise InputError("Channel does not exist")
+		raise InputError(description="Channel does not exist")
 
 	if not user_is_member(auth_user_id, channel_id):
-		raise AccessError("User is not a member of the channel")
+		raise AccessError(description="User is not a member of the channel")
 	
 	store = data_store.get()
 	messages = store['channels'][channel_id]['messages']
 
 	if start > len(messages):
-		raise InputError("Start must not be greater than the number of messages in the channel")
+		raise InputError(description="Start must not be greater than the number of messages in the channel")
 
 	if start < 0:
-		raise InputError("Start must not be negative")
+		raise InputError(description="Start must not be negative")
 	
 	# Get the up to 50 most recent messages from start
 	page = messages[start : start + 50]
@@ -283,22 +283,22 @@ def channel_addowner_v1(token, channel_id, u_id):
 	channels = store['channels']
 
 	if not valid_token(token):
-		raise AccessError("User ID does not belong to a user")
+		raise AccessError(description="User ID does not belong to a user")
 	
 	if not valid_channel_id(channel_id):
-		raise InputError("Channel doesn't exist")
+		raise InputError(description="Channel doesn't exist")
 
 	auth_user_id = token_user(token)
 
 	if not user_is_member(auth_user_id, channel_id):
-		raise AccessError("Authorising user is currently not a member of the channel")
+		raise AccessError(description="Authorising user is currently not a member of the channel")
 
 	print(user_has_owner_perms(token_user(token), channel_id))
 	if not user_has_owner_perms(token_user(token), channel_id):
-		raise AccessError("User is not authorised to add an owner")
+		raise AccessError(description="User is not authorised to add an owner")
 
 	if not user_is_member(u_id, channel_id):
-		raise InputError("User is currently not a member of the channel")
+		raise InputError(description="User is currently not a member of the channel")
 		
 
 	# if not valid_user_id(u_id): This case is handled by user_is_member
@@ -307,7 +307,7 @@ def channel_addowner_v1(token, channel_id, u_id):
 	#If user is already an owner
 	for owner in channels[channel_id]['owner_members']:
 		if owner == u_id:
-			raise InputError("User is already an owner of this channel")
+			raise InputError(description="User is already an owner of this channel")
 
 	store['channels'][channel_id]['owner_members'].append(u_id)
 
@@ -344,26 +344,26 @@ def channel_removeowner_v1(token, channel_id, u_id):
 	channels = store['channels']
     
 	if not valid_token(token):
-		raise AccessError("User ID does not belong to a user")
+		raise AccessError(description="User ID does not belong to a user")
 	
 	if not valid_channel_id(channel_id):
-		raise InputError("Channel doesn't exist")
+		raise InputError(description="Channel doesn't exist")
 	
 	if not valid_user_id(u_id):
 		raise InputError('User cannot be removed as owner as they do not exist')
 	
 	# If the authorised user has owner permissions
 	if not user_has_owner_perms(token_user(token), channel_id):
-		raise AccessError("User is not authorised to remove an owner")
+		raise AccessError(description="User is not authorised to remove an owner")
 	
     # If user to be removed as an owner is currently not an owner of the channel
 	owners = channels[channel_id]['owner_members']
 	if u_id not in owners:
-		raise InputError("User is not an owner to be removed")
+		raise InputError(description="User is not an owner to be removed")
 	
 	# If user to be removed is the only owner of the channel
 	if len(channels[channel_id]['owner_members']) == 1 and u_id in channels[channel_id]['owner_members']:
-	    raise InputError("User is currently the only owner of the channel")
+	    raise InputError(description="User is currently the only owner of the channel")
 	    
 	store['channels'][channel_id]['owner_members'].remove(u_id)
 
