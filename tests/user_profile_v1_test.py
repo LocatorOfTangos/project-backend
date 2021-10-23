@@ -68,3 +68,9 @@ def test_profile_changed(user):
 		'name_last': 'borris',
 		'handle_str': 'xxviuserxx' 
 	}
+
+def test_profile_removed(user):
+	# User is global owner
+	user2 = auth_register_v2_request("hello@mail.com", "pssword", "first", "last").json()
+	assert admin_user_remove_v1_request(user['token'], user2['auth_user_id']).status_code == 200
+	assert user_profile_v1_request(user['token'], user2['auth_user_id']).status_code == 200

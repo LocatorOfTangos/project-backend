@@ -84,3 +84,7 @@ def test_invite_transitivity(inviter, private, invitee_id, invitee_tkn, invitee_
     assert channel_invite_v2_request(invitee_tkn, private, invitee_id2).status_code == 200
     check_added(inviter, private, invitee_id)
     check_added(inviter, private, invitee_id2)
+
+def test_invite_removed_user(public, inviter, invitee_id):
+    assert admin_user_remove_v1_request(inviter, invitee_id).status_code == 200
+    assert channel_invite_v2_request(inviter, public, invitee_id).status_code == 400
