@@ -342,7 +342,6 @@ def channel_removeowner_v1(token, channel_id, u_id):
 	# Validating Input
 
 	store = data_store.get()
-	channels = store['channels']
 
 	if not valid_token(token):
 		raise AccessError("User ID does not belong to a user")
