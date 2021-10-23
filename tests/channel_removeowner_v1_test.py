@@ -11,6 +11,10 @@ def owner_tkn():
 	return auth_register_v2_request("owneremail@gmail.com", "pass123", "trish", "vman").json()['token']
 
 @pytest.fixture
+def owner_id():
+    return auth_login_v2_request('owneremail@gmail.com', 'pass123').json()['auth_user_id']
+
+@pytest.fixture
 def c_id(owner_tkn):
 	c_id = channels_create_v2_request(owner_tkn, "channelname", True).json()['channel_id']
 	return c_id
@@ -62,19 +66,23 @@ def test_user_not_in_channel(owner_tkn, c_id, user_not_in_channel):
 
 # User is not an owner to be removed
 def test_not_existing_owner(owner_tkn, c_id, user_not_owner_id):
-    assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 403
+    assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 400
 
 # Authorised user does not have owner permissions
 def test_no_owner_permissions(user_not_owner_tkn, c_id, user_owner_id):
     assert channel_removeowner_v1_request(user_not_owner_tkn, c_id, user_owner_id).status_code == 403
 
 # Test remove owner
-def test_add_multiple_owners(owner_tkn, c_id, user_owner_id, user_not_owner_id):
+def test_remove_multiple_owners(owner_tkn, c_id, user_owner_id, user_not_owner_id):
     assert channel_removeowner_v1_request(owner_tkn, c_id, user_owner_id).status_code == 200
     channel_addowner_v1_request(owner_tkn, c_id, user_not_owner_id).json()
     assert channel_removeowner_v1_request(owner_tkn, c_id, user_not_owner_id).status_code == 200
     check_user_removed_as_owner(owner_tkn, c_id, user_owner_id)
     check_user_removed_as_owner(owner_tkn, c_id, user_not_owner_id)
+
+# Test user removed is the only owner
+def test_one_owner(owner_tkn, owner_id, c_id):
+    assert channel_removeowner_v1_request(owner_tkn, c_id, owner_id).status_code == 400
 
 
 
