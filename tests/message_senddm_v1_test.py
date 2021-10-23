@@ -78,11 +78,7 @@ def test_not_member(dm):
 	user = auth_register_v2_request("u2@mail.com", "password", "first", "last").json()['token']
 	assert message_senddm_v1_request(user, dm, "!@#$%^&*()").status_code == 403
 
-@pytest.mark.skip(reason='Requires dm/leave')
 def test_left_dm(dm_owner, dm):
-	pass
-	'''
 	assert message_senddm_v1_request(dm_owner, dm, "ok").status_code == 200
 	dm_leave_v1_request(dm_owner, dm)
 	assert message_senddm_v1_request(dm_owner, dm, "ok").status_code == 403
-	'''
