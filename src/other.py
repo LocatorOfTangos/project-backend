@@ -17,7 +17,7 @@ def clear_v1():
     store['passwords'] = []
     store['curr_channel_id'] = 0
     store['curr_session_id'] = 0
-    store['message_info'] == dict()
+    store['message_info'] = {}
     data_store.set(store)
 
     return {}
