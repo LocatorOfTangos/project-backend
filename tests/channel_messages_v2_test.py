@@ -41,7 +41,7 @@ def test_invalid_start(user, channel):
 	assert channel_messages_v2_request(user, channel, -5).status_code == 400
 
 def test_not_member(channel):
-	user_unauthorised = auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['auth_user_id']
+	user_unauthorised = auth_register_v2_request("user2@mail.com", "password", "first", "last").json()['token']
 	assert channel_messages_v2_request(user_unauthorised, channel, 0).status_code == 403
 
 def test_single_message(user, channel):
