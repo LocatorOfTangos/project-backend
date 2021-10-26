@@ -14,4 +14,5 @@ def interval_backup():
 		store = data_store.get()
 		file = open("data.p", "wb")
 		pickle.dump(store, file)
+		file.close()
 		time.sleep(INTERVAL)
