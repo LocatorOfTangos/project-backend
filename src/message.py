@@ -56,8 +56,11 @@ def message_send_v1(token, channel_id, message):
 		'message_id': message_id,
 		'u_id': u_id,
 		'message': message,
-		'time_created': int(datetime.now(timezone.utc).timestamp())
+		'time_created': int(datetime.now(timezone.utc).timestamp()),
+		'reacts': [],
+		'is_pinned': False
 	}
+
 	channel['messages'].insert(0, msg)
 
 	# Update the message info mapping
@@ -125,8 +128,11 @@ def message_senddm_v1(token, dm_id, message):
 		'message_id': message_id,
 		'u_id': u_id,
 		'message': message,
-		'time_created': int(datetime.now(timezone.utc).timestamp())
+		'time_created': int(datetime.now(timezone.utc).timestamp()),
+		'reacts': [],
+		'is_pinned': False
 	}
+	
 	dm['messages'].insert(0, msg)
 
 	# Update the message info mapping
