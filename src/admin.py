@@ -32,7 +32,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
 	if not valid_user_id(u_id):
 		raise InputError(description='Invalid u_id')
 
-	if not (permission_id == 1 or permission_id == 2):
+	if permission_id not in (1, 2):
 		raise InputError(description='Invalid permission_id')
 	
 	caller_id = token_user(token)
