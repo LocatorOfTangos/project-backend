@@ -138,3 +138,11 @@ def user_profile_setname_v1(token, name_first, name_last):
 
 	data_store.set(store)
 	return {}
+
+def user_stats_v1(token):
+	return {
+		'channels_joined': [],
+    	'dms_joined': [], 
+    	'messages_sent': [], 
+    	'involvement_rate': 0
+	}
