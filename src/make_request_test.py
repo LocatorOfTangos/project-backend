@@ -202,7 +202,7 @@ def search_v1_request(token, query_str):
 	})
 
 def message_react_v1_request(token, message_id, react_id):
-	return request.post(config.url + 'message/react/v1', json={
+	return requests.post(config.url + 'message/react/v1', json={
 		'token': token,
 		'message_id': message_id,
 		'react_id': react_id

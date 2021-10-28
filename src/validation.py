@@ -92,8 +92,19 @@ def email_is_valid(email):
 	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 	return True if re.fullmatch(pattern, email) else False
 
+def user_has_reacted(u_id, message_id, react_id):
+    store = data_store.get()
+    # determine what channel the message is in
+    chat_type = store['message_info'][message_id]['type']
+    chat_id = store['message_info'][message_id]['to']
+    chat = store[chat_type][chat_id]
+
+    for msg in chat['messages']:
+        if msg['message_id'] == message_id:
+            return u_id in msg['reacts'][react_id - 1]['u_ids']
+
 def message_with_user_react(message, u_id):
     for i, react in enumerate(message['reacts']):
         message['reacts'][i]['is_this_user_reacted'] = u_id in react['u_ids']
     return message
-        
+    

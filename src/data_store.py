@@ -48,12 +48,14 @@ initial_object = {
     #   Add messages to front of list - most recent message should be at index 0
     #   Message dictionaries contain: message_id, u_id, message, time_created, reacts, is_pinned
     #       Reacts contains: react_id, u_ids, is_this_user_reacted
+    #       Index of react is react_id - 1 [react_id 1 is in index 0]
     'channels': [],
 
     # Same format as channels
     'dms': [],
     
     # Dictionary mapping message_ids to their sender and channel/dm_id
+    # type (dms/channels), sender (u_id), to (ch/dm id)
     'message_info': {},
 
     # ID to give to the next message (so that IDs aren't reused)

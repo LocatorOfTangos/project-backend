@@ -70,13 +70,19 @@ def test_invalid_token(user, message):
 	assert message_react_v1_request(user, message, 1).status_code == 403
 
 def test_reaction_shows_in_channel_messages(user, channel, message, user2):
-	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == []
+	u1id = auth_login_v2_request("e@mail.com", "psword").json()['auth_user_id']
+	u2id = auth_login_v2_request("u2@mail.com", "psword").json()['auth_user_id']
+	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
+		'react_id': 1,
+		'u_ids': [],
+		'is_this_user_reacted': False
+	}]
 	message_react_v1_request(user, message, 1)
 
 	# Ensure that the correct react list is shown for user
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user],
+		'u_ids': [u1id],
 		'is_this_user_reacted': True
 	}]
 
@@ -84,7 +90,7 @@ def test_reaction_shows_in_channel_messages(user, channel, message, user2):
 	channel_join_v2_request(user2, channel)
 	assert channel_messages_v2_request(user2, channel, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user],
+		'u_ids': [u1id],
 		'is_this_user_reacted': False
 	}]
 
@@ -92,29 +98,37 @@ def test_reaction_shows_in_channel_messages(user, channel, message, user2):
 	
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user, user2],
+		'u_ids': [u1id, u2id],
 		'is_this_user_reacted': True
 	}]
 
 def test_reaction_shows_in_dm_messages(user, user2):
-	dm = dm_create_v1_request(user, [user2]).json()['dm_id']
-	message_senddm_v1_request(user, dm, "Hi").json()['message_id']
+	u1id = auth_login_v2_request("e@mail.com", "psword").json()['auth_user_id']
+	u2id = auth_login_v2_request("u2@mail.com", "psword").json()['auth_user_id']
 
-	assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['reacts'] == []
+	dm = dm_create_v1_request(user, [u2id]).json()['dm_id']
+	
+	message = message_senddm_v1_request(user, dm, "Hi").json()['message_id']
+
+	assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['reacts'] == [{
+		'react_id': 1,
+		'u_ids': [],
+		'is_this_user_reacted': False
+	}]
 	
 	message_react_v1_request(user, message, 1)
 
 	# Ensure that the correct react list is shown for user
 	assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user],
+		'u_ids': [u1id],
 		'is_this_user_reacted': True
 	}]
 
 	# user2 should see the same except for is_this_user_reacted
 	assert dm_messages_v1_request(user2, dm, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user],
+		'u_ids': [u1id],
 		'is_this_user_reacted': False
 	}]
 
@@ -122,15 +136,20 @@ def test_reaction_shows_in_dm_messages(user, user2):
 	
 	assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user, user2],
+		'u_ids': [u1id, u2id],
 		'is_this_user_reacted': True
 	}]
 
 def test_reaction_shows_in_search(user, message):
-	assert search_v1_request(user, "ello").json()['messages'][0]['reacts'] == []
+	u1id = auth_login_v2_request("e@mail.com", "psword").json()['auth_user_id']
+	assert search_v1_request(user, "ello").json()['messages'][0]['reacts'] == [{
+		'react_id': 1,
+		'u_ids': [],
+		'is_this_user_reacted': False	
+	}]
 	message_react_v1_request(user, message, 1)
 	assert search_v1_request(user, "ello").json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
-		'u_ids': [user, user2],
+		'u_ids': [u1id],
 		'is_this_user_reacted': True	
 	}]
