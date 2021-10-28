@@ -24,6 +24,7 @@ from src.message import message_edit_v1, message_send_v1, message_remove_v1, mes
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1, dm_remove_v1
 from src.users import users_all_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
+from src.search import search_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -272,6 +273,15 @@ def admin_userpermission_change():
 def admin_user_remove():
     data = request.get_json()
     resp = admin_user_remove_v1(data['token'], data['u_id'])
+    return dumps(resp)
+
+########### Search ############
+
+@APP.route('/search/v1', methods=['GET'])
+def search():
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    resp = search_v1(token, query_str)
     return dumps(resp)
 
 ########### Clear ############
