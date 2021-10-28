@@ -5,8 +5,22 @@ from src.data_store import data_store
 
 def search_v1(token, query_str):
 	'''
-	Docstring
+	Searches for all messages containing query_str in channels that the authorised user is a member of.
+
+	Arguments:
+		token (string)		- token of the user performing a search
+		query_str (string)	- substring to search for messages containing
+
+	Exceptions:
+		InputError - Occurs when:
+			> query_str is not 1..1000 chars inclusive
+		AccessError - Occers when:
+			> Token is invalid
+
+	Return Value:
+		Returns a dictionary containing a list of matching messages
 	'''
+
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
