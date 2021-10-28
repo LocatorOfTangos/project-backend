@@ -111,3 +111,8 @@ def get_user_details(u_id):
 def email_is_valid(email):
 	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 	return True if re.fullmatch(pattern, email) else False
+
+def message_with_user_react(message, u_id):
+    for i, react in enumerate(message['reacts']):
+        message['reacts'][i]['is_this_user_reacted'] = u_id in react['u_ids']
+        
