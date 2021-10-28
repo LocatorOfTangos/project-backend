@@ -1,6 +1,6 @@
 from src.error import AccessError, InputError
 from src.data_store import data_store
-from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user, user_has_owner_perms
+from src.validation import *
 
 def channel_invite_v1(token, channel_id, u_id):
 	'''
@@ -173,7 +173,13 @@ def channel_messages_v1(token, channel_id, start):
 		raise AccessError(description="User is not a member of the channel")
 	
 	store = data_store.get()
+
+	# Get the list of messages, and for each add the user's react information
 	messages = store['channels'][channel_id]['messages']
+	messages = list(map(lambda m: message_with_user_react(m, auth_user_id), messages))
+
+	print("Messages:")
+	print(messages)
 
 	if start > len(messages):
 		raise InputError(description="Start must not be greater than the number of messages in the channel")

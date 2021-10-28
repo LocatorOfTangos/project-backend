@@ -115,4 +115,5 @@ def email_is_valid(email):
 def message_with_user_react(message, u_id):
     for i, react in enumerate(message['reacts']):
         message['reacts'][i]['is_this_user_reacted'] = u_id in react['u_ids']
+    return message
         
