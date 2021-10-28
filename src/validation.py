@@ -104,7 +104,6 @@ def get_user_details(u_id):
                 'name_last': user['name_last'],
                 'email': user['email'],
                 'handle_str': user['handle_str']
-
             }
     return user_details
 

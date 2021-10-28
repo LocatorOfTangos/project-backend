@@ -194,3 +194,9 @@ def dm_remove_v1_request(token, dm_id):
 		'token': token,
 		'dm_id': dm_id
 	})
+
+def search_v1_request(token, query_str):
+	return requests.get(config.url + 'search/v1', params={
+		'token': token,
+		'query_str': query_str
+	})

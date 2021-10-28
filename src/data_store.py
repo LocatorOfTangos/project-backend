@@ -46,7 +46,8 @@ initial_object = {
     # Owner_members and all_members are lists of u_id's
     # Messages is a list of message dictionaries
     #   Add messages to front of list - most recent message should be at index 0
-    #   Message dictionaries contain: message_id, u_id, message, time_created
+    #   Message dictionaries contain: message_id, u_id, message, time_created, reacts, is_pinned
+    #       Reacts contains: react_id, u_ids, is_this_user_reacted
     'channels': [],
 
     # Same format as channels
