@@ -70,7 +70,7 @@ def test_involvement_rate(owner, member1, member2, channel1, channel2, channel3,
 	assert user_stats_v1_request(member1['token']).status_code == 200
 	assert user_stats_v1_request(member1['token']).json()['involvement_rate'] == 1
 
-	channels_create_v2_request(owner['token'], ownerchannel, False)
+	ownerchannel = channels_create_v2_request(owner['token'], 'ownerchannel', False).json()['channel_id']
 
 	message_send_v1_request(member1['token'], channel1, 'Hello')
 	message_send_v1_request(member2['token'], channel2, 'Hello')
@@ -100,8 +100,8 @@ def test_time_records(owner, member1):
 
 	assert user_stats_v1_request(member1['token']).json()['channels_joined'] == [{'num_channels_joined': 0, 'time_stamp': time[0]},
 																				 {'num_channels_joined': 1, 'time_stamp': time[1]}]
-	assert user_stats_v1_request(member1['token']).json()['dms_joined'] == [{'num_channels_joined': 0, 'time_stamp': time[0]},
-																			{'num_channels_joined': 1, 'time_stamp': time[2]}]
+	assert user_stats_v1_request(member1['token']).json()['dms_joined'] == [{'num_dms_joined': 0, 'time_stamp': time[0]},
+																			{'num_dms_joined': 1, 'time_stamp': time[2]}]
 
 	sleep(1)
 	time.append(int(datetime.now(timezone.utc).timestamp()))

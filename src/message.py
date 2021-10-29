@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import *
 from datetime import datetime, timezone
+from src.user import stat_update
 
 def message_send_v1(token, channel_id, message):
 	'''
@@ -42,7 +43,11 @@ def message_send_v1(token, channel_id, message):
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
-	# Get the channel to send the messgae to
+
+	# Update statistics
+	stat_update(u_id, 'messages_sent', 1)
+
+	# Get the channel to send the message to
 	store = data_store.get()
 	channel = store['channels'][channel_id]
 
@@ -111,6 +116,10 @@ def message_senddm_v1(token, dm_id, message):
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
+
+	# Update statistics
+	stat_update(u_id, 'messages_sent', 1)
+
 	# Get the channel to send the messgae to
 	store = data_store.get()
 	dm = store['dms'][dm_id]

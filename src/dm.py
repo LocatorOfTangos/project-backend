@@ -1,6 +1,7 @@
 from src.error import InputError, AccessError
 from src.validation import valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
 from src.data_store import data_store
+from src.user import stat_update
 
 def dm_create_v1(token, u_ids):
 	'''
@@ -30,6 +31,10 @@ def dm_create_v1(token, u_ids):
 	u_id = token_user(token)
 	members = [u_id] + u_ids
 
+	# Update statistics
+	for individual in members:
+		stat_update(individual, 'dms_joined', 1)
+
 	store = data_store.get()
 
 	# Create dm_id
@@ -40,20 +45,20 @@ def dm_create_v1(token, u_ids):
 	name = ', '.join(handles)
 
 	dm_details = {
-        'dm_id': dm_id,
-        'name': name,
-        'owner_members': [u_id],
+		'dm_id': dm_id,
+		'name': name,
+		'owner_members': [u_id],
 		'all_members': members,
-        'messages': []
-    }
-    
+		'messages': []
+	}
+	
 	store['dms'].append(dm_details)
-    
-    # Apply changes
+	
+	# Apply changes
 	data_store.set(store)
 
 	return {
-	    'dm_id': dm_id,
+		'dm_id': dm_id,
 	}
 
 
@@ -118,6 +123,9 @@ def dm_leave_v1(token, dm_id):
 	if u_id not in dm['all_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not a member of the DM.')
 
+	# Update statistics
+	stat_update(u_id, 'dms_joined', -1)
+
 	if u_id in dm['owner_members']:
 		dm['owner_members'].remove(u_id)
 	dm['all_members'].remove(u_id)
@@ -153,6 +161,10 @@ def dm_remove_v1(token, dm_id):
 
 	if u_id not in store['dms'][dm_id]['owner_members']:
 		raise AccessError('dm_id is valid, but the authorised user is not an owner of the DM.')
+
+	# Update statistics
+	for individual in store['dms'][dm_id]['all_members']:
+		stat_update(individual, 'dms_joined', -1)
 
 	# Set to an empty channel
 	store['dms'][dm_id] = {

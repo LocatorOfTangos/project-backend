@@ -1,6 +1,7 @@
 from src.error import AccessError, InputError
 from src.validation import email_is_valid, valid_token, token_user, valid_user_id, get_user_details
 from src.data_store import data_store
+from datetime import datetime, timezone
 
 def user_profile_v1(token, u_id):
     '''
@@ -169,3 +170,20 @@ def user_stats_v1(token):
     raise InputError(description="token refers to invalid user?")
 
     return {}
+
+def stat_update(u_id, statistic, diff):
+    '''
+    Helper function that updates a user's statistics
+    '''
+
+    store = data_store.get()
+    users = store['users']
+
+    for user in users:
+        if user['u_id'] == u_id:
+            user['stats'][statistic].append({
+                                            'num_' + statistic: user['stats'][statistic][-1]['num_' + statistic]+diff,
+                                            'time_stamp': int(datetime.now(timezone.utc).timestamp())
+            })
+            return True
+    return False      
