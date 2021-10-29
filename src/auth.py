@@ -6,6 +6,7 @@ import src
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import valid_token, email_is_valid
+from datetime import datetime, timezone
 
 SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 
@@ -170,6 +171,14 @@ def auth_register_v1(email, password, name_first, name_last):
 
 	token = create_token(u_id)
 
+	time = int(datetime.now(timezone.utc).timestamp())
+	stats = {
+		'channels_joined': [{'num_channels_joined': 0, 'time_stamp': time}],
+		'dms_joined': [{'num_dms_joined': 0, 'time_stamp': time}],
+		'messages_sent': [{'num_messages_sent': 0, 'time_stamp': time}],
+		'involvement_rate': 0
+	}
+
 	users.append({
 		'u_id': u_id,
 		'email': email,
@@ -177,6 +186,7 @@ def auth_register_v1(email, password, name_first, name_last):
 		'name_last': name_last,
 		'handle_str': handle,
 		'global_permissions': perm_id,
+		'stats': stats
 	})
 
 	# Add password to data store
