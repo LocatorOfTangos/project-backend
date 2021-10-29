@@ -118,7 +118,7 @@ def user_profile_setname_v1(token, name_first, name_last):
 		InputError - Occurs when:
 			> either name is not 1..50 characters
 		
-		AccessError - Occers when:
+		AccessError - Occurs when:
 			> token is invalid
 
 	Return Value:
@@ -140,6 +140,19 @@ def user_profile_setname_v1(token, name_first, name_last):
 	return {}
 
 def user_stats_v1(token):
+	'''
+	Returns analytics about a given user's involvement with UNSW streams
+
+	Arguments: 
+		token (string)	- authorisation token of the user requesting the analytics
+
+	Exceptions:
+		AccessError - Occurs when:
+			> token is invalid
+
+	Return Value:
+		Returns a user_stats dictionary containing 'channels_joined', 'dms_joined', 'messages_sent', 'involvement_rate'
+	'''
 	return {
 		'channels_joined': [],
     	'dms_joined': [], 
