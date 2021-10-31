@@ -7,31 +7,17 @@ import re
 # Returns true if channel_id refers to a valid channel, else false
 def valid_channel_id(channel_id):
     store = data_store.get()
-    channels = store['channels']
-    for channel in channels:
-        if channel['channel_id'] == channel_id:
-            return True
-    return False
+    return any(ch['channel_id'] == channel_id for ch in store['channels'])
 
 def valid_dm_id(dm_id):
     store = data_store.get()
-    dms = store['dms']
-    for dm in dms:
-        if dm['dm_id'] == dm_id:
-            return True
-    return False
+    return any(dm['dm_id'] == dm_id for dm in store['dms'])
 
 # Returns true if u_id refers to a valid user, else false
 def valid_user_id(u_id, include_removed=False):
     store = data_store.get()
-    users = store['users']
+    return any(u['u_id'] == u_id for u in store['users'] if u['global_permissions'] != 3 or include_removed)
 
-    for user in users:
-        if user['u_id'] == u_id:
-            if user['global_permissions'] == 3 and not include_removed:
-                return False
-            return True
-    return False
 
 # Returns the user id of the user associated with the token
 # Assumes the token is valid
@@ -55,18 +41,12 @@ def valid_token(token):
     print (users[u_id])
 
     # Is the user valid?
-    if not any(u['u_id'] == u_id for u in users):
-        return False
-
-    # Has the user been removed?
-    if users[u_id]['global_permissions'] == 3:
+    if not valid_user_id(u_id):
         return False
     
     # Is the session valid?
-    if not any(s == s_id for s in sessions):
-        return False
-    
-    return True
+    return any(s == s_id for s in sessions)
+  
 
 
 # Returns true if user u_id is a member of channel c_id, else false
@@ -111,3 +91,9 @@ def get_user_details(u_id):
 def email_is_valid(email):
 	pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 	return True if re.fullmatch(pattern, email) else False
+
+def message_with_user_react(message, u_id):
+    for i, react in enumerate(message['reacts']):
+        message['reacts'][i]['is_this_user_reacted'] = u_id in react['u_ids']
+    return message
+        
