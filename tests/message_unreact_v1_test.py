@@ -18,14 +18,9 @@ def channel(user):
 	return channels_create_v2_request(user, "channel", True).json()['channel_id']
 
 @pytest.fixture
-def message_reacted(user, channel):
+def message(user, channel):
 	message = message_send_v1_request(user, channel, "Hello world").json()['message_id']
 	assert message_react_v1_request(user, message, 1).status_code == 200
-	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
-		'react_id': 1,
-		'u_ids': [user],
-		'is_this_user_reacted': True
-	}]
 	return message
 
 #=== Tests ===
@@ -58,8 +53,8 @@ def test_invalid_token(user, message):
 	auth_logout_v1_request(user)
 	assert message_unreact_v1_request(user, message, 1).status_code == 403
 
-def test_react_gone(user, message):
-	message_unreact_v1_request(user, message)
+def test_react_gone(user, message, channel):
+	message_unreact_v1_request(user, message, 1)
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
 		'u_ids': [],
@@ -69,7 +64,7 @@ def test_react_gone(user, message):
 def test_react_gone_multiple_users(user, message, user2, channel):
 	channel_join_v2_request(user2, channel)
 	message_react_v1_request(user2, message, 1)
-	message_unreact_v1_request(user, message)
+	message_unreact_v1_request(user, message, 1)
 	u2_id = auth_login_v2_request('u2@mail.com', "psword").json()['auth_user_id']
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['reacts'] == [{
 		'react_id': 1,
