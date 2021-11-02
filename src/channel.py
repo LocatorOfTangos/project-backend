@@ -1,7 +1,7 @@
 from src.error import AccessError, InputError
 from src.data_store import data_store
-from src.validation import user_is_member, valid_user_id, valid_channel_id, get_user_details, valid_token, token_user, user_has_owner_perms
-from src.user import stat_update
+from src.validation import *
+from src.user import stat_update, global_stat_update
 
 def channel_invite_v1(token, channel_id, u_id):
     '''
@@ -140,62 +140,68 @@ def channel_details_v1(token, channel_id):
 
 
 def channel_messages_v1(token, channel_id, start):
-    '''
-    Returns a page of messages from the channel matching channel_id.
-    Returns up to 50 messages, starting from index 'start' (where 0
-    is the most recent message sent to the channel).
+	'''
+	Returns a page of messages from the channel matching channel_id.
+	Returns up to 50 messages, starting from index 'start' (where 0
+	is the most recent message sent to the channel).
 
-    Arguments:
-        auth_user_id (integer)	- id of the user making the request
-        channel_id (integer)	- id of the channel to retrieve messages from
-        start (integer)			- index of the first message to retrieve
+	Arguments:
+		auth_user_id (integer)	- id of the user making the request
+		channel_id (integer)	- id of the channel to retrieve messages from
+		start (integer)			- index of the first message to retrieve
 
-    Exceptions:
-        InputError  - Occurs when:
-            > The channel does not exist
-            > Start is greater than the number of messages in the channel
-        AcessError	- Occurs when:
-            > auth_user_id does not belong to a user
-            > User is not a member of the channel
+	Exceptions:
+		InputError  - Occurs when:
+			> The channel does not exist
+			> Start is greater than the number of messages in the channel
+		AcessError	- Occurs when:
+			> auth_user_id does not belong to a user
+			> User is not a member of the channel
 
-    Return Value:
-        Returns a dictionary containing 'messages' (a list of the up to 50 messages),
-        'start', and 'end' (start + 50, or -1 if the last message of the channel has been
-        retrieved)
-    '''
+	Return Value:
+		Returns a dictionary containing 'messages' (a list of the up to 50 messages),
+		'start', and 'end' (start + 50, or -1 if the last message of the channel has been
+		retrieved)
+	'''
 
-    # Error cases
-    if not valid_token(token):
-        raise AccessError(description="User ID does not belong to a user")
+	# Error cases
+	if not valid_token(token):
+		raise AccessError(description="User ID does not belong to a user")
 
-    auth_user_id = token_user(token)
+	auth_user_id = token_user(token)
 
-    if not valid_channel_id(channel_id):
-        raise InputError(description="Channel does not exist")
+	if not valid_channel_id(channel_id):
+		raise InputError(description="Channel does not exist")
 
-    if not user_is_member(auth_user_id, channel_id):
-        raise AccessError(description="User is not a member of the channel")
-    
-    store = data_store.get()
-    messages = store['channels'][channel_id]['messages']
+	if not user_is_member(auth_user_id, channel_id):
+		raise AccessError(description="User is not a member of the channel")
+	
+	store = data_store.get()
 
-    if start > len(messages):
-        raise InputError(description="Start must not be greater than the number of messages in the channel")
+	# Get the list of messages, and for each add the user's react information
+	messages = store['channels'][channel_id]['messages']
+	messages = list(map(lambda m: message_with_user_react(m, auth_user_id), messages))
 
-    if start < 0:
-        raise InputError(description="Start must not be negative")
-    
-    # Get the up to 50 most recent messages from start
-    page = messages[start : start + 50]
+	print("Messages:")
+	print(messages)
 
-    # Get the index of the end of the page, or -1 if there are no messages after the page
-    end = (start + 50) if (start + 50) < len(messages) else -1
+	if start > len(messages):
+		raise InputError(description="Start must not be greater than the number of messages in the channel")
 
-    return {
-        'messages': page,
-        'start': start,
-        'end': end,
-    }
+	if start < 0:
+		raise InputError(description="Start must not be negative")
+	
+	# Get the up to 50 most recent messages from start
+	page = messages[start : start + 50]
+
+	# Get the index of the end of the page, or -1 if there are no messages after the page
+	end = (start + 50) if (start + 50) < len(messages) else -1
+
+	return {
+		'messages': page,
+		'start': start,
+		'end': end,
+	}
 
 def channel_join_v1(token, channel_id):
     '''

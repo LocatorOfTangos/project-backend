@@ -1,5 +1,5 @@
 from src.error import InputError, AccessError
-from src.validation import valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
+from src.validation import message_with_user_react, valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
 from src.data_store import data_store
 from src.user import stat_update, global_stat_update
 
@@ -102,9 +102,11 @@ def dm_messages_v1(token, dm_id, start):
 	if start > len(dm['messages']) or start < 0:
 		raise InputError('start is greater than the total number of messages in the channel.')
 
+	messages = store['dms'][dm_id]['messages']
+	messages = list(map(lambda m: message_with_user_react(m, u_id), messages))
 
 	return {
-		'messages': dm['messages'][start: start +  50],
+		'messages': messages[start: start +  50],
 		'start': start,
 		'end': -1 if start + 50 >= len(dm['messages']) else start + 50
 	}

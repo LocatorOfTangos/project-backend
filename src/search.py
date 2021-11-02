@@ -1,6 +1,6 @@
 from werkzeug.exceptions import default_exceptions
 from src.error import AccessError, InputError
-from src.validation import token_user, valid_token, user_is_member
+from src.validation import message_with_user_react, token_user, valid_token, user_is_member
 from src.data_store import data_store
 
 def search_v1(token, query_str):
@@ -32,22 +32,14 @@ def search_v1(token, query_str):
 
 	results = []
 
-	print("Store:")
-	print(store)
+	# Populate results with messages matching the query from channels the user is in
+	for ch in filter(lambda ch: user_is_member(u_id, ch['channel_id']), store['channels']):
+		results += filter(lambda m: query_str in m['message'], ch['messages'])
 
-	for ch in store['channels']:
-		if user_is_member(u_id, ch['channel_id']):
-			for msg in ch['messages']:
-				if query_str in msg['message']:
-					results.append(msg)
-
-	for dm in store['dms']:
-		if user_is_member(u_id, dm['dm_id'], chat_type="dms"):
-			for msg in dm['messages']:
-				if query_str in msg['message']:
-					results.append(msg)
+	for dm in filter(lambda dm: user_is_member(u_id, dm['dm_id'], chat_type='dms'), store['dms']):
+		results += filter(lambda m: query_str in m['message'], dm['messages'])
 	
-	print("Search results:")
-	print(results)
+	# Update results to include user's react information
+	results = list(map(lambda m: message_with_user_react(m, u_id), results))
 
 	return {'messages': results}
