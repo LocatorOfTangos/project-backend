@@ -1,22 +1,23 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.validation import valid_user_id, valid_token, token_user
+from src.user import stat_update, global_stat_update
 
 def channels_list_v1(token):
     '''
-	Provides the list of channels with associated details that an authorised user is part of.
+    Provides the list of channels with associated details that an authorised user is part of.
 
-	Arguments:
-		auth_user_id (integer)  - id of a registered user
+    Arguments:
+        auth_user_id (integer)  - id of a registered user
 
-	Exceptions:
-		AccessError  - Occurs when:
-			> A user has not been registered and thus does not have a valid ID.
+    Exceptions:
+        AccessError  - Occurs when:
+            > A user has not been registered and thus does not have a valid ID.
 
-	Return Value:
-		Returns a dictionary of a list of dictionaries containing 'channel_id'
+    Return Value:
+        Returns a dictionary of a list of dictionaries containing 'channel_id'
         and channel 'name'.
-	'''
+    '''
 
     #check for valid user_id
     if not valid_token(token):
@@ -44,18 +45,18 @@ def channels_list_v1(token):
 
 def channels_listall_v1(token):
     '''
-	Provides a list of all existing channels
+    Provides a list of all existing channels
 
-	Arguments:
-		auth_user_id (integer)  - id of a registered user
+    Arguments:
+        auth_user_id (integer)  - id of a registered user
 
-	Exceptions:
-		None
+    Exceptions:
+        None
 
-	Return Value:
-		Returns a dictionary containing 'channels', with a list of channels
+    Return Value:
+        Returns a dictionary containing 'channels', with a list of channels
         Each channel in the list is a dictionary with keys 'channel_id' and 'name'
-	'''
+    '''
 
     if not valid_token(token):
         raise AccessError(description="Invalid user token")
@@ -74,24 +75,24 @@ def channels_listall_v1(token):
 
 def channels_create_v1(token, name, is_public):
     '''
-	Creates and names a new channel that will be either public or private, automatically
+    Creates and names a new channel that will be either public or private, automatically
     adding the user who created it as the owner.
 
-	Arguments:
-		token (string)          - token of a registered user
-		name (string)           - name of the channel
-		is_public (boolean)     - indicates if channel is public (True) or private (False)
+    Arguments:
+        token (string)          - token of a registered user
+        name (string)           - name of the channel
+        is_public (boolean)     - indicates if channel is public (True) or private (False)
 
-	Exceptions:
-		InputError  - Occurs when:
-			> Channel name is not between 1 to 20 characters
+    Exceptions:
+        InputError  - Occurs when:
+            > Channel name is not between 1 to 20 characters
 
         AccessError - Occurs when:
             > A user has not been registered and thus does not have a valid ID.
 
-	Return Value:
-		Returns a dictionary containing 'channel_id'
-	'''
+    Return Value:
+        Returns a dictionary containing 'channel_id'
+    '''
 
     store = data_store.get()
     channels = store['channels']
@@ -105,6 +106,10 @@ def channels_create_v1(token, name, is_public):
     #Check for valid channel name
     if not 1 <= len(name) <= 20:
         raise InputError(description='Invalid Channel Name. Name must be between 1 to 20 characters')
+
+    # Update statistics
+    stat_update(u_id, 'channels_joined', 1)
+    global_stat_update('channels_exist', 1)
     
     # Create channel_id
     channel_id = len(channels)
