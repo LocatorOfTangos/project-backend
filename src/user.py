@@ -198,7 +198,6 @@ def stat_update(u_id, statistic, diff):
                 'time_stamp': int(datetime.now(timezone.utc).timestamp())
             })
             return
-    return      
 
 def global_stat_update(statistic, diff):
     '''
