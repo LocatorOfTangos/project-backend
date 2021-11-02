@@ -46,7 +46,7 @@ def channel_invite_v1(token, channel_id, u_id):
         raise InputError(description='This user has already been added to the channel')
 
     # Update statistics
-    stat_update(auth_user_id, 'channels_joined', 1)
+    stat_update(u_id, 'channels_joined', 1)
 
     for channel in data['channels']:
         if channel['channel_id'] == channel_id:

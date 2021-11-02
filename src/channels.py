@@ -1,7 +1,7 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.validation import valid_user_id, valid_token, token_user
-from src.user import stat_update
+from src.user import stat_update, global_stat_update
 
 def channels_list_v1(token):
     '''
@@ -109,6 +109,7 @@ def channels_create_v1(token, name, is_public):
 
     # Update statistics
     stat_update(u_id, 'channels_joined', 1)
+    global_stat_update('channels_exist', 1)
     
     # Create channel_id
     channel_id = len(channels)

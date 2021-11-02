@@ -160,16 +160,28 @@ def user_stats_v1(token):
 
     store = data_store.get()
     users = store['users']
-
     u_id = token_user(token)
 
     for user in users:
         if user['u_id'] == u_id:
-            return user['stats']
+            stat_block = dict(user['stats'])
+            
+    numerator = 0
+    for key, value in stat_block.items():
+        numerator += value[-1]['num_' + key]
 
-    raise InputError(description="token refers to invalid user?")
+    denominator = 0
+    for key, value in store['workplace_stats'].items():
+        denominator += value[-1]['num_' + key]
+    if denominator == 0:
+        involvement_rate = 0
+    else:
+        involvement_rate = numerator/denominator
 
-    return {}
+    stat_block['involvement_rate'] = involvement_rate
+    return {
+        'user_stats': stat_block
+    }
 
 def stat_update(u_id, statistic, diff):
     '''
@@ -182,8 +194,20 @@ def stat_update(u_id, statistic, diff):
     for user in users:
         if user['u_id'] == u_id:
             user['stats'][statistic].append({
-                                            'num_' + statistic: user['stats'][statistic][-1]['num_' + statistic]+diff,
-                                            'time_stamp': int(datetime.now(timezone.utc).timestamp())
+                'num_' + statistic: user['stats'][statistic][-1]['num_' + statistic]+diff,
+                'time_stamp': int(datetime.now(timezone.utc).timestamp())
             })
-            return True
-    return False      
+            return
+    return      
+
+def global_stat_update(statistic, diff):
+    '''
+    Helper function that updates global statistics
+    '''
+
+    store = data_store.get()
+    store['workplace_stats'][statistic].append({
+        'num_' + statistic: store['workplace_stats'][statistic][-1]['num_' + statistic]+diff,
+        'time_stamp': int(datetime.now(timezone.utc).timestamp())
+    })
+    return

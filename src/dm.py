@@ -1,7 +1,7 @@
 from src.error import InputError, AccessError
 from src.validation import valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
 from src.data_store import data_store
-from src.user import stat_update
+from src.user import stat_update, global_stat_update
 
 def dm_create_v1(token, u_ids):
 	'''
@@ -34,6 +34,7 @@ def dm_create_v1(token, u_ids):
 	# Update statistics
 	for individual in members:
 		stat_update(individual, 'dms_joined', 1)
+	global_stat_update('dms_exist', 1)
 
 	store = data_store.get()
 
@@ -165,6 +166,7 @@ def dm_remove_v1(token, dm_id):
 	# Update statistics
 	for individual in store['dms'][dm_id]['all_members']:
 		stat_update(individual, 'dms_joined', -1)
+	global_stat_update('dms_exist', -1)
 
 	# Set to an empty channel
 	store['dms'][dm_id] = {

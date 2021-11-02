@@ -171,13 +171,22 @@ def auth_register_v1(email, password, name_first, name_last):
 
 	token = create_token(u_id)
 
+	# Add new user statistics block
 	time = int(datetime.now(timezone.utc).timestamp())
 	stats = {
 		'channels_joined': [{'num_channels_joined': 0, 'time_stamp': time}],
 		'dms_joined': [{'num_dms_joined': 0, 'time_stamp': time}],
-		'messages_sent': [{'num_messages_sent': 0, 'time_stamp': time}],
-		'involvement_rate': 0
+		'messages_sent': [{'num_messages_sent': 0, 'time_stamp': time}]
 	}
+
+	# Start statistics recording for the whole server when the first user joins
+	if u_id == 0:
+		time = int(datetime.now(timezone.utc).timestamp())
+		store['workplace_stats'] = {
+			'channels_exist': [{'num_channels_exist': 0, 'time_stamp': time}], 
+			'dms_exist': [{'num_dms_exist': 0, 'time_stamp': time}], 
+			'messages_exist': [{'num_messages_exist': 0, 'time_stamp': time}]
+		}
 
 	users.append({
 		'u_id': u_id,

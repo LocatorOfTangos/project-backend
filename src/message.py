@@ -2,7 +2,7 @@ from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import *
 from datetime import datetime, timezone
-from src.user import stat_update
+from src.user import stat_update, global_stat_update
 
 def message_send_v1(token, channel_id, message):
 	'''
@@ -46,6 +46,7 @@ def message_send_v1(token, channel_id, message):
 
 	# Update statistics
 	stat_update(u_id, 'messages_sent', 1)
+	global_stat_update('messages_exist', 1)
 
 	# Get the channel to send the message to
 	store = data_store.get()
@@ -119,6 +120,7 @@ def message_senddm_v1(token, dm_id, message):
 
 	# Update statistics
 	stat_update(u_id, 'messages_sent', 1)
+	global_stat_update('messages_exist', 1)
 
 	# Get the channel to send the messgae to
 	store = data_store.get()
@@ -157,6 +159,9 @@ def set_message_contents(message_id, to, chat_type, contents):
 	data_store.set(store)
 
 def remove_message(message_id, to, chat_type):
+	# Update statistics
+	global_stat_update('messages_exist', -1)
+
 	store = data_store.get()
 	for i, msg in enumerate(store[chat_type][to]['messages']):
 		if msg['message_id'] == message_id:

@@ -58,7 +58,10 @@ initial_object = {
 
     # ID to give to the next message (so that IDs aren't reused)
     # Increment after use
-    'curr_message_id': 0
+    'curr_message_id': 0,
+
+    # Global streams statistics
+    'workplace_stats': {}
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
