@@ -205,10 +205,9 @@ def users_all_v1_request(token):
     })
 
 def users_stats_v1_request(token):
-	return requests.get(config.url + 'users/stats/v1', json={
+	return requests.get(config.url + 'users/stats/v1', params={
 		'token': token
 	})
-
 
 def dm_messages_v1_request(token, dm_id, start):
     return requests.get(config.url + 'dm/messages/v1', params={
