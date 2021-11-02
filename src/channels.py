@@ -115,7 +115,8 @@ def channels_create_v1(token, name, is_public):
         'is_public': is_public,
         'owner_members': [u_id],
         'all_members': [u_id],
-        'messages': []
+        'messages': [],
+        'standup': {'is_active': False, 'time_finish': None, 'msg_queue': []}
     }
     
     store['channels'].append(channels_details)

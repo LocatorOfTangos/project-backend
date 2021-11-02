@@ -31,11 +31,11 @@ def channel(user):
 def test_return_status(user, channel):
     assert standup_start_v1_request(user, channel, 60).status_code == 200
 
-def test_time_finish(user, channel):
-    assert time_eq(standup_start_v1_request(user, channel, 10).json()['finish_time'], now() + 10)
-    assert time_eq(standup_start_v1_request(user, channel, 20).json()['finish_time'], now() + 20)
-    assert time_eq(standup_start_v1_request(user, channel, 60).json()['finish_time'], now() + 60)
-    assert time_eq(standup_start_v1_request(user, channel, 99999).json()['finish_time'], now() + 99999)
+def test_time_finish_short(user, channel):
+    assert time_eq(standup_start_v1_request(user, channel, 10).json()['time_finish'], now() + 10)
+
+def test_time_finish_long(user, channel):
+    assert time_eq(standup_start_v1_request(user, channel, 99999).json()['time_finish'], now() + 99999)
 
 def test_not_member(channel, user2):
     assert standup_start_v1_request(user2, channel, 60).status_code == 403
@@ -67,3 +67,18 @@ def test_invalid_token(user, channel):
     auth_logout_v1_request(user)
     assert standup_start_v1_request(user, channel, 60).status_code == 403
 
+def test_concurrent(user, channel):
+    channel2 = channels_create_v2_request(user, "channel2", True).json()['channel_id']
+
+    assert standup_start_v1_request(user, channel, 1).status_code == 200
+    assert standup_start_v1_request(user, channel2, 1).status_code == 200
+
+    time.sleep(0.5)
+
+    assert standup_start_v1_request(user, channel, 1).status_code == 400
+    assert standup_start_v1_request(user, channel2, 1).status_code == 400
+    
+    time.sleep(1)
+
+    assert standup_start_v1_request(user, channel, 1).status_code == 200
+    assert standup_start_v1_request(user, channel2, 1).status_code == 200
