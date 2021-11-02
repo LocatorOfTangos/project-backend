@@ -42,7 +42,8 @@ initial_object = {
     'passwords': [],
 
     # List of channel dictionaries, indexed by ID
-    # Channel contains: channel_id, name, is_public, owner_members[], all_members[], messages[]
+    # Channel contains: channel_id, name, is_public, owner_members[], all_members[], messages[], standup{}
+    # Standup contains: is_active, time_finish, msg_queue[]
     # Owner_members and all_members are lists of u_id's
     # Messages is a list of message dictionaries
     #   Add messages to front of list - most recent message should be at index 0
