@@ -363,3 +363,65 @@ def message_react_v1(token, message_id, react_id):
 	data_store.set(store)
 
 	return {}
+
+def message_unreact_v1(token, message_id, react_id):
+	'''
+	Removes a reaction 'react_id' from the message 'message_id' from the authorised user.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) unreacting to the message
+		message_id (int)	- id of the message to remove react from
+		react_id (int)		- id of the reaction type to remove
+
+	Exceptions:
+		InputError - Occurs when:
+			> message_id does not refer to a valid message within a channel/dm that the user
+			  has joined
+			> react_id does not refer to a valid react type - see the list 'valid_reacts' below
+			> The user has not reacted to this message with this react_id
+		
+		AccessError - Occers when:
+			> token is invalid
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+	valid_reacts = [1]
+
+	# Error handling
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	if react_id not in valid_reacts:
+		raise InputError(description="Invalid react ID")
+
+	u_id = token_user(token)
+
+
+	# Get the message_id -> details mapping
+	store = data_store.get()
+	msgs = store['message_info']
+
+	if message_id not in msgs.keys():
+		raise InputError(description="Message does not exist")
+
+	# Determine whether the message is in a channel or a dm
+	chat_type = msgs[message_id]['type']
+	
+	# Determine the specific channel or dm the message is in
+	to = msgs[message_id]['to']
+
+	if not user_is_member(u_id, to, chat_type):
+		raise InputError(description="Message does not exist")
+
+	if not user_has_reacted(u_id, message_id, react_id):
+		raise InputError(description="User has not reacted to this message with this react")
+
+	# Implementation
+	# Remove the react from the message
+	for i, msg in enumerate(store[chat_type][to]['messages']):
+		if msg['message_id'] == message_id:
+			store[chat_type][to]['messages'][i]['reacts'][i - 1]['u_ids'].remove(u_id)
+	data_store.set(store)
+
+	return {}
