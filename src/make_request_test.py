@@ -260,3 +260,9 @@ def standup_start_v1_request(token, channel_id, length):
         'channel_id': channel_id,
         'length': length
     })
+
+def standup_active_v1_request(token, channel_id):
+    return requests.get(config.url + 'standup/active/v1', params={
+        'token': token,
+        'channel_id': channel_id
+    })

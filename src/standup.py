@@ -75,3 +75,43 @@ def standup_start_v1(token, channel_id, length):
     threading.Thread(target=standup_timer, args=[channel_id, length]).start()
 
     return {'time_finish': int(time.time()) + length}
+
+
+def standup_active_v1(token, channel_id):
+    '''
+    Returns whether the channel has an active standup, and if so, when it will end.
+
+    Arguments:
+            token (string)		- authorisation token of the user (session) requesting information
+            channel_id (int)	- id of the channel in which the standup is ocurring
+
+    Exceptions:
+            InputError - Occurs when:
+                    > channel_id does not refer to a channel
+
+            AccessError - Occers when:
+                    > token is invalid
+                    > user is not a member of the (valid) channel
+
+    Return Value:
+            Returns a dictionary containing whether there is a sstandup, and if so,
+            the time at which the standup will end
+    '''
+
+    if not valid_token(token):
+        raise AccessError(description="Token is invalid")
+
+    if not valid_channel_id(channel_id):
+        raise InputError(description="Invalid channel ID")
+
+    u_id = token_user(token)
+
+    if not user_is_member(u_id, channel_id):
+        raise AccessError(description="User is not a member of this channel")
+
+    store = data_store.get()
+
+    return {
+        'is_active': store['channels'][channel_id]['standup']['is_active'],
+        'time_finish': store['channels'][channel_id]['standup']['time_finish']
+    }
