@@ -27,7 +27,7 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     # List of user dictionaries, indexed by ID
-    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions
+    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats
     'users': [],
 
     # List of session_id's (integers)
@@ -42,7 +42,8 @@ initial_object = {
     'passwords': [],
 
     # List of channel dictionaries, indexed by ID
-    # Channel contains: channel_id, name, is_public, owner_members[], all_members[], messages[]
+    # Channel contains: channel_id, name, is_public, owner_members[], all_members[], messages[], standup{}
+    # Standup contains: is_active, time_finish, msg_queue[]
     # Owner_members and all_members are lists of u_id's
     # Messages is a list of message dictionaries
     #   Add messages to front of list - most recent message should be at index 0
@@ -60,7 +61,10 @@ initial_object = {
 
     # ID to give to the next message (so that IDs aren't reused)
     # Increment after use
-    'curr_message_id': 0
+    'curr_message_id': 0,
+
+    # Global streams statistics
+    'workplace_stats': {}
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
