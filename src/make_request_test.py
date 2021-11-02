@@ -187,6 +187,11 @@ def user_profile_setname_v1_request(token, name_first, name_last):
     })
 
 
+def user_stats_v1_request(token):
+	return requests.get(config.url + 'user/stats/v1', json={
+		'token': token
+	})
+
 def message_remove_v1_request(token, message_id):
     return requests.delete(config.url + 'message/remove/v1', json={
         'token': token,

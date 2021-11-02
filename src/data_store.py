@@ -27,7 +27,7 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     # List of user dictionaries, indexed by ID
-    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions
+    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats
     'users': [],
 
     # List of session_id's (integers)
@@ -61,7 +61,10 @@ initial_object = {
 
     # ID to give to the next message (so that IDs aren't reused)
     # Increment after use
-    'curr_message_id': 0
+    'curr_message_id': 0,
+
+    # Global streams statistics
+    'workplace_stats': {}
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

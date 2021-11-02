@@ -6,6 +6,7 @@ import src
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import valid_token, email_is_valid
+from datetime import datetime, timezone
 
 SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 
@@ -170,6 +171,23 @@ def auth_register_v1(email, password, name_first, name_last):
 
 	token = create_token(u_id)
 
+	# Add new user statistics block
+	time = int(datetime.now(timezone.utc).timestamp())
+	stats = {
+		'channels_joined': [{'num_channels_joined': 0, 'time_stamp': time}],
+		'dms_joined': [{'num_dms_joined': 0, 'time_stamp': time}],
+		'messages_sent': [{'num_messages_sent': 0, 'time_stamp': time}]
+	}
+
+	# Start statistics recording for the whole server when the first user joins
+	if u_id == 0:
+		time = int(datetime.now(timezone.utc).timestamp())
+		store['workplace_stats'] = {
+			'channels_exist': [{'num_channels_exist': 0, 'time_stamp': time}], 
+			'dms_exist': [{'num_dms_exist': 0, 'time_stamp': time}], 
+			'messages_exist': [{'num_messages_exist': 0, 'time_stamp': time}]
+		}
+
 	users.append({
 		'u_id': u_id,
 		'email': email,
@@ -177,6 +195,7 @@ def auth_register_v1(email, password, name_first, name_last):
 		'name_last': name_last,
 		'handle_str': handle,
 		'global_permissions': perm_id,
+		'stats': stats
 	})
 
 	# Add password to data store
