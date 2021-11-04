@@ -116,3 +116,17 @@ def test_concurrent(user, user2, channel):
 
 	assert channel_messages_v2_request(user, channel2, 0).json()['messages'][0]['message'] \
 		== "blakemorris: aaa\nhaydensmith: bbb\nblakemorris: ccc"
+
+def test_long(user, channel):
+	# Check that a standup where the compiled length exceeds the usual message length limit
+	# is sent correctly
+
+	standup_start_v1_request(user, channel, 1)
+
+	standup_send_v1_request(user, channel, "a" * 1000)
+	standup_send_v1_request(user, channel, "b" * 1000)
+
+	time.sleep(1.1)
+	
+	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
+		== f"blakemorris: {'a' * 1000}\nblakemorris: {'b' * 1000}"

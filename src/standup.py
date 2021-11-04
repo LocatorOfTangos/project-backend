@@ -3,9 +3,10 @@ from src.data_store import data_store
 from src.validation import token_user, valid_channel_id, valid_token, user_is_member
 import threading
 import time
+from src.message import message_send_v1
 
 
-def standup_timer(ch, length):
+def standup_timer(token, ch, length):
     store = data_store.get()
 
     # Initialise to an empty standup
@@ -19,6 +20,10 @@ def standup_timer(ch, length):
 
     # Wait for the standup to end
     time.sleep(length)
+
+    # Compile and send the standup message
+    message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
+    message_send_v1(token, ch, message, standup=True)
 
     # Reset state of standup dict
     store['channels'][ch]['standup'] = {
@@ -72,7 +77,7 @@ def standup_start_v1(token, channel_id, length):
             description="There is already an active standup in this channel")
 
     # Start the standup
-    threading.Thread(target=standup_timer, args=[channel_id, length]).start()
+    threading.Thread(target=standup_timer, args=[token, channel_id, length]).start()
 
     return {'time_finish': int(time.time()) + length}
 
@@ -115,3 +120,50 @@ def standup_active_v1(token, channel_id):
         'is_active': store['channels'][channel_id]['standup']['is_active'],
         'time_finish': store['channels'][channel_id]['standup']['time_finish']
     }
+
+def standup_send_v1(token, channel_id, message):
+    '''
+    Sends a message to a standup.
+
+    Arguments:
+            token (string)      - authorisation token of the user sending a standup message
+            channel_id (int)    - id of the channel to send the standup message to
+            message (string)    - text to send as a standup message
+
+    Exceptions:
+            InputError - Occurs when:
+                    > channel_id does not refer to a channel
+                    > message is not in 1..1000 characters
+                    > there is no active standup in the channel
+
+            AccessError - Occurs when:
+                    > token is invalid
+                    > user is not a member of the (valid) channel
+
+    Return Value:
+            A nothing dict
+    '''
+
+    if not valid_token(token):
+        raise AccessError(description="Token is invalid")
+
+    if not valid_channel_id(channel_id):
+        raise InputError(description="Invalid channel ID")
+
+    u_id = token_user(token)
+
+    if not user_is_member(u_id, channel_id):
+        raise AccessError(description="User is not a member of this channel")
+
+    if not 1 <= len(message) <= 1000:
+        raise InputError(description="Messages must be in 1..1000 characters")
+
+    if not standup_active_v1(token, channel_id)['is_active']:
+        raise InputError(description="This channel does not have an active standup")
+
+    store = data_store.get()
+    handle = store['users'][u_id]['handle_str']
+    store['channels'][channel_id]['standup']['msg_queue'].append(f"{handle}: {message}")
+    data_store.set(store)
+
+    return {}
