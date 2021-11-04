@@ -33,9 +33,16 @@ def d_msg(user, dm):
 	return message_senddm_v1_request(user, dm, "Hello DM! Pin this, please.").json()['message_id']
 
 # TESTS
+def test_invalid_token(c_msg):
+    assert message_pin_v1_request(None, c_msg).status_code == 403
+
 def test_msg_pin_status(user, d_msg, c_msg):
     assert message_pin_v1_request(user, c_msg).status_code == 200
     assert message_pin_v1_request(user, d_msg).status_code == 200
+
+def test_msg_pin_return(user, d_msg, c_msg):
+    assert message_pin_v1_request(user, c_msg).json() == {}
+    assert message_pin_v1_request(user, d_msg).json() == {}
 
 def test_not_valid_msg_id(user2, d_msg, c_msg):
     assert message_pin_v1_request(user2, c_msg).status_code == 400
