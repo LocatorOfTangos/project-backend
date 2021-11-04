@@ -62,17 +62,25 @@ def test_not_dm_owner(user, user2):
 
 def test_pin_channel_msg(user, channel, c_msg):
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['is_pinned'] == False
+
     message_pin_v1_request(user, c_msg)
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['is_pinned'] == True
+    assert message_pin_v1_request(user, c_msg).status_code == 400
+
     message_unpin_v1_request(user, c_msg)
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['is_pinned'] == False
+    assert message_unpin_v1_request(user, c_msg).status_code == 400
 
 def test_pin_dm_msg(user, dm, d_msg):
     assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['is_pinned'] == False
+
     message_pin_v1_request(user, d_msg)
     assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['is_pinned'] == True
+    assert message_pin_v1_request(user, d_msg).status_code == 400
+
     message_unpin_v1_request(user, d_msg)
     assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['is_pinned'] == False
+    assert message_unpin_v1_request(user, d_msg).status_code == 400
 
 def test_multiple_sent_messages(user, channel, c_msg):
     message_send_v1_request(user, channel, "Hello channel! Do not pin this, please.")
