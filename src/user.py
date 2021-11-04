@@ -197,8 +197,7 @@ def stat_update(u_id, statistic, diff):
                 'num_' + statistic: user['stats'][statistic][-1]['num_' + statistic]+diff,
                 'time_stamp': int(datetime.now(timezone.utc).timestamp())
             })
-            break
-    return
+            return
 
 def global_stat_update(statistic, diff):
     '''
