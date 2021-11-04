@@ -1,10 +1,11 @@
+import time
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import *
 from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
 
-def message_send_v1(token, channel_id, message, standup=False):
+def message_send_v1(token, channel_id, message, message_id=None, standup=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -53,8 +54,9 @@ def message_send_v1(token, channel_id, message, standup=False):
 	channel = store['channels'][channel_id]
 
 	# Assign a unique message_id
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	if message_id is None:
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
 	# Add the message to the channel
 	# Add to the front of the list due to channel/messages implementation
@@ -81,7 +83,7 @@ def message_send_v1(token, channel_id, message, standup=False):
 	return {'message_id': message_id}
 
 
-def message_senddm_v1(token, dm_id, message):
+def message_senddm_v1(token, dm_id, message, message_id=None):
 	'''
 	Sends a message to a dm (dm_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -130,8 +132,9 @@ def message_senddm_v1(token, dm_id, message):
 	dm = store['dms'][dm_id]
 
 	# Assign a unique message_id
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	if message_id is None:
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
 	# Add the message to the channel
 	# Add to the front of the list due to channel/messages implementation
@@ -443,3 +446,77 @@ def message_unpin_v1(token, message_id):
 	pin_message(u_id, message_id, pin_mode=False)
 
 	return {}
+
+def message_sendlater_v1(token, channel_id, message, time_sent):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not valid_channel_id(channel_id):
+		raise InputError(description="Invalid channel_id")
+
+	if len(message) > 1000:
+		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
+
+	if int(time_sent) > int(time.time()):
+		raise InputError(description='time_sent is a time in the past')
+
+	u_id = token_user(token)
+	if not user_is_member(u_id, channel_id):
+		raise AccessError(description="User is not a member of this channel")
+
+	message_id = store['curr_message_id']
+	store['curr_message_id'] += 1
+
+	msg_data = {
+		'token': token,
+		'channel_id': channel_id,
+		'type': 'channels',
+		'message_id': message_id,
+		'message': message,
+		'time_sent': int(time_sent)
+	}
+
+	store['msg_queue'].append(msg_data)
+	store['msg_queue'].sort(key=lambda x: x['time_sent'])
+	data_store.set(store)
+
+	return {'message_id': message_id}
+
+def message_sendlaterdm_v1(token, dm_id, message, time_sent):
+	store = data_store.get()
+
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not valid_dm_id(dm_id):
+		raise InputError(description="Invalid dm_id")
+
+	if len(message) > 1000:
+		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
+
+	if int(time_sent) > int(time.time()):
+		raise InputError(description='time_sent is a time in the past')
+
+	u_id = token_user(token)
+	if not user_is_member(u_id, dm_id):
+		raise AccessError(description="User is not a member of this dm")
+
+	message_id = store['curr_message_id']
+	store['curr_message_id'] += 1
+
+	msg_data = {
+		'token': token,
+		'dm_id': dm_id,
+		'type': 'dm',
+		'message_id': message_id,
+		'message': message,
+		'time_sent': int(time_sent)
+	}
+
+	store['msg_queue'].append(msg_data)
+	store['msg_queue'].sort(key=lambda x: x['time_sent'])
+	data_store.set(store)
+
+	return {'message_id': message_id}
