@@ -211,3 +211,30 @@ def global_stat_update(statistic, diff):
         'time_stamp': int(datetime.now(timezone.utc).timestamp())
     })
     return
+
+def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    '''
+    Downloads a JPG image from the internet via a given URL, and crops according to specifications.
+    The formatted image becomes the user's profile picture.
+    
+    Arguments: 
+        token (string)	- authorisation token of the user requesting the profile picture change
+        img_url (string)  - URL that the desired JPG resides at
+        x_start (int) - number of horizontal pixels (starting left) from which to begin image cropping
+        y_start (int) - number of vertical pixels (starting top) from which to begin image cropping
+        x_end (int) - number of horizontal pixels (starting left) at which to end image cropping
+        y_end (int) - number of vertical pixels (starting top) at which to end image cropping
+
+    Exceptions:
+        InputError  - Occurs when:
+            > img_url returns an HTTP status other than 200
+            > any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL
+            > x_end is less than x_start or y_end is less than y_start
+            > image uploaded is not a JPG
+        AccessError - Occurs when:
+            > token is invalid
+
+    Return Value:
+        Returns an empty dictionary'''
+
+    return {}
