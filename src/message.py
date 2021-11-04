@@ -425,3 +425,21 @@ def message_unreact_v1(token, message_id, react_id):
 	data_store.set(store)
 
 	return {}
+
+def message_pin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	pin_message(u_id, message_id)
+
+	return {}
+
+def message_unpin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	pin_message(u_id, message_id, pin_mode=False)
+
+	return {}

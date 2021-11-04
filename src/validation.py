@@ -1,7 +1,7 @@
 import jwt
 import src.auth
 from src.data_store import data_store
-from src.error import AccessError
+from src.error import AccessError, InputError
 import re
 
 # Returns true if channel_id refers to a valid channel, else false
@@ -108,3 +108,35 @@ def message_with_user_react(message, u_id):
         message['reacts'][i]['is_this_user_reacted'] = u_id in react['u_ids']
     return message
     
+def pin_message(u_id, m_id, pin_mode=True):
+    store = data_store.get()
+    try:
+        msg_info = store['message_info'][m_id]
+    except Exception as e:
+        raise InputError(description='Message ID does not exist.') from e
+
+    channel = None
+    if msg_info['type'] == 'channels':
+        c_id = msg_info['to']
+        channel = store['channels'][c_id]
+    else:
+        dm_id = msg_info['to']
+        channel = store['dms'][dm_id]
+
+    if u_id not in channel['all_members']:
+        raise InputError(description='message_id is not a valid message within a channel or DM that the authorised user has joined')
+    if u_id not in channel['owner_members']:
+        raise AccessError(description='message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM')
+
+    msg = list(filter(lambda m: m_id == m['message_id'], channel['messages']))[0]
+
+    if pin_mode:
+        if msg['is_pinned']:
+            raise InputError(description='Message is already pinned.')
+        msg['is_pinned'] = True
+    else:
+        if not msg['is_pinned']:
+            raise InputError(description='Message is already not pinned.')
+        msg['is_pinned'] = False
+
+    return msg['is_pinned']
