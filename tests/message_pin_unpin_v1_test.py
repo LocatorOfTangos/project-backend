@@ -26,7 +26,7 @@ def c_msg(user, channel):
 # DM
 @pytest.fixture
 def dm(user, user2):
-	return dm_create_v1_request(user, [])['dm_id']
+	return dm_create_v1_request(user, []).json()['dm_id']
 
 @pytest.fixture
 def d_msg(user, dm):
