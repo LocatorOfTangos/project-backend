@@ -21,7 +21,7 @@ from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, 
 from src.dm import dm_create_v1
 from src.standup import standup_start_v1, standup_active_v1
 from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_setemail_v1, user_profile_setname_v1, user_stats_v1
-from src.message import message_edit_v1, message_react_v1, message_send_v1, message_remove_v1, message_senddm_v1, message_unreact_v1
+from src.message import message_edit_v1, message_react_v1, message_send_v1, message_remove_v1, message_senddm_v1, message_unreact_v1, message_pin_v1, message_unpin_v1
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1, dm_remove_v1
 from src.users import users_all_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
@@ -188,6 +188,18 @@ def message_react():
 def message_unreact():
     data = request.get_json()
     resp = message_unreact_v1(data['token'], data['message_id'], data['react_id'])
+    return dumps(resp)
+
+@APP.route('/message/pin/v1', methods=['POST'])
+def message_pin():
+    data = request.get_json()
+    resp = message_pin_v1(data['token'], data['message_id'])
+    return dumps(resp)
+
+@APP.route('/message/unpin/v1', methods=['POST'])
+def message_unpin():
+    data = request.get_json()
+    resp = message_unpin_v1(data['token'], data['message_id'])
     return dumps(resp)
 
 ########### DM ############

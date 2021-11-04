@@ -425,3 +425,25 @@ def message_unreact_v1(token, message_id, react_id):
 	data_store.set(store)
 
 	return {}
+
+def message_pin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	is_pinned = pin_message(u_id, message_id)
+
+	if not is_pinned:
+		raise AccessError(description='An error occurred in the pinning function. Developers: please check.')
+	return {}
+
+def message_unpin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	is_pinned = pin_message(u_id, message_id, pin_mode=False)
+
+	if is_pinned:
+		raise AccessError(description='An error occurred in the pinning function. Developers: please check.')
+	return {}

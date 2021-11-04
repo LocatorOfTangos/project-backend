@@ -266,3 +266,15 @@ def standup_active_v1_request(token, channel_id):
         'token': token,
         'channel_id': channel_id
     })
+
+def message_pin_v1_request(token, message_id):
+    return requests.post(config.url + 'message/pin/v1', json={
+        'token': token,
+        'message_id': message_id
+    })
+
+def message_unpin_v1_request(token, message_id):
+    return requests.post(config.url + 'message/unpin/v1', json={
+        'token': token,
+        'message_id': message_id
+    })
