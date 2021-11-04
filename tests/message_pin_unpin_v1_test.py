@@ -59,3 +59,12 @@ def test_pin_dm_msg(user, dm, d_msg):
     assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['is_pinned'] == True
     message_unpin_v1_request(user, d_msg)
     assert dm_messages_v1_request(user, dm, 0).json()['messages'][0]['is_pinned'] == False
+
+def test_multiple_sent_messages(user, channel, c_msg):
+    message_send_v1_request(user, channel, "Hello channel! Do not pin this, please.")
+    message_send_v1_request(user, channel, "Hello channel! Also, do not pin this, please.")
+
+    # that is, it should successfully pin the last message (as that is the ID of c_msg)
+    assert channel_messages_v2_request(user, channel, 0).json()['messages'][2]['is_pinned'] == False
+    message_pin_v1_request(user, c_msg)
+    assert channel_messages_v2_request(user, channel, 0).json()['messages'][2]['is_pinned'] == True
