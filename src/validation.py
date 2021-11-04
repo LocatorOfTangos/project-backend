@@ -113,7 +113,7 @@ def pin_message(u_id, m_id, pin_mode=True):
     try:
         msg_info = store['message_info'][m_id]
     except IndexError as e:
-        raise InputError(description='message_id is not a valid message within a channel or DM that the authorised user has joined') from e
+        raise InputError(description='message does not exist.') from e
 
     channel = None
     if msg_info['type'] == 'channels':
@@ -123,6 +123,8 @@ def pin_message(u_id, m_id, pin_mode=True):
         dm_id = msg_info['to']
         channel = store['dms'][dm_id]
 
+    if u_id not in channel['all_members']:
+        raise InputError(description='message_id is not a valid message within a channel or DM that the authorised user has joined')
     if u_id not in channel['owner_members']:
         raise AccessError(description='message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM')
 
