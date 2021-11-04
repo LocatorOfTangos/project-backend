@@ -431,7 +431,7 @@ def message_pin_v1(token, message_id):
 		raise AccessError(description="Token is invalid")
 
 	u_id = token_user(token)
-	is_pinned = pin_message(u_id, message_id)
+	pin_message(u_id, message_id)
 
 	return {}
 
@@ -440,6 +440,6 @@ def message_unpin_v1(token, message_id):
 		raise AccessError(description="Token is invalid")
 
 	u_id = token_user(token)
-	is_pinned = pin_message(u_id, message_id, pin_mode=False)
+	pin_message(u_id, message_id, pin_mode=False)
 
 	return {}
