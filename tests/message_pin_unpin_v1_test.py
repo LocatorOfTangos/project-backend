@@ -49,9 +49,6 @@ def test_not_valid_msg_id(user2, d_msg, c_msg):
     assert message_pin_v1_request(user2, c_msg).status_code == 400
     assert message_pin_v1_request(user2, d_msg).status_code == 400
 
-def test_weird_msg_id(user):
-    assert message_pin_v1_request(user2, 100).status_code == 400
-
 def test_not_channel_owner(user, user2, channel, c_msg):
     user2_id = auth_login_v2_request('u2@mail.com', 'psword').json()['auth_user_id']
     channel_invite_v2_request(user, channel, user2_id)

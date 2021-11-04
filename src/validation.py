@@ -110,10 +110,7 @@ def message_with_user_react(message, u_id):
     
 def pin_message(u_id, m_id, pin_mode=True):
     store = data_store.get()
-    try:
-        msg_info = store['message_info'][m_id]
-    except IndexError as e:
-        raise InputError(description='message does not exist.') from e
+    msg_info = store['message_info'][m_id]  # assuming the messaging index works correctly.
 
     channel = None
     if msg_info['type'] == 'channels':
