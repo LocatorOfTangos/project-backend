@@ -128,10 +128,7 @@ def pin_message(u_id, m_id, pin_mode=True):
     if u_id not in channel['owner_members']:
         raise AccessError(description='message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM')
 
-    try:
-        msg = list(filter(lambda m: m_id == m['message_id'], channel['messages']))[0]
-    except IndexError as e:
-        raise AccessError(description='The message could not be found unexpectedly. Please report the issue to the developers.') from e
+    msg = list(filter(lambda m: m_id == m['message_id'], channel['messages']))[0]
 
     if pin_mode:
         if msg['is_pinned']:
