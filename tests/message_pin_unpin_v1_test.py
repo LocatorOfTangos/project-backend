@@ -35,6 +35,7 @@ def d_msg(user, dm):
 # TESTS
 def test_invalid_token(c_msg):
     assert message_pin_v1_request(None, c_msg).status_code == 403
+    assert message_pin_v1_request(None, d_msg).status_code == 403
 
 def test_msg_pin_status(user, d_msg, c_msg):
     assert message_pin_v1_request(user, c_msg).status_code == 200
