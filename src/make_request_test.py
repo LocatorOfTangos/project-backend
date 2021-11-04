@@ -270,3 +270,10 @@ def standup_active_v1_request(token, channel_id):
         'token': token,
         'channel_id': channel_id
     })
+
+def standup_send_v1_request(token, channel_id, message):
+    return requests.post(config.url + 'standup/send/v1', json={
+        'token': token,
+        'channel_id': channel_id,
+        'message': message
+    })

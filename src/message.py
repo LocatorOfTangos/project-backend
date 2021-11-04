@@ -4,7 +4,7 @@ from src.validation import *
 from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
 
-def message_send_v1(token, channel_id, message):
+def message_send_v1(token, channel_id, message, standup=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -39,7 +39,7 @@ def message_send_v1(token, channel_id, message):
 	if not user_is_member(u_id, channel_id):
 		raise AccessError(description="User is not a member of this channel")
 	
-	if not 1 <= len(message) <= 1000:
+	if (not 1 <= len(message) <= 1000) and not standup:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
