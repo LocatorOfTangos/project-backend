@@ -109,7 +109,7 @@ def test_concurrent(user, user2, channel):
 	standup_send_v1_request(user2, channel, "ccc")
 	standup_send_v1_request(user, channel2, "ccc")
 
-	time.sleep(1.1)
+	time.sleep(1.5)
 	
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
 		== "haydensmith: aaa\nblakemorris: bbb\nhaydensmith: ccc"
@@ -126,7 +126,7 @@ def test_long(user, channel):
 	standup_send_v1_request(user, channel, "a" * 1000)
 	standup_send_v1_request(user, channel, "b" * 1000)
 
-	time.sleep(1.1)
+	time.sleep(1.5)
 	
 	assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
 		== f"blakemorris: {'a' * 1000}\nblakemorris: {'b' * 1000}"
