@@ -3,6 +3,20 @@ from src.error import AccessError, InputError
 from src.validation import *
 from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
+from src.notifications import send_notification
+import re
+
+# Returns a list of u_ids from tags in 'message' referring to an existing user.
+def find_tags(message):
+	# Find tag matches in the message
+	# Remove the '@' to get just the handles
+	handles = [s[1:] for s in re.findall('@[a-zA-Z0-9]+', message)]
+
+	# Convert to u_ids, excluding invalid handles
+	users = data_store.get()['users']
+	u_ids = [u['u_id'] for u in users if u['handle_str'] in handles]
+	return u_ids
+
 
 def message_send_v1(token, channel_id, message, standup=False):
 	'''
@@ -55,6 +69,10 @@ def message_send_v1(token, channel_id, message, standup=False):
 	# Assign a unique message_id
 	message_id = store['curr_message_id']
 	store['curr_message_id'] += 1
+
+	# Ping tagged users
+	print("Tagged users:")
+	print(find_tags(message))
 
 	# Add the message to the channel
 	# Add to the front of the list due to channel/messages implementation

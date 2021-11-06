@@ -1,4 +1,4 @@
-import jwt
+import PyJWT
 import src.auth
 from src.data_store import data_store
 from src.error import AccessError, InputError

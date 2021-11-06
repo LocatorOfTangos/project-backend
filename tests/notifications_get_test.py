@@ -149,3 +149,7 @@ def test_many_notifications(user, channel, user2):
 	for i in range(25):
 		message_send_v1_request(user, channel, "@usertwo ping")
 	assert len(notifications_get_v1_request(user2).json()['notifications']) == 20
+
+def test_tagging(user, channel, user2):
+	channel_join_v2_request(user2, channel)
+	message_send_v1_request(user, channel, "hi @usertwo")
