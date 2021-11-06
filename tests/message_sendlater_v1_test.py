@@ -88,3 +88,16 @@ def test_message_ids_unique_single_channel(ch_owner, ch_pub):
     m_id = message_sendlater_v1_request(ch_owner, ch_pub, "p", time_sent).json()['message_id']
     assert m_id not in used_ids
     used_ids.add(m_id)
+
+def test_timing(ch_owner, ch_pub):
+    time_sent = int(time.time())
+    m_id1 = message_sendlater_v1_request(ch_owner, ch_pub, "m", time_sent).json()['message_id']
+    m_id2 = message_sendlater_v1_request(ch_owner, ch_pub, "n", time_sent + 1).json()['message_id']
+    m_id3 = message_sendlater_v1_request(ch_owner, ch_pub, "o", time_sent + 2).json()['message_id']
+
+    time.sleep(2)
+
+    messages = channel_messages_v2_request(ch_owner, ch_pub, 0).json()['messages']
+
+    for m_id, message in zip([m_id3, m_id2, m_id1], messages):
+        assert m_id == message['message_id']
