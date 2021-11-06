@@ -459,7 +459,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
 	if len(message) > 1000:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 
-	if int(time_sent) > int(time.time()):
+	if int(time_sent) < int(time.time()):
 		raise InputError(description='time_sent is a time in the past')
 
 	u_id = token_user(token)
