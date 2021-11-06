@@ -20,18 +20,26 @@ def channel(user):
 
 
 def test_status(user):
+	"Tests that a successful request returns with status 200."
+
 	assert notifications_get_v1_request(user).status_code == 200
 
 def test_invalid_token(user):
+	"Tests that a made up, tampered or logged out token causes an access error"
+
 	assert notifications_get_v1_request("qwerty").status_code == 403
 	assert notifications_get_v1_request(user[1:]).status_code == 403
 	auth_logout_v1_request(user)
 	assert notifications_get_v1_request(user).status_code == 403
 
 def test_no_notifications(user):
+	"Tests that an empty list is returned when the user has no notifications"
+
 	assert notifications_get_v1_request(user).json() == {'notifications': []}
 
 def test_added_channel(user, channel, user2):
+	"Tests that the correct notification format is returned when a user is added to a channel"
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	channel_invite_v2_request(user, channel, user2['auth_user_id'])
 	assert notifications_get_v1_request(user2['token']).json() == \
@@ -44,6 +52,8 @@ def test_added_channel(user, channel, user2):
 	}
 
 def test_added_dm(user, user2):
+	"Tests that the correct notification format is returned when a user is added to a dm"
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	dm = dm_create_v1_request(user, [user2['auth_user_id']]).json()['dm_id']
 	assert notifications_get_v1_request(user2['token']).json() == \
@@ -56,6 +66,9 @@ def test_added_dm(user, user2):
 	}
 
 def test_tagged_channel(user, channel, user2):
+	"""Tests that the correct notification ocurrs when a user is tagged in a channel,
+		and that the notifications are in the right order"""
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	channel_invite_v2_request(user, channel, user2['auth_user_id'])
 	message_send_v1_request(user, channel, "hi @usertwo, can i borrow your credit card number")
@@ -76,6 +89,9 @@ def test_tagged_channel(user, channel, user2):
 	}
 
 def test_tagged_dm(user, user2):
+	"""Tests that the correct notification ocurrs when a user is tagged in a dm,
+		and that the notifications are in the right order"""
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	dm = dm_create_v1_request(user, [user2['auth_user_id']]).json()['dm_id']
 	message_senddm_v1_request(user, dm, "hello @usertwo")
@@ -96,6 +112,8 @@ def test_tagged_dm(user, user2):
 	}
 
 def test_tagged_edit(user, channel, user2):
+	"Tests that the user is notified when a message is edited to add a tag"
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	channel_join_v2_request(user2['token'], channel)
 	msg = message_send_v1_request(user, channel, "hi usertwo").json()['message_id']
@@ -127,6 +145,8 @@ def test_tagged_share(user, channel, user2):
 	}'''
 
 def test_tagged_not_member(user, channel, user2):
+	"Tests that the user is only notified when tagged if they are a member of the channel"
+
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	message_send_v1_request(user, channel, "hi @usertwo!!!")
 	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
@@ -146,16 +166,17 @@ def test_react(user, channel, user2):
 	}
 
 def test_many_notifications(user, channel, user2):
+	"Tests that notification/get returns 20 notifications when the user has more"
+
 	channel_join_v2_request(user2['token'], channel)
 	for i in range(25):
 		message_send_v1_request(user, channel, "@usertwo ping")
 	assert len(notifications_get_v1_request(user2['token']).json()['notifications']) == 20
 
-def test_tagging(user, channel, user2):
-	assert channel_join_v2_request(user2['token'], channel).status_code == 200
-	assert message_send_v1_request(user, channel, "hi @usertwo").status_code == 200
 
 def test_tag_multiple_users(user, channel, user2):
+	"Tests that when multiple users are tagged in a message, they are all notified"
+
 	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
 
 	channel_join_v2_request(user2['token'], channel)
@@ -182,6 +203,8 @@ def test_tag_multiple_users(user, channel, user2):
 	}
 
 def test_tag_multiple_users_multiple_times(user, channel, user2):
+	"Tests that when multiple users are tagged multiple times, they are only notified once"
+
 	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
 
 	channel_join_v2_request(user2['token'], channel)
@@ -207,7 +230,11 @@ def test_tag_multiple_users_multiple_times(user, channel, user2):
 		}]
 	}
 
+
 def test_no_notification_on_previous_tag_edit(user, channel, user2):
+	"""Tests that when a user is tagged in a message and this message is then edited,
+		the user initially tagged is not notified again"""
+		
 	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
 
 	channel_join_v2_request(user2['token'], channel)
