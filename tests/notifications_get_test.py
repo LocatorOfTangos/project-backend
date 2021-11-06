@@ -154,3 +154,94 @@ def test_many_notifications(user, channel, user2):
 def test_tagging(user, channel, user2):
 	assert channel_join_v2_request(user2['token'], channel).status_code == 200
 	assert message_send_v1_request(user, channel, "hi @usertwo").status_code == 200
+
+def test_tag_multiple_users(user, channel, user2):
+	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
+
+	channel_join_v2_request(user2['token'], channel)
+	channel_join_v2_request(user3['token'], channel)
+
+	message_send_v1_request(user, channel, "hi @usertwo and @userthree")
+
+	assert notifications_get_v1_request(user2['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo and @use"
+		}]
+	}
+
+	assert notifications_get_v1_request(user3['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo and @use"
+		}]
+	}
+
+def test_tag_multiple_users_multiple_times(user, channel, user2):
+	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
+
+	channel_join_v2_request(user2['token'], channel)
+	channel_join_v2_request(user3['token'], channel)
+
+	message_send_v1_request(user, channel, "hi @usertwo and @userthree and also @usertwo and @userthree")
+
+	assert notifications_get_v1_request(user2['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo and @use"
+		}]
+	}
+
+	assert notifications_get_v1_request(user3['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo and @use"
+		}]
+	}
+
+def test_no_notification_on_previous_tag_edit(user, channel, user2):
+	user3 = auth_register_v2_request("a@mail.com", "psword", "user", "three").json()
+
+	channel_join_v2_request(user2['token'], channel)
+	channel_join_v2_request(user3['token'], channel)
+
+	msg = message_send_v1_request(user, channel, "hi @usertwo").json()['message_id']
+
+	assert notifications_get_v1_request(user2['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo"
+		}]
+	}
+
+	assert notifications_get_v1_request(user3['token']).json() == {'notifications': []}
+
+	message_edit_v1_request(user, msg, "hi @usertwo and @userthree")
+
+	assert notifications_get_v1_request(user2['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo"
+		}]
+	}
+	
+	assert notifications_get_v1_request(user3['token']).json() == \
+	{'notifications':
+		[{
+			'channel_id': channel,
+			'dm_id': -1,
+			'notification_message': "userone tagged you in newchannel: hi @usertwo and @use"
+		}]
+	}
