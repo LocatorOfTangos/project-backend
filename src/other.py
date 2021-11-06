@@ -19,6 +19,7 @@ def clear_v1():
     store['curr_session_id'] = 0
     store['message_info'] = {}
     store['workplace_stats'] = {}
+    store['msg_queue'] = []
     data_store.set(store)
 
     return {}

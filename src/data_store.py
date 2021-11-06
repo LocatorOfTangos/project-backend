@@ -64,7 +64,10 @@ initial_object = {
     'curr_message_id': 0,
 
     # Global streams statistics
-    'workplace_stats': {}
+    'workplace_stats': {},
+
+    # for sendlater
+    'msg_queue': []
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

@@ -25,6 +25,7 @@ from src.message import message_edit_v1, message_react_v1, message_send_v1, mess
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1, dm_remove_v1
 from src.users import users_all_v1, users_stats_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
+from src.scheduler import send_msg_scheduler
 from src.search import search_v1
 
 def quit_gracefully(*args):
@@ -370,6 +371,7 @@ if __name__ == "__main__":
 
     # Start periodic backup
     threading.Thread(target=interval_backup, args=()).start()
+    threading.Thread(target=send_msg_scheduler).start()
 
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
