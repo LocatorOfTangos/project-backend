@@ -27,7 +27,6 @@ def token_user(token):
 # Returns true if token refers to a valid user token
 def valid_token(token):
     store = data_store.get()
-    users = store['users']
     sessions = store['sessions']
 
     try:

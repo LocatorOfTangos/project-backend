@@ -169,7 +169,7 @@ def test_many_notifications(user, channel, user2):
 	"Tests that notification/get returns 20 notifications when the user has more"
 
 	channel_join_v2_request(user2['token'], channel)
-	for i in range(25):
+	for _ in range(25):
 		message_send_v1_request(user, channel, "@usertwo ping")
 	assert len(notifications_get_v1_request(user2['token']).json()['notifications']) == 20
 
