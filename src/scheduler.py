@@ -6,12 +6,11 @@ from src.message import (
 )
 
 def send_msg_scheduler():
-    store = data_store.get()
-    msg_queue = store['msg_queue']
     while True:
+        store = data_store.get()
+        msg_queue = store['msg_queue']
         if len(msg_queue) == 0:
             continue
-
         first_msg = msg_queue[0]
         if int(time.time()) >= int(first_msg['time_sent']):
             if first_msg['type'] == 'channels':
@@ -20,4 +19,4 @@ def send_msg_scheduler():
                 message_senddm_v1(first_msg['token'], first_msg['dm_id'], first_msg['message'], message_id=first_msg['message_id'])
 
             msg_queue.pop(0)
-            data_store.set(msg_queue)
+            data_store.set(store)

@@ -365,13 +365,13 @@ if __name__ == "__main__":
         # If previous data exists, load it in to the data store
         data = pickle.load(open("data.p", "rb"))
         data_store.set(data)
-    except:
+    except Exception:
         # Otherwise, do nothing
         pass
 
     # Start periodic backup
     threading.Thread(target=interval_backup, args=()).start()
-    threading.Thread(target=send_msg_scheduler).start()
+    threading.Thread(target=send_msg_scheduler, args=()).start()
 
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
