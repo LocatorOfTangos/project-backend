@@ -1,4 +1,4 @@
-import PyJWT
+import jwt
 import src.auth
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -38,7 +38,6 @@ def valid_token(token):
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']
     
-    print (users[u_id])
 
     # Is the user valid?
     if not valid_user_id(u_id):

@@ -11,11 +11,11 @@ def user():
 
 @pytest.fixture
 def user2():
-	return auth_register_v2_request("u@mail.com", "psword", "user", "two").json()['token']
+	return auth_register_v2_request("u@mail.com", "psword", "user", "two").json()
 
 @pytest.fixture
 def channel(user):
-	return channels_create_v2_request(user, "newchannel", True)
+	return channels_create_v2_request(user, "newchannel", True).json()['channel_id']
 
 
 
@@ -32,9 +32,9 @@ def test_no_notifications(user):
 	assert notifications_get_v1_request(user).json() == {'notifications': []}
 
 def test_added_channel(user, channel, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	channel_invite_v2_request(user, channel, user2)
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	channel_invite_v2_request(user, channel, user2['auth_user_id'])
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': channel,
@@ -44,22 +44,22 @@ def test_added_channel(user, channel, user2):
 	}
 
 def test_added_dm(user, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	dm = dm_create_v1_request(user, [user2]).json()['dm_id']
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	dm = dm_create_v1_request(user, [user2['auth_user_id']]).json()['dm_id']
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': -1,
 			'dm_id': dm,
-			'notification_message': "userone added you to usertwo, userone"
+			'notification_message': "userone added you to userone, usertwo"
 		}]
 	}
 
 def test_tagged_channel(user, channel, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	channel_invite_v2_request(user, channel, user2)
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	channel_invite_v2_request(user, channel, user2['auth_user_id'])
 	message_send_v1_request(user, channel, "hi @usertwo, can i borrow your credit card number")
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[
 			{
@@ -76,16 +76,16 @@ def test_tagged_channel(user, channel, user2):
 	}
 
 def test_tagged_dm(user, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	dm = dm_create_v1_request(user, [user2]).json()['dm_id']
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	dm = dm_create_v1_request(user, [user2['auth_user_id']]).json()['dm_id']
 	message_senddm_v1_request(user, dm, "hello @usertwo")
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[
 			{
 				'channel_id': -1,
 				'dm_id': dm,
-				'notification_message': "userone tagged you in newchannel: hello @usertwo"
+				'notification_message': "userone tagged you in userone, usertwo: hello @usertwo"
 			},
 			{
 				'channel_id': -1,
@@ -96,12 +96,12 @@ def test_tagged_dm(user, user2):
 	}
 
 def test_tagged_edit(user, channel, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	channel_join_v2_request(user2, channel)
-	msg = message_senddm_v1_request(user, channel, "hi usertwo").json()['message_id']
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	channel_join_v2_request(user2['token'], channel)
+	msg = message_send_v1_request(user, channel, "hi usertwo").json()['message_id']
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	message_edit_v1_request(user, msg, "hi @usertwo!!!")
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': channel,
@@ -114,10 +114,10 @@ def test_tagged_edit(user, channel, user2):
 def test_tagged_share(user, channel, user2):
 	pass
 '''
-	channel_join_v2_request(user2, channel)
+	channel_join_v2_request(user2['token'], channel)
 	msg = message_senddm_v1_request(user, channel, "hello").json()['message_id']
 	message_share_v1_request(user, msg, "@usertwo", channel, -1)
-	assert notifications_get_v1_request(user2).json() == \
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': channel,
@@ -127,15 +127,16 @@ def test_tagged_share(user, channel, user2):
 	}'''
 
 def test_tagged_not_member(user, channel, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 	message_send_v1_request(user, channel, "hi @usertwo!!!")
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
 
 def test_react(user, channel, user2):
-	assert notifications_get_v1_request(user2).json() == {'notifications': []}
-	channel_join_v2_request(user2, channel)
-	msg = message_send_v1_request(user2, channel, "hello world").json()['message_id']
+	assert notifications_get_v1_request(user2['token']).json() == {'notifications': []}
+	channel_join_v2_request(user2['token'], channel)
+	msg = message_send_v1_request(user2['token'], channel, "hello world").json()['message_id']
 	message_react_v1_request(user, msg, 1)
+	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': channel,
@@ -145,11 +146,11 @@ def test_react(user, channel, user2):
 	}
 
 def test_many_notifications(user, channel, user2):
-	channel_join_v2_request(user2, channel)
+	channel_join_v2_request(user2['token'], channel)
 	for i in range(25):
 		message_send_v1_request(user, channel, "@usertwo ping")
-	assert len(notifications_get_v1_request(user2).json()['notifications']) == 20
+	assert len(notifications_get_v1_request(user2['token']).json()['notifications']) == 20
 
 def test_tagging(user, channel, user2):
-	channel_join_v2_request(user2, channel)
-	message_send_v1_request(user, channel, "hi @usertwo")
+	assert channel_join_v2_request(user2['token'], channel).status_code == 200
+	assert message_send_v1_request(user, channel, "hi @usertwo").status_code == 200

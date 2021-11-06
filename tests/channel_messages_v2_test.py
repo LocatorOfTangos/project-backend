@@ -17,7 +17,6 @@ def channel(user):
 
 # Get the messages of a channel as a list of strings
 def message_strings(token, channel, start):
-	print (channel_messages_v2_request(token, channel, start).status_code)
 	messages = channel_messages_v2_request(token, channel, start).json()['messages']
 	return [m['message'] for m in messages]
 

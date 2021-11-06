@@ -26,6 +26,7 @@ def notifications_get_v1(token):
 	return {'notifications': store['users'][u_id]['notifications'][:20]}
 
 def send_notification(user, text, channel=-1, dm=-1):
+	print(f"notification sent to {user}: {text}")
 	store = data_store.get()
 	notification = {
 		'channel_id': channel, 
@@ -33,3 +34,4 @@ def send_notification(user, text, channel=-1, dm=-1):
 		'notification_message': text
 	}
 	store['users'][user]['notifications'].insert(0, notification)
+	data_store.set(store)

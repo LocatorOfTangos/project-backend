@@ -1,3 +1,4 @@
+from logging import Handler
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import *
@@ -70,9 +71,13 @@ def message_send_v1(token, channel_id, message, standup=False):
 	message_id = store['curr_message_id']
 	store['curr_message_id'] += 1
 
-	# Ping tagged users
-	print("Tagged users:")
-	print(find_tags(message))
+
+	# Ping tagged users who are members of the channel
+	handle = store['users'][u_id]['handle_str']
+	ch_name = store['channels'][channel_id]['name']
+
+	for user in filter(lambda x: user_is_member(x, channel_id), find_tags(message)):
+		send_notification(user, f"{handle} tagged you in {ch_name}: {message[:20]}", channel_id)
 
 	# Add the message to the channel
 	# Add to the front of the list due to channel/messages implementation
@@ -150,6 +155,13 @@ def message_senddm_v1(token, dm_id, message):
 	# Assign a unique message_id
 	message_id = store['curr_message_id']
 	store['curr_message_id'] += 1
+
+	# Ping tagged users who are members of the dm
+	handle = store['users'][u_id]['handle_str']
+	dm_name = store['dms'][dm_id]['name']
+	
+	for user in filter(lambda x: user_is_member(x, dm_id, chat_type='dms'), find_tags(message)):
+		send_notification(user, f"{handle} tagged you in {dm_name}: {message[:20]}", dm=dm_id)
 
 	# Add the message to the channel
 	# Add to the front of the list due to channel/messages implementation
@@ -252,12 +264,30 @@ def message_edit_v1(token, message_id, message):
 
 	### Implementation ###
 
+	# Get the old message
+	old_msg = list(filter(lambda x: x['message_id'] == message_id, store[chat_type][to]['messages']))[0]['message']
+	
+	# Ping tagged users who are members of the channel/dm and weren't already tagged in the message
+	old_tags = find_tags(old_msg)
+	new_tags = find_tags(message)
+
+	diff_tags = set(new_tags) - set(old_tags)
+
+	handle = store['users'][u_id]['handle_str']
+	chat_name = store[chat_type][to]['name']
+	dm_id = to if chat_type == 'dms' else -1
+	channel_id = to if chat_type == 'channels' else -1
+	
+	for user in filter(lambda x: user_is_member(x, to, chat_type=chat_type), diff_tags):
+		send_notification(user, f"{handle} tagged you in {chat_name}: {message[:20]}", channel_id, dm_id)
+
 	# If the new message is empty, the message is deleted
 	if message == "":
 		remove_message(message_id, to, chat_type)
 		return {}
 
 	set_message_contents(message_id, to, chat_type, message)
+
 
 	return {}
 
@@ -379,6 +409,16 @@ def message_react_v1(token, message_id, react_id):
 		if msg['message_id'] == message_id:
 			store[chat_type][to]['messages'][i]['reacts'][i - 1]['u_ids'].append(u_id)
 	data_store.set(store)
+
+
+	# Notify the message sender
+	sender = msgs[message_id]['sender']
+	handle = store['users'][u_id]['handle_str']
+	chat_name = store[chat_type][to]['name']
+	dm_id = to if chat_type == 'dms' else -1
+	channel_id = to if chat_type == 'channels' else -1
+
+	send_notification(sender, f"{handle} reacted to your message in {chat_name}", channel_id, dm_id)
 
 	return {}
 
