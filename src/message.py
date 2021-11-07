@@ -496,11 +496,11 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 	if len(message) > 1000:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 
-	if int(time_sent) > int(time.time()):
+	if int(time_sent) < int(time.time()):
 		raise InputError(description='time_sent is a time in the past')
 
 	u_id = token_user(token)
-	if not user_is_member(u_id, dm_id):
+	if not user_is_member(u_id, dm_id, chat_type='dms'):
 		raise AccessError(description="User is not a member of this dm")
 
 	message_id = store['curr_message_id']
@@ -509,7 +509,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 	msg_data = {
 		'token': token,
 		'dm_id': dm_id,
-		'type': 'dm',
+		'type': 'dms',
 		'message_id': message_id,
 		'message': message,
 		'time_sent': int(time_sent)
