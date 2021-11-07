@@ -274,3 +274,28 @@ def user_profile_uploadphoto_v1_request(token, img_url, x_start, y_start, x_end,
         'x_end': x_end,
         'y_end': y_end
     })
+
+def standup_active_v1_request(token, channel_id):
+    return requests.get(config.url + 'standup/active/v1', params={
+        'token': token,
+        'channel_id': channel_id
+    })
+
+def message_pin_v1_request(token, message_id):
+    return requests.post(config.url + 'message/pin/v1', json={
+        'token': token,
+        'message_id': message_id
+    })
+
+def message_unpin_v1_request(token, message_id):
+    return requests.post(config.url + 'message/unpin/v1', json={
+        'token': token,
+        'message_id': message_id
+    })
+    
+def standup_send_v1_request(token, channel_id, message):
+    return requests.post(config.url + 'standup/send/v1', json={
+        'token': token,
+        'channel_id': channel_id,
+        'message': message
+    })

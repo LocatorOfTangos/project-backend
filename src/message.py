@@ -4,7 +4,7 @@ from src.validation import *
 from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
 
-def message_send_v1(token, channel_id, message):
+def message_send_v1(token, channel_id, message, standup=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -39,7 +39,7 @@ def message_send_v1(token, channel_id, message):
 	if not user_is_member(u_id, channel_id):
 		raise AccessError(description="User is not a member of this channel")
 	
-	if not 1 <= len(message) <= 1000:
+	if (not 1 <= len(message) <= 1000) and not standup:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
@@ -423,5 +423,23 @@ def message_unreact_v1(token, message_id, react_id):
 		if msg['message_id'] == message_id:
 			store[chat_type][to]['messages'][i]['reacts'][i - 1]['u_ids'].remove(u_id)
 	data_store.set(store)
+
+	return {}
+
+def message_pin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	pin_message(u_id, message_id)
+
+	return {}
+
+def message_unpin_v1(token, message_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+
+	u_id = token_user(token)
+	pin_message(u_id, message_id, pin_mode=False)
 
 	return {}
