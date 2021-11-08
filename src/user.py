@@ -268,7 +268,7 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     count = store['current_profile_image']
 
-    store['users'][u_id]['profile_image_url'] = config.url + f'/profile_pictures/{count}.jpg'
+    store['users'][u_id]['profile_image_url'] = config.url + f'profile_images/{count}.jpg'
     # Save produced URL to relevant user's dictionary
 
     data_store.set(store)

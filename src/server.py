@@ -1,7 +1,7 @@
 import sys
 import signal
 from json import dumps
-from flask import Flask, app, request
+from flask import Flask, app, request, send_from_directory
 from flask_cors import CORS
 import requests
 from src.error import InputError
@@ -283,6 +283,10 @@ def user_profile_uploadphoto():
     data = request.get_json()
     resp = user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], data['y_start'], data['x_end'], data['y_end'])
     return dumps(resp)
+
+@APP.route('/profile_images/<code>', methods=['GET'])
+def user_profile_image(code):
+    return send_from_directory('profile_images', code)
 
 ########### Users ############
 
