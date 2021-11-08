@@ -7,6 +7,7 @@ from src.message import message_send_v1
 
 
 def standup_timer(token, ch, length):
+    print("Thread start")
     store = data_store.get()
 
     # Initialise to an empty standup
@@ -23,7 +24,8 @@ def standup_timer(token, ch, length):
 
     # Compile and send the standup message
     message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
-    message_send_v1(token, ch, message, standup=True)
+    if message != "":
+        message_send_v1(token, ch, message, standup=True)
 
     # Reset state of standup dict
     store['channels'][ch]['standup'] = {
@@ -31,6 +33,7 @@ def standup_timer(token, ch, length):
         'time_finish': None,
         'msg_queue': []
     }
+    print("Thread end")
 
 
 def standup_start_v1(token, channel_id, length):
@@ -77,7 +80,8 @@ def standup_start_v1(token, channel_id, length):
             description="There is already an active standup in this channel")
 
     # Start the standup
-    threading.Thread(target=standup_timer, args=[token, channel_id, length]).start()
+    threading.Thread(target=standup_timer, daemon=True, args=[
+                     token, channel_id, length]).start()
 
     return {'time_finish': int(time.time()) + length}
 
@@ -121,6 +125,7 @@ def standup_active_v1(token, channel_id):
         'time_finish': store['channels'][channel_id]['standup']['time_finish']
     }
 
+
 def standup_send_v1(token, channel_id, message):
     '''
     Sends a message to a standup.
@@ -159,11 +164,12 @@ def standup_send_v1(token, channel_id, message):
         raise InputError(description="Messages must be in 1..1000 characters")
 
     if not standup_active_v1(token, channel_id)['is_active']:
-        raise InputError(description="This channel does not have an active standup")
+        raise InputError(
+            description="This channel does not have an active standup")
 
     store = data_store.get()
     handle = store['users'][u_id]['handle_str']
     store['channels'][channel_id]['standup']['msg_queue'].append(f"{handle}: {message}")
     data_store.set(store)
-
+    print(f"SENT user {u_id}")
     return {}

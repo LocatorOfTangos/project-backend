@@ -33,15 +33,16 @@ def valid_token(token):
     try:
         decoded_jwt = jwt.decode(token, src.auth.SECRET, algorithms=['HS256']) 
     except Exception:
+        print("Could not decode token")
         return False
 
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']
-    
-    print (users[u_id])
 
     # Is the user valid?
     if not valid_user_id(u_id):
+        print(f"Invalid UID {u_id}")
+        print(users)
         return False
     
     # Is the session valid?

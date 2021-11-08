@@ -182,9 +182,6 @@ def channel_messages_v1(token, channel_id, start):
 	messages = store['channels'][channel_id]['messages']
 	messages = list(map(lambda m: message_with_user_react(m, auth_user_id), messages))
 
-	print("Messages:")
-	print(messages)
-
 	if start > len(messages):
 		raise InputError(description="Start must not be greater than the number of messages in the channel")
 
