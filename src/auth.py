@@ -195,7 +195,8 @@ def auth_register_v1(email, password, name_first, name_last):
 		'name_last': name_last,
 		'handle_str': handle,
 		'global_permissions': perm_id,
-		'stats': stats
+		'stats': stats,
+		'notifications': []
 	})
 
 	# Add password to data store

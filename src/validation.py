@@ -27,7 +27,6 @@ def token_user(token):
 # Returns true if token refers to a valid user token
 def valid_token(token):
     store = data_store.get()
-    users = store['users']
     sessions = store['sessions']
 
     try:
@@ -38,7 +37,6 @@ def valid_token(token):
     u_id = decoded_jwt['u_id']
     s_id = decoded_jwt['s_id']
     
-    print (users[u_id])
 
     # Is the user valid?
     if not valid_user_id(u_id):
