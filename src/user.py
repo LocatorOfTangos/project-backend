@@ -2,6 +2,10 @@ from src.error import AccessError, InputError
 from src.validation import email_is_valid, valid_token, token_user, valid_user_id, get_user_details
 from src.data_store import data_store
 from datetime import datetime, timezone
+import requests
+from PIL import Image
+from io import BytesIO
+from src import config
 
 def user_profile_v1(token, u_id):
     '''
@@ -237,4 +241,35 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     Return Value:
         Returns an empty dictionary'''
 
+    if not valid_token(token):
+        raise AccessError(description="Invalid token")
+
+    try:
+        resp = requests.get(img_url, stream=True)
+    except Exception as e:
+        raise InputError(description="Url did not respond") from e
+    if resp.status_code != 200:
+        raise InputError(description="Url did not return successfully")
+
+    image = Image.open(BytesIO(resp.content))
+    if image.format not in ('JPEG', 'JPG'):
+        raise InputError(description="Improper file type")
+    if not (0 <= x_start <= x_end <= image.size[0]-1 and 0 <= y_start <= y_end <= image.size[1]-1):
+        raise InputError(description="Specified bounds are Invalid")
+
+    u_id = token_user(token)
+
+    image = image.crop((x_start, y_start, x_end, y_end))
+
+    store = data_store.get()
+    imageno = store['current_profile_image']
+    store['current_profile_image'] += 1
+    image.save(f'profile_images/{imageno}.jpg')
+
+    count = store['current_profile_image']
+
+    store['users'][u_id]['profile_image_url'] = config.url + f'/profile_pictures/{count}.jpg'
+    # Save produced URL to relevant user's dictionary
+
+    data_store.set(store)
     return {}

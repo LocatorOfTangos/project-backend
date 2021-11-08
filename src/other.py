@@ -1,4 +1,6 @@
 from src.data_store import data_store
+import os
+from shutil import rmtree
 
 def clear_v1():
     '''
@@ -19,6 +21,18 @@ def clear_v1():
     store['curr_session_id'] = 0
     store['message_info'] = {}
     store['workplace_stats'] = {}
+    store['current_profile_image'] = 0
     data_store.set(store)
+
+    images = 'profile_images'
+    for filename in os.listdir(images):
+        file_path = os.path.join(images, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                rmtree(file_path)
+        except Exception as e:
+            raise 'Failed to delete %s. Reason: %s' % (file_path, e)
 
     return {}
