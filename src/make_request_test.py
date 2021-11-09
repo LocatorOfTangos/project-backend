@@ -288,3 +288,9 @@ def standup_send_v1_request(token, channel_id, message):
         'channel_id': channel_id,
         'message': message
     })
+
+def auth_passwordreset_v1_request(reset_code, new_password):
+    return requests.post(config.url + 'auth/passwordreset/reset/v1', json={
+        'reset_code': reset_code,
+        'new_password': new_password
+    })
