@@ -304,3 +304,7 @@ def message_sendlaterdm_v1_request(token, dm_id, message, time_sent):
         'message': message,
         'time_sent': time_sent
     })
+def notifications_get_v1_request(token):
+    return requests.get(config.url + 'notifications/get/v1', params={
+        'token': token
+    })

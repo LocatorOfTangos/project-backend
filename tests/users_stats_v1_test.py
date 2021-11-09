@@ -3,6 +3,9 @@ from src.make_request_test import *
 from datetime import datetime, timezone
 from time import sleep
 
+def time_eq(a, b):
+    return abs(a - b) <= 1
+
 # Reset application data before each test is run
 @pytest.fixture(autouse=True)
 def clear_data():
@@ -81,30 +84,57 @@ def test_utilisation_rate(owner):
 def test_time_records(owner, member1):
     time = []
     time.append(int(datetime.now(timezone.utc).timestamp()))
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['channels_exist'] == [{'num_channels_exist': 0, 'time_stamp': time[0]}]
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time[0]}]
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['messages_exist'] == [{'num_messages_exist': 0, 'time_stamp': time[0]}]
+
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']
+    assert data['channels_exist'][0]['num_channels_exist'] == 0
+    assert data['dms_exist'][0]['num_dms_exist'] == 0
+    assert data['messages_exist'][0]['num_messages_exist'] == 0
+    assert time_eq(data['channels_exist'][0]['time_stamp'], time[0])
+    assert time_eq(data['dms_exist'][0]['time_stamp'], time[0])
+    assert time_eq(data['messages_exist'][0]['time_stamp'], time[0])
+
 
     time.append(int(datetime.now(timezone.utc).timestamp()))
+
     channel_id = channels_create_v2_request(member1['token'], 'channel1', True).json()['channel_id']
+
     time.append(int(datetime.now(timezone.utc).timestamp()))
+
     dm_id = dm_create_v1_request(member1['token'], [owner['auth_user_id']]).json()['dm_id']
 
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['channels_exist'] == [{'num_channels_exist': 0, 'time_stamp': time[0]},
-        {'num_channels_exist': 1, 'time_stamp': time[1]}]
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time[0]},
-        {'num_dms_exist': 1, 'time_stamp': time[2]}]
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']['channels_exist']
+    assert len(data) == 2
+    assert data[0]['num_channels_exist'] == 0
+    assert data[1]['num_channels_exist'] == 1
+    assert time_eq(data[0]['time_stamp'], time[0])
+    assert time_eq(data[0]['time_stamp'], time[1])
+
+
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']['dms_exist']
+    assert len(data) == 2
+    assert data[0]['num_dms_exist'] == 0
+    assert data[1]['num_dms_exist'] == 1
+    assert time_eq(data[0]['time_stamp'], time[0])
+    assert time_eq(data[0]['time_stamp'], time[2])
 
     sleep(1)
+
     time.append(int(datetime.now(timezone.utc).timestamp()))
+    
     message_id = message_send_v1_request(member1['token'], channel_id, 'Hello').json()['message_id']
 
     time.append(int(datetime.now(timezone.utc).timestamp()))
+    
     message_send_v1_request(member1['token'], dm_id, 'Hello')
 
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['messages_exist'] == [{'num_messages_exist': 0, 'time_stamp': time[0]},
-        {'num_messages_exist': 1,  'time_stamp': time[3]}, 
-        {'num_messages_exist': 2, 'time_stamp': time[4]}]
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']['messages_exist']
+    assert len(data) == 3
+    assert data[0]['num_messages_exist'] == 0
+    assert data[1]['num_messages_exist'] == 1
+    assert data[2]['num_messages_exist'] == 2
+    assert time_eq(data[0]['time_stamp'], time[0])
+    assert time_eq(data[1]['time_stamp'], time[3])
+    assert time_eq(data[2]['time_stamp'], time[4])
 
     time.append(int(datetime.now(timezone.utc).timestamp()))
     message_remove_v1_request(member1['token'], message_id)
@@ -112,11 +142,22 @@ def test_time_records(owner, member1):
     time.append(int(datetime.now(timezone.utc).timestamp()))
     dm_remove_v1_request(member1['token'], dm_id)
 
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['messages_exist'] == [{'num_messages_exist': 0, 'time_stamp': time[0]},
-        {'num_messages_exist': 1,  'time_stamp': time[3]}, 
-        {'num_messages_exist': 2, 'time_stamp': time[4]},
-        {'num_messages_exist': 1, 'time_stamp': time[5]}]
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']['messages_exist']
+    assert len(data) == 4
+    assert data[0]['num_messages_exist'] == 0
+    assert data[1]['num_messages_exist'] == 1
+    assert data[2]['num_messages_exist'] == 2
+    assert data[3]['num_messages_exist'] == 1
+    assert time_eq(data[0]['time_stamp'], time[0])
+    assert time_eq(data[1]['time_stamp'], time[3])
+    assert time_eq(data[2]['time_stamp'], time[4])
+    assert time_eq(data[3]['time_stamp'], time[5])
 
-    assert users_stats_v1_request(member1['token']).json()['workplace_stats']['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time[0]},
-        {'num_dms_exist': 1, 'time_stamp': time[2]},
-        {'num_dms_exist': 0, 'time_stamp': time[6]}]
+    data = users_stats_v1_request(member1['token']).json()['workplace_stats']['dms_exist']
+    assert len(data) == 3
+    assert data[0]['num_dms_exist'] == 0
+    assert data[1]['num_dms_exist'] == 1
+    assert data[2]['num_dms_exist'] == 0
+    assert time_eq(data[0]['time_stamp'], time[0])
+    assert time_eq(data[1]['time_stamp'], time[2])
+    assert time_eq(data[2]['time_stamp'], time[6])
