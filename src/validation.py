@@ -42,7 +42,6 @@ def valid_token(token):
     # Is the user valid?
     if not valid_user_id(u_id):
         print(f"Invalid UID {u_id}")
-        print(users)
         return False
     
     # Is the session valid?
