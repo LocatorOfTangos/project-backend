@@ -86,7 +86,6 @@ def test_successful_owner_removes_member1(owner, member1, member2, channel):
 
 	# check that profile of removed user has been updated
 	profile = user_profile_v1_request(owner['token'], member1['auth_user_id']).json()['user']
-	print(profile)
 	assert profile['name_first'] == 'Removed'
 	assert profile['name_last'] == 'user'
 

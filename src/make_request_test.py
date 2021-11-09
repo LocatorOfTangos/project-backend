@@ -288,3 +288,8 @@ def standup_send_v1_request(token, channel_id, message):
         'channel_id': channel_id,
         'message': message
     })
+
+def notifications_get_v1_request(token):
+    return requests.get(config.url + 'notifications/get/v1', params={
+        'token': token
+    })

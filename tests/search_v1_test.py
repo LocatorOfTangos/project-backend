@@ -44,7 +44,6 @@ def test_status(user1, channel1):
 
 def test_one_result(user1, channel1):
 	messages = search_v1_request(user1, "hello").json()['messages']
-	print(messages)
 	assert {m['message'] for m in messages} == {"hello world"}
 
 def test_multiple_results(user1, channel1):
