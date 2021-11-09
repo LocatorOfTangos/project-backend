@@ -7,7 +7,7 @@ from src.message import message_send_v1
 
 
 def standup_timer(token, ch, length):
-    print("Thread start")
+    print(f"Thread start {threading.get_ident()}")
     store = data_store.get()
 
     # Initialise to an empty standup
@@ -24,6 +24,7 @@ def standup_timer(token, ch, length):
 
     # Compile and send the standup message
     message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
+    
     if message != "":
         message_send_v1(token, ch, message, standup=True)
 
@@ -33,7 +34,7 @@ def standup_timer(token, ch, length):
         'time_finish': None,
         'msg_queue': []
     }
-    print("Thread end")
+    print(f"Thread end {threading.get_ident()}")
 
 
 def standup_start_v1(token, channel_id, length):
