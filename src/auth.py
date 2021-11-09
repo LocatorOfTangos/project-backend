@@ -238,3 +238,25 @@ def auth_logout_v1(token):
 	data_store.set(store)
 	
 	return {}
+
+def auth_passwordreset_v1(reset_code, new_password):
+	'''
+    Change user password 
+
+    Arguments:
+        reset_code (int): Reset code that was sent to user's email
+        new_password (str): New password 
+
+    Exceptions:
+		InputError > Occur when:
+        	> Reset code is invalid
+        	> New_password is less than 6 characters
+
+    Return Value:
+        Returns an empty dictionary
+    '''
+
+	if len(new_password) < 6:
+		raise InputError(description='Password entered is less than 6 characters long')
+
+	
