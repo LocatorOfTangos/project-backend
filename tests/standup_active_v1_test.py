@@ -1,6 +1,7 @@
 import pytest
 from src.make_request_test import *
 import time
+from src.data_store import data_store
 
 def now():
     return int(time.time())
@@ -37,6 +38,7 @@ def test_no_standup(user, channel):
 def test_active_standup(user, channel):
 	assert standup_active_v1_request(user, channel).json() == {'is_active': False, 'time_finish': None}
 	standup_start_v1_request(user, channel, 60)
+	print(data_store.get())
 	standup_info = standup_active_v1_request(user, channel).json()
 	assert standup_info['is_active'] == True
 	assert time_eq(standup_info['time_finish'], now() + 60)
