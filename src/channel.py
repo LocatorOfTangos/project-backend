@@ -2,6 +2,7 @@ from src.error import AccessError, InputError
 from src.data_store import data_store
 from src.validation import *
 from src.user import stat_update, global_stat_update
+from src.notifications import send_notification
 
 def channel_invite_v1(token, channel_id, u_id):
     '''
@@ -47,6 +48,11 @@ def channel_invite_v1(token, channel_id, u_id):
 
     # Update statistics
     stat_update(u_id, 'channels_joined', 1)
+
+    # Notify the user that they've been added
+    handle = data['users'][auth_user_id]['handle_str']
+    ch_name = data['channels'][channel_id]['name']
+    send_notification(u_id, f"{handle} added you to {ch_name}", channel=channel_id)
 
     for channel in data['channels']:
         if channel['channel_id'] == channel_id:
@@ -182,6 +188,7 @@ def channel_messages_v1(token, channel_id, start):
 	messages = store['channels'][channel_id]['messages']
 	messages = list(map(lambda m: message_with_user_react(m, auth_user_id), messages))
 
+
 	if start > len(messages):
 		raise InputError(description="Start must not be greater than the number of messages in the channel")
 
@@ -241,7 +248,6 @@ def channel_join_v1(token, channel_id):
             break
     if joining_channel == {}:
         raise InputError(description="Channel ID does not describe an existing channel")
-    print(f"joining channel = {joining_channel}")
 
     # Check whether user is already a member of the given channel, raise InputError if the case
     for member in joining_channel['all_members']:
@@ -350,7 +356,6 @@ def channel_addowner_v1(token, channel_id, u_id):
     if not user_is_member(auth_user_id, channel_id):
         raise AccessError(description="Authorising user is currently not a member of the channel")
 
-    print(user_has_owner_perms(token_user(token), channel_id))
     if not user_has_owner_perms(token_user(token), channel_id):
         raise AccessError(description="User is not authorised to add an owner")
 

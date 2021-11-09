@@ -1,4 +1,5 @@
 from src.error import InputError, AccessError
+from src.notifications import send_notification
 from src.validation import message_with_user_react, valid_token, valid_user_id, token_user, get_user_details, valid_dm_id, valid_channel_id
 from src.data_store import data_store
 from src.user import stat_update, global_stat_update
@@ -44,6 +45,11 @@ def dm_create_v1(token, u_ids):
 	# Create name
 	handles = sorted([store['users'][u]['handle_str'] for u in members])
 	name = ', '.join(handles)
+
+	# Notify the users that they've been added
+	owner_handle = store['users'][u_id]['handle_str']
+	for user in u_ids:
+		send_notification(user, f"{owner_handle} added you to {name}", dm=dm_id)
 
 	dm_details = {
 		'dm_id': dm_id,

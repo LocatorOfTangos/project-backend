@@ -17,7 +17,6 @@ def dm(user):
 
 # Get the messages of a channel as a list of strings
 def message_strings(token, dm, start):
-	print (dm_messages_v1_request(token, dm, start).status_code)
 	messages = dm_messages_v1_request(token, dm, start).json()['messages']
 	return [m['message'] for m in messages]
 
