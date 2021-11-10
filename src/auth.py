@@ -197,7 +197,8 @@ def auth_register_v1(email, password, name_first, name_last):
 		'handle_str': handle,
 		'global_permissions': perm_id,
 		'stats': stats,
-		'profile_image_url': config.url + 'profile_image_default.jpg'
+		'profile_image_url': config.url + 'profile_image_default.jpg',
+		'notifications': []
 	})
 
 	# Add password to data store

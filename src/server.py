@@ -16,6 +16,7 @@ from src.data_store import data_store
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
+from src.notifications import notifications_get_v1
 from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.dm import dm_create_v1
@@ -344,6 +345,14 @@ def standup_active():
 def standup_send():
     data = request.get_json()
     resp = standup_send_v1(data['token'], data['channel_id'], data['message'])
+    return dumps(resp)
+
+########### Notifications ############
+
+@APP.route('/notifications/get/v1', methods=['GET'])
+def notifications_get():
+    token = request.args.get('token')
+    resp = notifications_get_v1(token)
     return dumps(resp)
 
 ########### Clear ############
