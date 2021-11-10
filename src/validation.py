@@ -82,7 +82,7 @@ def get_user_details(u_id):
                 'name_last': user['name_last'],
                 'email': user['email'],
                 'handle_str': user['handle_str'],
-                'profile_img_url': user['profile_image_url']
+                'profile_img_url': user['profile_img_url']
             }
     return user_details
 

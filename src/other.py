@@ -21,11 +21,13 @@ def clear_v1():
     store['curr_session_id'] = 0
     store['message_info'] = {}
     store['workplace_stats'] = {}
-    store['current_profile_image'] = 0
+    store['current_profile_img'] = 0
     data_store.set(store)
 
-    images = 'profile_images'
+    images = 'profile_imgs'
     for filename in os.listdir(images):
+        if filename == 'profile_img_default.jpg':
+            continue
         file_path = os.path.join(images, filename)
         try:
             if os.path.isfile(file_path) or os.path.islink(file_path):

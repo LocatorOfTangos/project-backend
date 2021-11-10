@@ -23,7 +23,7 @@ def user_profile_v1(token, u_id):
             > token is invalid
 
     Return Value:
-        Returns a user dictionary containing 'u_id', 'email', 'name_first', 'name_last', 'handle_str'
+        Returns a user dictionary containing 'u_id', 'email', 'name_first', 'name_last', 'handle_str', 'profile_img_url'
     '''
 
     if not valid_token(token):
@@ -239,7 +239,8 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
             > token is invalid
 
     Return Value:
-        Returns an empty dictionary'''
+        Returns an empty dictionary
+    '''
 
     if not valid_token(token):
         raise AccessError(description="Invalid token")
@@ -262,14 +263,12 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     image = image.crop((x_start, y_start, x_end, y_end))
 
     store = data_store.get()
-    imageno = store['current_profile_image']
-    store['current_profile_image'] += 1
-    image.save(f'profile_images/{imageno}.jpg')
+    imageno = store['current_profile_img']
+    image.save(f'profile_imgs/{imageno}.jpg')
 
-    count = store['current_profile_image']
+    store['users'][u_id]['profile_img_url'] = config.url + f'profile_imgs/{imageno}.jpg'
 
-    store['users'][u_id]['profile_image_url'] = config.url + f'profile_images/{count}.jpg'
-    # Save produced URL to relevant user's dictionary
+    store['current_profile_img'] += 1
 
     data_store.set(store)
     return {}

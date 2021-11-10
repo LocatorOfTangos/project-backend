@@ -34,8 +34,6 @@ def test_bad_filetype(user):
 
 def test_successful(user):
     assert user_profile_uploadphoto_v1_request(user['token'], jas, 50, 50, 140, 140).status_code == 200
-    deets = user_profile_v1_request(user['token'], user['auth_user_id']).json()
-    print(deets)
 
 def test_multiple_changes(user, user2):
     assert user_profile_uploadphoto_v1_request(user['token'], 'http://via.placeholder.com/100.JPG/FFFF00/000000/?text=userwon', 10, 10, 90, 90).status_code == 200
