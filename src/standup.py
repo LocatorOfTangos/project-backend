@@ -19,7 +19,7 @@ def standup_timer(token, ch, length):
         message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
         
         if message != "":
-            message_send_v1(token, ch, message, standup=True)
+            message_send_v1(token, ch, message, ignore_len=True)
         else:
             print("No messages in standup")
 
@@ -33,7 +33,7 @@ def standup_timer(token, ch, length):
 
 
         data_store.set(store)
-        
+
 def standup_start_v1(token, channel_id, length):
     '''
     Starts a standup in a channel for 'length' seconds
