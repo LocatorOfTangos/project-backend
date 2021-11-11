@@ -65,3 +65,14 @@ def test_shared_message_dm(sender, dm, message):
 	msg = dm_messages_v1_request(sender, dm, 0).json()['messages'][0]['message']
 	assert "Truer words were never spoken" in msg
 	assert "The world is flat" in msg
+
+def test_deleted_message(sender, channel1, message):
+	message_remove_v1_request(sender, message)
+	assert message_share_v1_request(sender, message, "Look at this", channel1, -1).status_code == 400
+
+def test_edited_message(sender, channel1, message):
+	message_edit_v1_request(sender, message, "uwu")
+	message_share_v1_request(sender, message, "Look at this", channel1, -1).status_code == 200
+	msg = channel_messages_v2_request(sender, channel1, 0).json()['messages'][0]['message']
+	assert "Look at this" in msg
+	assert "uwu" in msg

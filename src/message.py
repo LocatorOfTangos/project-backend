@@ -96,8 +96,7 @@ def message_send_v1(token, channel_id, message, ignore_len=False):
 	store['message_info'][message_id] = {
 		'type': 'channels',
 		'sender': u_id,
-		'to': channel_id,
-		'message': message
+		'to': channel_id
 	}
 
 	data_store.set(store)
@@ -181,8 +180,7 @@ def message_senddm_v1(token, dm_id, message, ignore_len=False):
 	store['message_info'][message_id] = {
 		'type': 'dms',
 		'sender': u_id,
-		'to': dm_id,
-		'message': message
+		'to': dm_id
 	}
 
 	data_store.set(store)
@@ -534,10 +532,15 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 	if len(message) > 1000:
 		raise InputError(description="Message must be less thatn 1000 chars")
 
-	share_message = f'{message}\n > "{msgs[og_message_id]["message"]}"'
+	# Get the contents of the shared message
+	og_text = list(filter(lambda m: m['message_id'] == og_message_id, store[chat_type][to]["messages"]))[0]['message']
+
+	share_message = f'{message}\n > "{og_text}"'
 
 	if dm_id == -1:
-		message_send_v1(token, channel_id, share_message, ignore_len=True)
+		m_id = message_send_v1(token, channel_id, share_message, ignore_len=True)['message_id']
 	
 	else:
-		message_senddm_v1(token, dm_id, share_message, ignore_len=True)
+		m_id = message_senddm_v1(token, dm_id, share_message, ignore_len=True)['message_id']
+	
+	return {'shared_message_id': m_id}

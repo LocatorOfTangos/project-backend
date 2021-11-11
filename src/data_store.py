@@ -56,7 +56,7 @@ initial_object = {
     'dms': [],
     
     # Dictionary mapping message_ids to their sender and channel/dm_id
-    # type (dms/channels), sender (u_id), to (ch/dm id), message (text)
+    # type (dms/channels), sender (u_id), to (ch/dm id)
     'message_info': {},
 
     # ID to give to the next message (so that IDs aren't reused)
