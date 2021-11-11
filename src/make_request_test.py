@@ -295,7 +295,7 @@ def notifications_get_v1_request(token):
     })
 
 def message_share_v1_request(token, og_message_id, message, channel_id, dm_id):
-    return request.post(config.url + 'message/share/v1', json={
+    return requests.post(config.url + 'message/share/v1', json={
         'token': token,
         'og_message_id': og_message_id,
         'message': message,

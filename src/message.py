@@ -19,7 +19,7 @@ def find_tags(message):
 	return u_ids
 
 
-def message_send_v1(token, channel_id, message, standup=False):
+def message_send_v1(token, channel_id, message, ignore_len=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -54,7 +54,7 @@ def message_send_v1(token, channel_id, message, standup=False):
 	if not user_is_member(u_id, channel_id):
 		raise AccessError(description="User is not a member of this channel")
 	
-	if (not 1 <= len(message) <= 1000) and not standup:
+	if (not 1 <= len(message) <= 1000) and not ignore_len:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
@@ -96,7 +96,8 @@ def message_send_v1(token, channel_id, message, standup=False):
 	store['message_info'][message_id] = {
 		'type': 'channels',
 		'sender': u_id,
-		'to': channel_id
+		'to': channel_id,
+		'message': message
 	}
 
 	data_store.set(store)
@@ -104,7 +105,7 @@ def message_send_v1(token, channel_id, message, standup=False):
 	return {'message_id': message_id}
 
 
-def message_senddm_v1(token, dm_id, message):
+def message_senddm_v1(token, dm_id, message, ignore_len=False):
 	'''
 	Sends a message to a dm (dm_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -139,7 +140,7 @@ def message_senddm_v1(token, dm_id, message):
 	if not user_is_member(u_id, dm_id, 'dms'):
 		raise AccessError(description="User is not a member of this dm")
 	
-	if not 1 <= len(message) <= 1000:
+	if (not 1 <= len(message) <= 1000) and not ignore_len:
 		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
 	
 	### Implementation ###
@@ -180,7 +181,8 @@ def message_senddm_v1(token, dm_id, message):
 	store['message_info'][message_id] = {
 		'type': 'dms',
 		'sender': u_id,
-		'to': dm_id
+		'to': dm_id,
+		'message': message
 	}
 
 	data_store.set(store)
@@ -501,3 +503,41 @@ def message_unpin_v1(token, message_id):
 	pin_message(u_id, message_id, pin_mode=False)
 
 	return {}
+
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+	
+	if channel_id != -1 and dm_id != -1:
+		raise InputError(description="Channel ID or DM ID must be -1")
+	
+	if not (valid_channel_id(channel_id) or valid_dm_id(dm_id)):
+		raise InputError(description="Channel/DM ID is invalid")
+	
+	# Get the message_id -> details mapping
+	store = data_store.get()
+	msgs = store['message_info']
+	u_id = token_user(token)
+
+	if og_message_id not in msgs.keys():
+		raise InputError(description="Message does not exist")
+
+	# Determine whether the message is in a channel or a dm
+	chat_type = msgs[og_message_id]['type']
+	
+	# Determine the specific channel or dm the message is in
+	to = msgs[og_message_id]['to']
+
+	if not user_is_member(u_id, to, chat_type):
+		raise InputError(description="Message does not exist")
+
+	if len(message) > 1000:
+		raise InputError(description="Message must be less thatn 1000 chars")
+
+	share_message = f'{message}\n > "{msgs[og_message_id]["message"]}"'
+
+	if dm_id == -1:
+		message_send_v1(token, channel_id, share_message, ignore_len=True)
+	
+	else:
+		message_senddm_v1(token, dm_id, share_message, ignore_len=True)

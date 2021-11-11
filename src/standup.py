@@ -23,7 +23,7 @@ def standup_timer(token, ch, length):
 
     # Compile and send the standup message
     message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
-    message_send_v1(token, ch, message, standup=True)
+    message_send_v1(token, ch, message, ignore_len=True)
 
     # Reset state of standup dict
     store['channels'][ch]['standup'] = {
