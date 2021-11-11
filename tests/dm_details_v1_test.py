@@ -1,4 +1,5 @@
 import pytest
+from src import config
 from src.make_request_test import *
 
 @pytest.fixture(autouse=True)
@@ -37,7 +38,8 @@ def test_owner(owner):
 				'email': 'testemail@gmail.com',
 				'name_first': 'vu',
 				'name_last': 'luu',
-				'handle_str': 'vuluu'
+				'handle_str': 'vuluu',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			}
 		]
 	}
@@ -54,14 +56,16 @@ def test_multiple_members(owner, user1):
 				'email': 'testemail@gmail.com',
 				'name_first': 'vu',
 				'name_last': 'luu',
-				'handle_str': 'vuluu'
+				'handle_str': 'vuluu',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
             {
 				'u_id': user1_id,
 				'email': 'testemail2@gmail.com',
 				'name_first': 'david',
 				'name_last': 'smith',
-				'handle_str': 'davidsmith'
+				'handle_str': 'davidsmith',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			}
 		]
 	}

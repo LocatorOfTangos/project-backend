@@ -1,5 +1,5 @@
 import pytest
-
+from src import config
 from src.make_request_test import *
 
 @pytest.fixture(autouse=True)
@@ -50,7 +50,8 @@ def test_valid_channel_id():
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
+                'handle_str': 'vuluu',
+                'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
             },
         ],
         'all_members': [
@@ -59,7 +60,8 @@ def test_valid_channel_id():
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
+                'handle_str': 'vuluu',
+                'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
             },
         ],
     }
@@ -83,7 +85,8 @@ def test_private_channel():
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
+                'handle_str': 'vuluu',
+                'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
             },
         ],
         'all_members': [
@@ -92,7 +95,8 @@ def test_private_channel():
                 'name_first': 'vu',
                 'name_last': 'luu',
                 'email': 'testemail@gmail.com',
-                'handle_str': 'vuluu'
+                'handle_str': 'vuluu',
+                'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
             },
         ],
     }

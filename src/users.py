@@ -14,7 +14,7 @@ def users_all_v1(token):
 			> token is invalid
 
 	Return Value:
-		Returns a list of users containing 'u_id', 'email', 'name_first', 'name_last', 'handle_str'
+		Returns a list of users containing 'u_id', 'email', 'name_first', 'name_last', 'handle_str', 'profile_img_url'
 	'''
 	if not valid_token(token):
 		raise AccessError(description='Token is invalid')
