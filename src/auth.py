@@ -239,3 +239,31 @@ def auth_logout_v1(token):
 	data_store.set(store)
 	
 	return {}
+
+def auth_passwordreset_request_v1(email):
+	'''
+	Given a registered user's email address, sends an email with a secret code
+	used to verify them when changing passwords. They should also be
+	logged out of all current sessions.
+
+	Arguments:
+		email (string)		- Email of a registered user
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
+	store = data_store.get()
+	users = store['users']
+	
+	# Generate a reset code using secrets module
+	reset_code = secrets.token_hex(5)
+
+
+
+	
+
+
+
+
+
