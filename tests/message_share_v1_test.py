@@ -76,3 +76,6 @@ def test_edited_message(sender, channel1, message):
 	msg = channel_messages_v2_request(sender, channel1, 0).json()['messages'][0]['message']
 	assert "Look at this" in msg
 	assert "uwu" in msg
+
+def test_invalid_token(channel1, message):
+	assert message_share_v1_request("qwerty", message, "Hi", channel1, -1).status_code == 403
