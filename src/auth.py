@@ -259,4 +259,20 @@ def auth_passwordreset_v1(reset_code, new_password):
 	if len(new_password) < 6:
 		raise InputError(description='Password entered is less than 6 characters long')
 
+	if not reset_code_is_valid(reset_code):
+		raise InputError(description='Invalid reset code')
+
+	store = data_store.get()
+	users = store['users']
+	password = store['passwords']
+	for user in users:
+		if user['reset_code'] == reset_code:
+			u_id = user['u_id']
+			break
+
+	password[u_id] == hashlib.sha256(new_password.encode()).hexdigest()
+
+	return {}
+
+
 	

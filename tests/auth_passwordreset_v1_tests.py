@@ -30,10 +30,10 @@ def test_valid_reset_code():
     auth_passwordreset_v1_request('testemail@gmail.com')
 
     store = data_store.get()
-    codes = store['reset_code']
-    for code in codes:
-        if code[email] == email:
-            reset_code = code['reset_code']
+    users = store['users']
+    for user in users:
+        if user['email'] == email:
+            reset_code = user['reset_code']
             break
 
     assert auth_passwordreset_v1_request(reset_code, 'newpassword').status_code == 200
