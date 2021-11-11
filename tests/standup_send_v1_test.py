@@ -26,9 +26,10 @@ def channel(user):
 
 
 def test_status(user, channel):
-    standup_start_v1_request(user, channel, 60)
+    standup_start_v1_request(user, channel, 1)
     assert standup_send_v1_request(
         user, channel, "my catfish ate a kmart toaster").status_code == 200
+    time.sleep(1.1)
 
 
 def test_invalid_channel(user):
@@ -36,13 +37,14 @@ def test_invalid_channel(user):
 
 
 def test_invalid_length(user, channel):
-    standup_start_v1_request(user, channel, 60)
+    standup_start_v1_request(user, channel, 1)
     assert standup_send_v1_request(user, channel, "").status_code == 400
     assert standup_send_v1_request(user, channel, "a").status_code == 200
     assert standup_send_v1_request(
         user, channel, "a" * 1000).status_code == 200
     assert standup_send_v1_request(
         user, channel, "a" * 1001).status_code == 400
+    time.sleep(1.1)
 
 
 def test_no_standup(user, channel):
@@ -50,12 +52,13 @@ def test_no_standup(user, channel):
 
 
 def test_not_member(user2, user, channel):
-    standup_start_v1_request(user, channel, 60)
+    standup_start_v1_request(user, channel, 1)
     assert standup_send_v1_request(user2, channel, "hello").status_code == 403
+    time.sleep(1.1)
 
 
 def test_invalid_token(user, channel):
-    standup_start_v1_request(user, channel, 60)
+    standup_start_v1_request(user, channel, 1)
 
     assert standup_send_v1_request(
         "qwerty", channel, "hello").status_code == 403
@@ -66,6 +69,7 @@ def test_invalid_token(user, channel):
     auth_logout_v1_request(user)
 
     assert standup_send_v1_request(user, channel, "hello").status_code == 403
+    time.sleep(1.1)
 
 
 def test_one_message(user, channel):
@@ -73,7 +77,7 @@ def test_one_message(user, channel):
 
     standup_send_v1_request(user, channel, "my catfish ate a kmart toaster")
 
-    time.sleep(1.5)
+    time.sleep(1.1)
 
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
         == "blakemorris: my catfish ate a kmart toaster"
@@ -86,7 +90,7 @@ def test_multiple_messages(user, channel):
     standup_send_v1_request(user, channel, "bbb")
     standup_send_v1_request(user, channel, "ccc")
 
-    time.sleep(1.5)
+    time.sleep(1.25)
 
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
         == "blakemorris: aaa\nblakemorris: bbb\nblakemorris: ccc"
@@ -102,7 +106,7 @@ def test_multiple_users(user, user2, channel):
     standup_send_v1_request(user, channel, "bbb")
     standup_send_v1_request(user2, channel, "ccc")
 
-    time.sleep(1.5)
+    time.sleep(1.25)
 
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
         == "haydensmith: aaa\nblakemorris: bbb\nhaydensmith: ccc"
@@ -128,7 +132,7 @@ def test_concurrent(user, user2, channel):
     standup_send_v1_request(user2, channel, "ccc")
     standup_send_v1_request(user, channel2, "ccc")
 
-    time.sleep(1.5)
+    time.sleep(1.25)
 
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
         == "haydensmith: aaa\nblakemorris: bbb\nhaydensmith: ccc"
@@ -148,7 +152,7 @@ def test_long(user, channel):
     standup_send_v1_request(user, channel, "a" * 1000)
     standup_send_v1_request(user, channel, "b" * 1000)
 
-    time.sleep(1.5)
+    time.sleep(1.25)
 
     assert channel_messages_v2_request(user, channel, 0).json()['messages'][0]['message'] \
         == f"blakemorris: {'a' * 1000}\nblakemorris: {'b' * 1000}"
