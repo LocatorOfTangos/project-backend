@@ -1,5 +1,6 @@
 import pytest
 from src.make_request_test import *
+from src import config
 
 @pytest.fixture(autouse=True)
 def clear():
@@ -18,7 +19,8 @@ def test_profile_self(user):
 		'email': 'u@mail.com',
 		'name_first': 'first',
 		'name_last': 'last',
-		'handle_str': 'firstlast' 
+		'handle_str': 'firstlast',
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 	}
 
 def test_profile_other_user(user):
@@ -29,7 +31,8 @@ def test_profile_other_user(user):
 		'email': 'u2@mail.com',
 		'name_first': 'blake',
 		'name_last': 'morris',
-		'handle_str': 'blakemorris' 
+		'handle_str': 'blakemorris',
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 	}
 
 def test_profile_bad_token(user):
@@ -54,7 +57,8 @@ def test_profile_changed(user):
 		'email': 'u@mail.com',
 		'name_first': 'first',
 		'name_last': 'last',
-		'handle_str': 'firstlast' 
+		'handle_str': 'firstlast',
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 	}
 
 	user_profile_setname_v1_request(user['token'], "jake", "borris")
@@ -66,7 +70,8 @@ def test_profile_changed(user):
 		'email': 'z5555555@unsw.edu.au',
 		'name_first': 'jake',
 		'name_last': 'borris',
-		'handle_str': 'xxviuserxx' 
+		'handle_str': 'xxviuserxx',
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 	}
 
 def test_profile_removed(user):
