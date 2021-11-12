@@ -1,4 +1,5 @@
 import time
+from threading import Lock
 from logging import Handler
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -7,6 +8,8 @@ from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
 from src.notifications import send_notification
 import re
+
+LOCK = Lock()
 
 # Returns a list of u_ids from tags in 'message' referring to an existing user.
 def find_tags(message):
@@ -548,8 +551,6 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 	return {'shared_message_id': m_id}
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
-	store = data_store.get()
-
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
@@ -566,27 +567,27 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
 	if not user_is_member(u_id, channel_id):
 		raise AccessError(description="User is not a member of this channel")
 
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	with LOCK:
+		store = data_store.get()
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
-	msg_data = {
-		'token': token,
-		'channel_id': channel_id,
-		'type': 'channels',
-		'message_id': message_id,
-		'message': message,
-		'time_sent': int(time_sent)
-	}
+		msg_data = {
+			'token': token,
+			'channel_id': channel_id,
+			'type': 'channels',
+			'message_id': message_id,
+			'message': message,
+			'time_sent': int(time_sent)
+		}
 
-	store['msg_queue'].append(msg_data)
-	store['msg_queue'].sort(key=lambda x: x['time_sent'])
-	data_store.set(store)
+		store['msg_queue'].append(msg_data)
+		store['msg_queue'].sort(key=lambda x: x['time_sent'])
+		data_store.set(store)
 
 	return {'message_id': message_id}
 
 def message_sendlaterdm_v1(token, dm_id, message, time_sent):
-	store = data_store.get()
-
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
@@ -603,20 +604,22 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 	if not user_is_member(u_id, dm_id, chat_type='dms'):
 		raise AccessError(description="User is not a member of this dm")
 
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	with LOCK:
+		store = data_store.get()
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
-	msg_data = {
-		'token': token,
-		'dm_id': dm_id,
-		'type': 'dms',
-		'message_id': message_id,
-		'message': message,
-		'time_sent': int(time_sent)
-	}
+		msg_data = {
+			'token': token,
+			'dm_id': dm_id,
+			'type': 'dms',
+			'message_id': message_id,
+			'message': message,
+			'time_sent': int(time_sent)
+		}
 
-	store['msg_queue'].append(msg_data)
-	store['msg_queue'].sort(key=lambda x: x['time_sent'])
-	data_store.set(store)
+		store['msg_queue'].append(msg_data)
+		store['msg_queue'].sort(key=lambda x: x['time_sent'])
+		data_store.set(store)
 
 	return {'message_id': message_id}
