@@ -551,6 +551,28 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 	return {'shared_message_id': m_id}
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
+	'''
+	Send a message from the authorised user to the channel specified by channel_id automatically at a specified time in the future.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) unreacting to the message
+		channel_id (int)    - id of the targeted channel
+		message (string)	- id of the message to remove react from
+		time_sent (int)		- time for when message will be sent
+
+	Exceptions:
+		InputError - Occurs when:
+			> channel_id does not refer to a valid channel
+			> length of message is over 1000 characters
+			> time_sent is a time in the past
+		
+		AccessError - Occers when:
+			> token is invalid
+			> channel_id is valid and the authorised user is not a member of the channel they are trying to post to
+
+	Return Value:
+		{ message_id }
+	'''
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
@@ -588,6 +610,27 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
 	return {'message_id': message_id}
 
 def message_sendlaterdm_v1(token, dm_id, message, time_sent):
+	'''
+	Send a message from the authorised user to the DM specified by dm_id automatically at a specified time in the future.
+	Arguments:
+		token (string)		- authorisation token of the user (session) unreacting to the message
+		dm_id (int)         - id of the targeted dm
+		message (string)	- id of the message to remove react from
+		time_sent (int)		- time for when message will be sent
+
+	Exceptions:
+		InputError - Occurs when:
+			> channel_id does not refer to a valid channel
+			> length of message is over 1000 characters
+			> time_sent is a time in the past
+		
+		AccessError - Occers when:
+			> token is invalid
+			> channel_id is valid and the authorised user is not a member of the channel they are trying to post to
+
+	Return Value:
+		{ message_id }
+	'''
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
