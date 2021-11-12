@@ -2,6 +2,8 @@ import hashlib
 
 import jwt
 import src
+import secrets
+import smtplib
 
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -257,7 +259,31 @@ def auth_passwordreset_request_v1(email):
 	users = store['users']
 	
 	# Generate a reset code using secrets module
-	reset_code = secrets.token_hex(5)
+	reset_code = secrets.token_hex(4)
+
+	# Set up SMTP server and send email
+
+	sender_email = 'dummyemail6767@gmail.com'
+	receiver_email = email
+
+	msg = MIMEMultipart()
+	msg['From'] = sender_email
+	msg['To'] = email
+	msg['Subject'] = 'Your Reset Code'
+	msg.attach(MIMEText(reset_code, 'plain'))
+
+	server = smtplib.SMTP(host='smtp.gmail.com', 465)
+	sever.starttls()
+	server.login(sender_email, 'Dummy123')
+	server.send_message(sender_email, receiver_email, msg.as_string())
+
+	server.quit()
+
+	return {}
+	
+
+
+	
 
 
 
