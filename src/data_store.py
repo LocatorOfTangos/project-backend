@@ -28,6 +28,7 @@ Example usage:
 initial_object = {
     # List of user dictionaries, indexed by ID
     # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[]
+    # reset_code, user_sessions
     'users': [],
 
     # List of session_id's (integers)
