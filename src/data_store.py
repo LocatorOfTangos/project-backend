@@ -66,13 +66,11 @@ initial_object = {
     # Global streams statistics
     'workplace_stats': {},
 
-<<<<<<< HEAD
     # for sendlater
-    'msg_queue': []
-=======
+    'msg_queue': [],
+
     # Profile picture ID
     'current_profile_image': 0
->>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

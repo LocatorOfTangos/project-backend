@@ -19,12 +19,7 @@ def find_tags(message):
 	u_ids = [u['u_id'] for u in users if u['handle_str'] in handles]
 	return u_ids
 
-
-<<<<<<< HEAD
-def message_send_v1(token, channel_id, message, message_id=None, standup=False):
-=======
 def message_send_v1(token, channel_id, message, ignore_len=False):
->>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -110,11 +105,7 @@ def message_send_v1(token, channel_id, message, ignore_len=False):
 	return {'message_id': message_id}
 
 
-<<<<<<< HEAD
-def message_senddm_v1(token, dm_id, message, message_id=None):
-=======
 def message_senddm_v1(token, dm_id, message, ignore_len=False):
->>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58
 	'''
 	Sends a message to a dm (dm_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -513,7 +504,49 @@ def message_unpin_v1(token, message_id):
 
 	return {}
 
-<<<<<<< HEAD
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+	if not valid_token(token):
+		raise AccessError(description="Token is invalid")
+	
+	if channel_id != -1 and dm_id != -1:
+		raise InputError(description="Channel ID or DM ID must be -1")
+	
+	if not (valid_channel_id(channel_id) or valid_dm_id(dm_id)):
+		raise InputError(description="Channel/DM ID is invalid")
+	
+	# Get the message_id -> details mapping
+	store = data_store.get()
+	msgs = store['message_info']
+	u_id = token_user(token)
+
+	if og_message_id not in msgs.keys():
+		raise InputError(description="Message does not exist")
+
+	# Determine whether the message is in a channel or a dm
+	chat_type = msgs[og_message_id]['type']
+	
+	# Determine the specific channel or dm the message is in
+	to = msgs[og_message_id]['to']
+
+	if not user_is_member(u_id, to, chat_type):
+		raise InputError(description="Message does not exist")
+
+	if len(message) > 1000:
+		raise InputError(description="Message must be less thatn 1000 chars")
+
+	# Get the contents of the shared message
+	og_text = list(filter(lambda m: m['message_id'] == og_message_id, store[chat_type][to]["messages"]))[0]['message']
+
+	share_message = f'{message}\n > "{og_text}"'
+
+	if dm_id == -1:
+		m_id = message_send_v1(token, channel_id, share_message, ignore_len=True)['message_id']
+	
+	else:
+		m_id = message_senddm_v1(token, dm_id, share_message, ignore_len=True)['message_id']
+	
+	return {'shared_message_id': m_id}
+
 def message_sendlater_v1(token, channel_id, message, time_sent):
 	store = data_store.get()
 
@@ -587,47 +620,3 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 	data_store.set(store)
 
 	return {'message_id': message_id}
-=======
-def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-	if not valid_token(token):
-		raise AccessError(description="Token is invalid")
-	
-	if channel_id != -1 and dm_id != -1:
-		raise InputError(description="Channel ID or DM ID must be -1")
-	
-	if not (valid_channel_id(channel_id) or valid_dm_id(dm_id)):
-		raise InputError(description="Channel/DM ID is invalid")
-	
-	# Get the message_id -> details mapping
-	store = data_store.get()
-	msgs = store['message_info']
-	u_id = token_user(token)
-
-	if og_message_id not in msgs.keys():
-		raise InputError(description="Message does not exist")
-
-	# Determine whether the message is in a channel or a dm
-	chat_type = msgs[og_message_id]['type']
-	
-	# Determine the specific channel or dm the message is in
-	to = msgs[og_message_id]['to']
-
-	if not user_is_member(u_id, to, chat_type):
-		raise InputError(description="Message does not exist")
-
-	if len(message) > 1000:
-		raise InputError(description="Message must be less thatn 1000 chars")
-
-	# Get the contents of the shared message
-	og_text = list(filter(lambda m: m['message_id'] == og_message_id, store[chat_type][to]["messages"]))[0]['message']
-
-	share_message = f'{message}\n > "{og_text}"'
-
-	if dm_id == -1:
-		m_id = message_send_v1(token, channel_id, share_message, ignore_len=True)['message_id']
-	
-	else:
-		m_id = message_senddm_v1(token, dm_id, share_message, ignore_len=True)['message_id']
-	
-	return {'shared_message_id': m_id}
->>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58

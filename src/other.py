@@ -21,11 +21,8 @@ def clear_v1():
     store['curr_session_id'] = 0
     store['message_info'] = {}
     store['workplace_stats'] = {}
-<<<<<<< HEAD
     store['msg_queue'] = []
-=======
     store['current_profile_img'] = 0
->>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58
     data_store.set(store)
 
     images = 'profile_imgs'
