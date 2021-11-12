@@ -19,7 +19,7 @@ def find_tags(message):
 	u_ids = [u['u_id'] for u in users if u['handle_str'] in handles]
 	return u_ids
 
-def message_send_v1(token, channel_id, message, ignore_len=False):
+def message_send_v1(token, channel_id, message, message_id=None, ignore_len=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -105,7 +105,7 @@ def message_send_v1(token, channel_id, message, ignore_len=False):
 	return {'message_id': message_id}
 
 
-def message_senddm_v1(token, dm_id, message, ignore_len=False):
+def message_senddm_v1(token, dm_id, message, message_id=None, ignore_len=False):
 	'''
 	Sends a message to a dm (dm_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
