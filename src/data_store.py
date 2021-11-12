@@ -66,6 +66,9 @@ initial_object = {
     # Global streams statistics
     'workplace_stats': {},
 
+    # for sendlater
+    'msg_queue': [],
+
     # Profile picture ID
     'current_profile_image': 0
 }

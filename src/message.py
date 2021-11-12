@@ -1,3 +1,5 @@
+import time
+from threading import Lock
 from logging import Handler
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -6,6 +8,8 @@ from datetime import datetime, timezone
 from src.user import stat_update, global_stat_update
 from src.notifications import send_notification
 import re
+
+LOCK = Lock()
 
 # Returns a list of u_ids from tags in 'message' referring to an existing user.
 def find_tags(message):
@@ -18,8 +22,7 @@ def find_tags(message):
 	u_ids = [u['u_id'] for u in users if u['handle_str'] in handles]
 	return u_ids
 
-
-def message_send_v1(token, channel_id, message, ignore_len=False):
+def message_send_v1(token, channel_id, message, message_id=None, ignore_len=False):
 	'''
 	Sends a message to a channel (channel_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -68,8 +71,9 @@ def message_send_v1(token, channel_id, message, ignore_len=False):
 	channel = store['channels'][channel_id]
 
 	# Assign a unique message_id
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	if message_id is None:
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
 
 	# Ping tagged users who are members of the channel
@@ -104,7 +108,7 @@ def message_send_v1(token, channel_id, message, ignore_len=False):
 	return {'message_id': message_id}
 
 
-def message_senddm_v1(token, dm_id, message, ignore_len=False):
+def message_senddm_v1(token, dm_id, message, message_id=None, ignore_len=False):
 	'''
 	Sends a message to a dm (dm_id) from a user (token).
 	The message is saved with a message_id, the u_id of the sender, the message contents and
@@ -153,8 +157,9 @@ def message_senddm_v1(token, dm_id, message, ignore_len=False):
 	dm = store['dms'][dm_id]
 
 	# Assign a unique message_id
-	message_id = store['curr_message_id']
-	store['curr_message_id'] += 1
+	if message_id is None:
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
 
 	# Ping tagged users who are members of the dm
 	handle = store['users'][u_id]['handle_str']
@@ -544,3 +549,120 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 		m_id = message_senddm_v1(token, dm_id, share_message, ignore_len=True)['message_id']
 	
 	return {'shared_message_id': m_id}
+
+def message_sendlater_v1(token, channel_id, message, time_sent):
+	'''
+	Send a message from the authorised user to the channel specified by channel_id automatically at a specified time in the future.
+
+	Arguments:
+		token (string)		- authorisation token of the user (session) unreacting to the message
+		channel_id (int)    - id of the targeted channel
+		message (string)	- id of the message to remove react from
+		time_sent (int)		- time for when message will be sent
+
+	Exceptions:
+		InputError - Occurs when:
+			> channel_id does not refer to a valid channel
+			> length of message is over 1000 characters
+			> time_sent is a time in the past
+		
+		AccessError - Occers when:
+			> token is invalid
+			> channel_id is valid and the authorised user is not a member of the channel they are trying to post to
+
+	Return Value:
+		{ message_id }
+	'''
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not valid_channel_id(channel_id):
+		raise InputError(description="Invalid channel_id")
+
+	if len(message) > 1000:
+		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
+
+	if int(time_sent) < int(time.time()):
+		raise InputError(description='time_sent is a time in the past')
+
+	u_id = token_user(token)
+	if not user_is_member(u_id, channel_id):
+		raise AccessError(description="User is not a member of this channel")
+
+	with LOCK:
+		store = data_store.get()
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
+
+		msg_data = {
+			'token': token,
+			'channel_id': channel_id,
+			'type': 'channels',
+			'message_id': message_id,
+			'message': message,
+			'time_sent': int(time_sent)
+		}
+
+		store['msg_queue'].append(msg_data)
+		store['msg_queue'].sort(key=lambda x: x['time_sent'])
+		data_store.set(store)
+
+	return {'message_id': message_id}
+
+def message_sendlaterdm_v1(token, dm_id, message, time_sent):
+	'''
+	Send a message from the authorised user to the DM specified by dm_id automatically at a specified time in the future.
+	Arguments:
+		token (string)		- authorisation token of the user (session) unreacting to the message
+		dm_id (int)         - id of the targeted dm
+		message (string)	- id of the message to remove react from
+		time_sent (int)		- time for when message will be sent
+
+	Exceptions:
+		InputError - Occurs when:
+			> channel_id does not refer to a valid channel
+			> length of message is over 1000 characters
+			> time_sent is a time in the past
+		
+		AccessError - Occers when:
+			> token is invalid
+			> channel_id is valid and the authorised user is not a member of the channel they are trying to post to
+
+	Return Value:
+		{ message_id }
+	'''
+	if not valid_token(token):
+		raise AccessError(description="Invalid token")
+
+	if not valid_dm_id(dm_id):
+		raise InputError(description="Invalid dm_id")
+
+	if len(message) > 1000:
+		raise InputError(description="Message length must be between 1 and 1000 chars (inclusive)")
+
+	if int(time_sent) < int(time.time()):
+		raise InputError(description='time_sent is a time in the past')
+
+	u_id = token_user(token)
+	if not user_is_member(u_id, dm_id, chat_type='dms'):
+		raise AccessError(description="User is not a member of this dm")
+
+	with LOCK:
+		store = data_store.get()
+		message_id = store['curr_message_id']
+		store['curr_message_id'] += 1
+
+		msg_data = {
+			'token': token,
+			'dm_id': dm_id,
+			'type': 'dms',
+			'message_id': message_id,
+			'message': message,
+			'time_sent': int(time_sent)
+		}
+
+		store['msg_queue'].append(msg_data)
+		store['msg_queue'].sort(key=lambda x: x['time_sent'])
+		data_store.set(store)
+
+	return {'message_id': message_id}
