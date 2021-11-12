@@ -76,12 +76,14 @@ def test_user_is_not_member(user, ch_pub, ch_priv, dm, message):
     assert message_sendlater_v1_request(user, dm, message, time_sent).status_code == 403
 
 def test_message_u_id(owner, ch_pub, ch_priv, message):
-    time_sent = int(time.time())
+    time_sent = int(time.time()) + 1
 
     u_id = auth_login_v2_request('u@mail.com', 'password').json()['auth_user_id']
 
-    message_sendlater_v1_request(owner, ch_pub, message, time_sent)
-    message_sendlater_v1_request(owner, ch_priv, message, time_sent)
+    assert message_sendlater_v1_request(owner, ch_pub, message, time_sent).status_code == 200
+    assert message_sendlater_v1_request(owner, ch_priv, message, time_sent).status_code == 200
+
+    time.sleep(1.5)
 
     message = channel_messages_v2_request(owner, ch_pub, 0).json()['messages'][0]
     assert message['u_id'] == u_id
@@ -90,7 +92,7 @@ def test_message_u_id(owner, ch_pub, ch_priv, message):
     assert message['u_id'] == u_id 
 
 def test_message_ids_unique_single_channel(owner, ch_pub, ch_priv):
-    time_sent = int(time.time())
+    time_sent = int(time.time()) + 1
     used_ids = set()
 
     m_id = message_sendlater_v1_request(owner, ch_pub, "m", time_sent).json()['message_id']
@@ -107,7 +109,7 @@ def test_message_ids_unique_single_channel(owner, ch_pub, ch_priv):
     used_ids.add(m_id)
 
 def test_dm_ids_unique_multiple(owner, dm):
-    time_sent = int(time.time())
+    time_sent = int(time.time()) + 1
     used_ids = set()
 
     dm2 = dm_create_v1_request(owner, []).json()['dm_id']
@@ -126,12 +128,12 @@ def test_dm_ids_unique_multiple(owner, dm):
     used_ids.add(m_id)
 
 def test_timing(owner, ch_pub):
-    time_sent = int(time.time())
+    time_sent = int(time.time()) + 1
     m_id1 = message_sendlater_v1_request(owner, ch_pub, "m", time_sent).json()['message_id']
     m_id2 = message_sendlater_v1_request(owner, ch_pub, "n", time_sent + 1).json()['message_id']
     m_id3 = message_sendlater_v1_request(owner, ch_pub, "o", time_sent + 2).json()['message_id']
 
-    time.sleep(2.5)
+    time.sleep(3.1)
 
     messages = channel_messages_v2_request(owner, ch_pub, 0).json()['messages']
 
