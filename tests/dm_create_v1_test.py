@@ -1,5 +1,6 @@
 import pytest
 from src.make_request_test import *
+from src import config
 
 @pytest.fixture(autouse=True)
 def clear():
@@ -59,7 +60,8 @@ def test_create_no_u_ids(owner):
 				'email': 'u@mail.com',
 				'name_first': 'blake',
 				'name_last': 'morris',
-				'handle_str': 'blakemorris'
+				'handle_str': 'blakemorris',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			}
 		]
 	}
@@ -75,14 +77,16 @@ def test_create_one_u_id(owner, user1):
 				'email': 'u@mail.com',
 				'name_first': 'blake',
 				'name_last': 'morris',
-				'handle_str': 'blakemorris'
+				'handle_str': 'blakemorris',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
 			{
 				'u_id': user1,
 				'email': 'u2@mail.com',
 				'name_first': 'redmond',
 				'name_last': 'mobbs',
-				'handle_str': 'redmondmobbs'
+				'handle_str': 'redmondmobbs',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
 		]
 	}
@@ -98,21 +102,24 @@ def test_create_multiple_u_ids(owner, user1, user2):
 				'email': 'u@mail.com',
 				'name_first': 'blake',
 				'name_last': 'morris',
-				'handle_str': 'blakemorris'
+				'handle_str': 'blakemorris',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
 			{
 				'u_id': user1,
 				'email': 'u2@mail.com',
 				'name_first': 'redmond',
 				'name_last': 'mobbs',
-				'handle_str': 'redmondmobbs'
+				'handle_str': 'redmondmobbs',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
 			{
 				'u_id': user2,
 				'email': 'u3@mail.com',
 				'name_first': 'tyler',
 				'name_last': 'gan',
-				'handle_str': 'tylergan'
+				'handle_str': 'tylergan',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
 		]
 	}

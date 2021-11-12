@@ -27,7 +27,7 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     # List of user dictionaries, indexed by ID
-    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[]
+    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[], profile_image_url
     'users': [],
 
     # List of session_id's (integers)
@@ -66,8 +66,13 @@ initial_object = {
     # Global streams statistics
     'workplace_stats': {},
 
+<<<<<<< HEAD
     # for sendlater
     'msg_queue': []
+=======
+    # Profile picture ID
+    'current_profile_image': 0
+>>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

@@ -1,5 +1,6 @@
 from enum import auto
 import pytest
+from src import config
 from src.make_request_test import *
 
 @pytest.fixture(autouse=True)
@@ -28,7 +29,8 @@ def test_one_user(user):
 		'email': 'e@mail.com',
 		'name_first': 'first',
 		'name_last': 'last',
-		'handle_str': 'firstlast'
+		'handle_str': 'firstlast',
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 	}
 
 def test_multiple_users(user, users):

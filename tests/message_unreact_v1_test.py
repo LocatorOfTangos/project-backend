@@ -71,3 +71,10 @@ def test_react_gone_multiple_users(user, message, user2, channel):
 		'u_ids': [u2_id],
 		'is_this_user_reacted': False
 	}]
+
+def test_not_member(user2, channel):
+	channel_join_v2_request(user2, channel)
+	msg = message_send_v1_request(user2, channel, "Hi").json()['message_id']
+	message_react_v1_request(user2, msg, 1)
+	channel_leave_v1_request(user2, channel)
+	assert message_unreact_v1_request(user2, msg, 1).status_code == 400

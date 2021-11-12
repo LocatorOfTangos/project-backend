@@ -265,6 +265,16 @@ def standup_start_v1_request(token, channel_id, length):
         'length': length
     })
 
+def user_profile_uploadphoto_v1_request(token, img_url, x_start, y_start, x_end, y_end):
+    return requests.post(config.url + 'user/profile/uploadphoto/v1', json={
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start': y_start,
+        'x_end': x_end,
+        'y_end': y_end
+    })
+
 def standup_active_v1_request(token, channel_id):
     return requests.get(config.url + 'standup/active/v1', params={
         'token': token,
@@ -282,6 +292,7 @@ def message_unpin_v1_request(token, message_id):
         'token': token,
         'message_id': message_id
     })
+    
 def standup_send_v1_request(token, channel_id, message):
     return requests.post(config.url + 'standup/send/v1', json={
         'token': token,
@@ -308,3 +319,15 @@ def notifications_get_v1_request(token):
     return requests.get(config.url + 'notifications/get/v1', params={
         'token': token
     })
+<<<<<<< HEAD
+=======
+
+def message_share_v1_request(token, og_message_id, message, channel_id, dm_id):
+    return requests.post(config.url + 'message/share/v1', json={
+        'token': token,
+        'og_message_id': og_message_id,
+        'message': message,
+        'channel_id': channel_id,
+        'dm_id': dm_id
+    })
+>>>>>>> 8a8561ad189feb809a726b2652f5d28fb3d24c58

@@ -3,6 +3,9 @@ from src.make_request_test import *
 from datetime import datetime, timezone
 from time import sleep
 
+def t_eq(a, b):
+	return abs(a - b) <= 1
+
 # Reset application data before each test is run
 @pytest.fixture(autouse=True)
 def clear_data():
@@ -89,19 +92,27 @@ def test_involvement_rate(owner, member1, member2, channel1, channel2, channel3,
 def test_time_records(owner, member1):
 	time = []
 	time.append(int(datetime.now(timezone.utc).timestamp()))
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['channels_joined'] == [{'num_channels_joined': 0, 'time_stamp': time[0]}]
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['dms_joined'] == [{'num_dms_joined': 0, 'time_stamp': time[0]}]
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['messages_sent'] == [{'num_messages_sent': 0, 'time_stamp': time[0]}]
+
+	stats = user_stats_v1_request(member1['token']).json()['user_stats']
+	assert t_eq(stats['channels_joined'][0]['time_stamp'], time[0])
+	assert t_eq(stats['dms_joined'][0]['time_stamp'], time[0])
+	assert t_eq(stats['messages_sent'][0]['time_stamp'], time[0])
 
 	time.append(int(datetime.now(timezone.utc).timestamp()))
 	channel_id = channels_create_v2_request(member1['token'], 'channel1', True).json()['channel_id']
 	time.append(int(datetime.now(timezone.utc).timestamp()))
 	dm_id = dm_create_v1_request(member1['token'], [owner['auth_user_id']]).json()['dm_id']
 
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['channels_joined'] == [{'num_channels_joined': 0, 'time_stamp': time[0]},
-		{'num_channels_joined': 1, 'time_stamp': time[1]}]
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['dms_joined'] == [{'num_dms_joined': 0, 'time_stamp': time[0]},
-		{'num_dms_joined': 1, 'time_stamp': time[2]}]
+	stats = user_stats_v1_request(member1['token']).json()['user_stats']
+	assert t_eq(stats['channels_joined'][0]['time_stamp'], time[0])
+	assert t_eq(stats['channels_joined'][1]['time_stamp'], time[1])
+	assert stats['channels_joined'][0]['num_channels_joined'] == 0
+	assert stats['channels_joined'][1]['num_channels_joined'] == 1
+	assert t_eq(stats['dms_joined'][0]['time_stamp'], time[0])
+	assert t_eq(stats['dms_joined'][1]['time_stamp'], time[1])
+	assert stats['dms_joined'][0]['num_dms_joined'] == 0
+	assert stats['dms_joined'][1]['num_dms_joined'] == 1
+
 
 	sleep(1)
 	time.append(int(datetime.now(timezone.utc).timestamp()))
@@ -110,6 +121,10 @@ def test_time_records(owner, member1):
 	time.append(int(datetime.now(timezone.utc).timestamp()))
 	message_send_v1_request(member1['token'], dm_id, 'Hello')
 
-	assert user_stats_v1_request(member1['token']).json()['user_stats']['messages_sent'] == [{'num_messages_sent': 0, 'time_stamp': time[0]},
-		{'num_messages_sent': 1,  'time_stamp': time[3]}, 
-		{'num_messages_sent': 2, 'time_stamp': time[4]}]
+	stats = user_stats_v1_request(member1['token']).json()['user_stats']
+	assert t_eq(stats['messages_sent'][0]['time_stamp'], time[0])
+	assert t_eq(stats['messages_sent'][1]['time_stamp'], time[3])
+	assert t_eq(stats['messages_sent'][2]['time_stamp'], time[4])
+	assert stats['messages_sent'][0]['num_messages_sent'] == 0
+	assert stats['messages_sent'][1]['num_messages_sent'] == 1
+	assert stats['messages_sent'][2]['num_messages_sent'] == 2
