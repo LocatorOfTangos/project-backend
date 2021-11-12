@@ -15,13 +15,11 @@ def standup_timer(token, ch, length):
 
     # Compile and send the standup message
     with lock:
-        print(f">> Locked in standup_timer by thread {threading.get_ident()}")
-
         store = data_store.get()
         message = '\n'.join(store['channels'][ch]['standup']['msg_queue'])
         
         if message != "":
-            message_send_v1(token, ch, message, standup=True)
+            message_send_v1(token, ch, message, ignore_len=True)
         else:
             print("No messages in standup")
 
@@ -35,8 +33,6 @@ def standup_timer(token, ch, length):
 
 
         data_store.set(store)
-
-    print(f">> Released in standup_timer by thread {threading.get_ident()}")
 
 def standup_start_v1(token, channel_id, length):
     '''
