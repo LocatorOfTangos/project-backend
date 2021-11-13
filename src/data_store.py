@@ -27,12 +27,9 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     # List of user dictionaries, indexed by ID
-<<<<<<< HEAD
-    # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[]
-    # reset_code
-=======
+
     # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[], profile_image_url
->>>>>>> master
+    # reset_code
     'users': [],
 
     # List of session_id's (integers)
