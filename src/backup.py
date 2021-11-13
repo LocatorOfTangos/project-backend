@@ -22,6 +22,7 @@ def interval_backup():
 		
 		first_msg = msg_queue[0]
 		if int(time.time()) >= int(first_msg['time_sent']):
+			print(first_msg)
 			if first_msg['type'] == 'channels':
 				message_send_v1(first_msg['token'], first_msg['channel_id'], first_msg['message'], message_id=first_msg['message_id'])
 			else:
