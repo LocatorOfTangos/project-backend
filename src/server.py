@@ -284,11 +284,6 @@ def user_stats():
     resp = user_stats_v1(data['token'])
     return dumps(resp)
 
-@APP.route('/user/profile/uploadphoto/v1', methods=['POST'])
-def user_profile_uploadphoto():
-    data = request.get_json()
-    resp = user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], data['y_start'], data['x_end'], data['y_end'])
-    return dumps(resp)
 
 ########### Users ############
 
