@@ -21,6 +21,11 @@ def auth_login_v2_request(email, password):
         'password': password,
     })
 
+def auth_passwordreset_v1_request(email):
+    return requests.post(config.url + 'auth/passwordreset/request/v1', json={
+        'email': email
+    })
+    
 
 def clear_v1_request():
     return requests.delete(config.url + 'clear/v1', params={})

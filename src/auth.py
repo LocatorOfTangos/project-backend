@@ -2,6 +2,10 @@ import hashlib
 
 import jwt
 import src
+import secrets
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -14,11 +18,22 @@ SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 # Creates a JWT token for a user's session
 def create_token(u_id):
 	store = data_store.get()
-
+	user_sessions = store['user_sessions']
 	# Get the next sequential ID to use
 	s_id = store['curr_session_id']
 
 	store['sessions'].append(s_id)
+	user_sessions = store['user_sessions']
+
+	for user in user_sessions:
+		if user['u_id'] == u_id:
+			store['user_sessions'][u_id]['sessions'].append(s_id)
+	else:
+		user_session = {
+			'u_id': u_id,
+			'sessions': [s_id]
+		}
+		store['user_sessions'].append(user_session)
 
 	# Increment sequential ID for next session to use
 	store['curr_session_id'] += 1
@@ -197,6 +212,7 @@ def auth_register_v1(email, password, name_first, name_last):
 		'handle_str': handle,
 		'global_permissions': perm_id,
 		'stats': stats,
+		'reset_code': None,
 		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg',
 		'notifications': []
 	})
@@ -241,3 +257,72 @@ def auth_logout_v1(token):
 	data_store.set(store)
 	
 	return {}
+
+def auth_passwordreset_request_v1(email):
+	'''
+	Given a registered user's email address, sends an email with a secret code
+	used to verify them when changing passwords. They should also be
+	logged out of all current sessions.
+
+	Arguments:
+		email (string)		- Email of a registered user
+
+	Return Value:
+		Returns an empty dictionary
+	'''
+
+	# Check if email given is valid
+	if not email_is_valid(email):
+		raise InputError(description='Email is invalid')
+
+	store = data_store.get()
+	users = store['users']
+	sessions = store['sessions']
+	user_sessions = store['user_sessions']
+
+	# Generate a reset code using secrets module
+	reset_code = secrets.token_hex(4)
+
+	# Store reset code and logout from all current sessions
+	for user in users:
+		if user['email'] == email:
+			u_id = user['u_id']
+
+	for s_id in user_sessions[u_id]['sessions']:
+		if s_id in sessions:
+			sessions.remove(s_id)
+	
+	users[u_id]['reset_code'] = reset_code
+	user_sessions[u_id]['sessions'].clear()
+	
+	# Set up SMTP server and send email
+	sender_email = 'dummyemail6767@gmail.com'
+	receiver_email = email
+
+	msg = MIMEMultipart()
+	txt = MIMEText(reset_code, 'plain')
+	msg['From'] = sender_email
+	msg['To'] = email
+	msg['Subject'] = 'Your Reset Code'
+	msg.attach(txt)
+
+	server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	server.login("dummyemail6767@gmail.com", "Dummy123")
+	server.sendmail(sender_email, receiver_email, msg.as_string())
+	server.quit()
+
+	data_store.set(store)
+	return {}
+	
+
+
+	
+
+
+
+	
+
+
+
+
+

@@ -14,7 +14,7 @@ import pickle
 from src.data_store import data_store
 
 # Implementation imports
-from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
+from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1, auth_passwordreset_request_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.notifications import notifications_get_v1
 from src.other import clear_v1
@@ -81,6 +81,12 @@ def auth_login():
 def auth_logout():
     data = request.get_json()
     resp = auth_logout_v1(data['token'])
+    return dumps(resp)
+
+@APP.route('/auth/passwordreset/request/v1', methods=['POST'])
+def auth_passwordreset_request():
+    data = request.get_json()
+    resp = auth_passwordreset_request_v1(data['email'])
     return dumps(resp)
 
 
