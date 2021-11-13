@@ -543,4 +543,5 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 	else:
 		m_id = message_senddm_v1(token, dm_id, share_message, ignore_len=True)['message_id']
 	
+
 	return {'shared_message_id': m_id}
