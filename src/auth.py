@@ -17,20 +17,23 @@ SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 # Creates a JWT token for a user's session
 def create_token(u_id):
 	store = data_store.get()
+	user_sessions = store['user_sessions']
 	# Get the next sequential ID to use
 	s_id = store['curr_session_id']
 
 	store['sessions'].append(s_id)
-	
-	if u_id in store['user_sessions']['u_id']:
-		store['user_sessions'][u_id]['sessions'].append(s_id)
+	user_sessions = store['user_sessions']
+
+	for user in user_sessions:
+		if user['u_id'] == u_id:
+			store['user_sessions'][u_id]['sessions'].append(s_id)
 	else:
 		user_session = {
 			'u_id': u_id,
 			'sessions': [s_id]
 		}
 		store['user_sessions'].append(user_session)
-		
+
 	# Increment sequential ID for next session to use
 	store['curr_session_id'] += 1
 
@@ -275,7 +278,6 @@ def auth_passwordreset_request_v1(email):
 	sessions = store['sessions']
 	user_sessions = store['user_sessions']
 
-	print(*sessions)
 	# Generate a reset code using secrets module
 	reset_code = secrets.token_hex(4)
 
@@ -283,8 +285,6 @@ def auth_passwordreset_request_v1(email):
 	for user in users:
 		if user['email'] == email:
 			u_id = user['u_id']
-	
-	print(*user_sessions[u_id]['sessions'])
 
 	for s_id in user_sessions[u_id]['sessions']:
 		if s_id in sessions:
@@ -292,8 +292,7 @@ def auth_passwordreset_request_v1(email):
 	
 	users[u_id]['reset_code'] = reset_code
 	user_sessions[u_id]['sessions'].clear()
-
-	print(*sessions)
+	
 	# Set up SMTP server and send email
 	sender_email = 'dummyemail6767@gmail.com'
 	receiver_email = email
