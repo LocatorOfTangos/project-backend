@@ -290,10 +290,6 @@ def user_profile_uploadphoto():
     resp = user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], data['y_start'], data['x_end'], data['y_end'])
     return dumps(resp)
 
-@APP.route('/profile_imgs/<path>')
-def profile_imgs(path):
-    return send_from_directory('../profile_imgs', path)
-
 ########### Users ############
 
 @APP.route('/users/all/v1', methods=['GET'])

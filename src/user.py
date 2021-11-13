@@ -3,8 +3,6 @@ from src.validation import email_is_valid, valid_token, token_user, valid_user_i
 from src.data_store import data_store
 from datetime import datetime, timezone
 import requests
-from PIL import Image
-from io import BytesIO
 from src import config
 
 def user_profile_v1(token, u_id):
@@ -215,60 +213,3 @@ def global_stat_update(statistic, diff):
         'time_stamp': int(datetime.now(timezone.utc).timestamp())
     })
     return
-
-def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
-    '''
-    Downloads a JPG image from the internet via a given URL, and crops according to specifications.
-    The formatted image becomes the user's profile picture.
-    
-    Arguments: 
-        token (string)	- authorisation token of the user requesting the profile picture change
-        img_url (string)  - URL that the desired JPG resides at
-        x_start (int) - number of horizontal pixels (starting left) from which to begin image cropping
-        y_start (int) - number of vertical pixels (starting top) from which to begin image cropping
-        x_end (int) - number of horizontal pixels (starting left) at which to end image cropping
-        y_end (int) - number of vertical pixels (starting top) at which to end image cropping
-
-    Exceptions:
-        InputError  - Occurs when:
-            > img_url returns an HTTP status other than 200
-            > any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL
-            > x_end is less than x_start or y_end is less than y_start
-            > image uploaded is not a JPG
-        AccessError - Occurs when:
-            > token is invalid
-
-    Return Value:
-        Returns an empty dictionary
-    '''
-
-    if not valid_token(token):
-        raise AccessError(description="Invalid token")
-
-    try:
-        resp = requests.get(img_url, stream=True)
-    except Exception as e:
-        raise InputError(description="Url did not respond") from e
-    if resp.status_code != 200:
-        raise InputError(description="Url did not return successfully")
-
-    image = Image.open(BytesIO(resp.content))
-    if image.format not in ('JPEG', 'JPG'):
-        raise InputError(description="Improper file type")
-    if not (0 <= x_start <= x_end <= image.size[0]-1 and 0 <= y_start <= y_end <= image.size[1]-1):
-        raise InputError(description="Specified bounds are Invalid")
-
-    u_id = token_user(token)
-
-    image = image.crop((x_start, y_start, x_end, y_end))
-
-    store = data_store.get()
-    imageno = store['current_profile_img']
-    image.save(f'profile_imgs/{imageno}.jpg')
-
-    store['users'][u_id]['profile_img_url'] = config.url + f'profile_imgs/{imageno}.jpg'
-
-    store['current_profile_img'] += 1
-
-    data_store.set(store)
-    return {}
