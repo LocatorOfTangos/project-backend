@@ -11,6 +11,7 @@ from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.validation import valid_token, email_is_valid
 from datetime import datetime, timezone
+from src import config
 
 SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 
@@ -211,8 +212,9 @@ def auth_register_v1(email, password, name_first, name_last):
 		'handle_str': handle,
 		'global_permissions': perm_id,
 		'stats': stats,
-		'notifications': [],
 		'reset_code': None,
+		'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg',
+		'notifications': []
 	})
 
 	# Add password to data store

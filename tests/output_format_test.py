@@ -94,21 +94,23 @@ def test_channel_details(user, channel):
 	
 	own = out['owner_members'][0]
 	assert isinstance(own, dict)
-	assert set(own.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str'}
+	assert set(own.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str', 'profile_img_url'}
 	assert isinstance(own['u_id'], int)
 	assert isinstance(own['email'], str)
 	assert isinstance(own['name_first'], str)
 	assert isinstance(own['name_last'], str)
 	assert isinstance(own['handle_str'], str)
+	assert isinstance(own['profile_img_url'], str)
 
 	memb = out['all_members'][0]
 	assert isinstance(memb, dict)
-	assert set(memb.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str'}
+	assert set(memb.keys()) == {'u_id', 'email', 'name_first', 'name_last', 'handle_str', 'profile_img_url'}
 	assert isinstance(memb['u_id'], int)
 	assert isinstance(memb['email'], str)
 	assert isinstance(memb['name_first'], str)
 	assert isinstance(memb['name_last'], str)
 	assert isinstance(memb['handle_str'], str)
+	assert isinstance(memb['profile_img_url'], str)
 
 
 def test_channel_join(user_2, channel):

@@ -128,21 +128,18 @@ def test_tagged_edit(user, channel, user2):
 		}]
 	}
 
-@pytest.mark.skip(reason="Share not yet implemented")
 def test_tagged_share(user, channel, user2):
-	pass
-'''
 	channel_join_v2_request(user2['token'], channel)
-	msg = message_senddm_v1_request(user, channel, "hello").json()['message_id']
+	msg = message_send_v1_request(user, channel, "hello").json()['message_id']
 	message_share_v1_request(user, msg, "@usertwo", channel, -1)
 	assert notifications_get_v1_request(user2['token']).json() == \
 	{'notifications':
 		[{
 			'channel_id': channel,
 			'dm_id': -1,
-			'notification_message': "userone tagged you in newchannel: " # ADD MESSAGE SHARE FORMAT HERE
+			'notification_message': 'userone tagged you in newchannel: @usertwo\n > "hello"'
 		}]
-	}'''
+	}
 
 def test_tagged_not_member(user, channel, user2):
 	"Tests that the user is only notified when tagged if they are a member of the channel"

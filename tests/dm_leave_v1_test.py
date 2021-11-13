@@ -1,4 +1,5 @@
 import pytest
+from src import config
 from src.make_request_test import *
 
 @pytest.fixture(autouse=True)
@@ -56,14 +57,16 @@ def test_owner_leave_dm_with_users(owner, user1, user2):
 				'email': 'testemail2@gmail.com',
 				'name_first': 'david',
 				'name_last': 'smith',
-				'handle_str': 'davidsmith'
+				'handle_str': 'davidsmith',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			},
             {
 				'u_id': user2,
 				'email': 'testemail3@gmail.com',
 				'name_first': 'sam',
 				'name_last': 'nguyen',
-				'handle_str': 'samnguyen'
+				'handle_str': 'samnguyen',
+				'profile_img_url': config.url + 'profile_imgs/profile_img_default.jpg'
 			}
 		]
 	}

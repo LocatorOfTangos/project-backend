@@ -1,6 +1,7 @@
 import pytest
 from src.make_request_test import *
 import time
+from src.data_store import data_store
 
 def now():
     return int(time.time())
@@ -28,7 +29,7 @@ def channel(user):
     return channels_create_v2_request(user, "channel", True).json()['channel_id']
 
 def test_status(user, channel):
-	standup_start_v1_request(user, channel, 60)
+	standup_start_v1_request(user, channel, 0)
 	assert standup_active_v1_request(user, channel).status_code == 200
 
 def test_no_standup(user, channel):
@@ -36,10 +37,12 @@ def test_no_standup(user, channel):
 
 def test_active_standup(user, channel):
 	assert standup_active_v1_request(user, channel).json() == {'is_active': False, 'time_finish': None}
-	standup_start_v1_request(user, channel, 60)
+	standup_start_v1_request(user, channel, 1)
+	print(data_store.get())
 	standup_info = standup_active_v1_request(user, channel).json()
 	assert standup_info['is_active'] == True
-	assert time_eq(standup_info['time_finish'], now() + 60)
+	assert time_eq(standup_info['time_finish'], now() + 1)
+	time.sleep(1.1)
 
 def test_standup_ended(user, channel):
 	assert standup_active_v1_request(user, channel).json() == {'is_active': False, 'time_finish': None}
@@ -47,7 +50,7 @@ def test_standup_ended(user, channel):
 	assert standup_active_v1_request(user, channel).json()['is_active'] == True
 	time.sleep(0.5)
 	assert standup_active_v1_request(user, channel).json()['is_active'] == True
-	time.sleep(0.7)
+	time.sleep(0.6)
 	assert standup_active_v1_request(user, channel).json()['is_active'] == False
 
 def test_invalid_token(user, channel):
