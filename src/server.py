@@ -7,12 +7,6 @@ import requests
 from src.error import InputError
 from src import config
 
-# For data persistence
-from src.backup import interval_backup
-import threading
-import pickle
-from src.data_store import data_store
-
 # Implementation imports
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1, auth_passwordreset_request_v1
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
@@ -21,11 +15,17 @@ from src.other import clear_v1
 from src.channel import channel_join_v1, channel_details_v1, channel_invite_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.standup import standup_send_v1, standup_start_v1, standup_active_v1
 from src.user import user_profile_v1, user_profile_sethandle_v1, user_profile_setemail_v1, user_profile_setname_v1, user_stats_v1, user_profile_uploadphoto_v1
-from src.message import message_edit_v1, message_react_v1, message_send_v1, message_remove_v1, message_senddm_v1, message_share_v1, message_unreact_v1, message_pin_v1, message_unpin_v1
+from src.message import message_edit_v1, message_react_v1, message_send_v1, message_remove_v1, message_senddm_v1, message_share_v1, message_unreact_v1, message_pin_v1, message_unpin_v1, message_sendlater_v1, message_sendlaterdm_v1
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1, dm_list_v1, dm_leave_v1, dm_remove_v1
 from src.users import users_all_v1, users_stats_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.search import search_v1
+
+# For data persistence
+from src.backup import interval_backup
+import threading
+import pickle
+from src.data_store import data_store
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -214,6 +214,18 @@ def message_share():
     resp = message_share_v1(data['token'], data['og_message_id'], data['message'], data['channel_id'], data['dm_id'])
     return dumps(resp)
 
+@APP.route('/message/sendlater/v1', methods=['POST'])
+def message_sendlater():
+    data = request.get_json()
+    resp = message_sendlater_v1(data['token'], data['channel_id'], data['message'], data['time_sent'])
+    return dumps(resp)
+
+@APP.route('/message/sendlaterdm/v1', methods=['POST'])
+def message_sendlaterdm():
+    data = request.get_json()
+    resp = message_sendlaterdm_v1(data['token'], data['dm_id'], data['message'], data['time_sent'])
+    return dumps(resp)
+
 ########### DM ############
 
 @APP.route('/dm/create/v1', methods=['POST'])
@@ -386,7 +398,7 @@ if __name__ == "__main__":
         pass
 
     # Start periodic backup
-    threading.Thread(target=interval_backup, args=()).start()
+    threading.Thread(target=interval_backup, args=(), daemon=True).start()
 
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
