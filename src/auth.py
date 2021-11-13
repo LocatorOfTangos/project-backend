@@ -4,6 +4,8 @@ import jwt
 import src
 import secrets
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from src.data_store import data_store
 from src.error import AccessError, InputError
@@ -261,6 +263,10 @@ def auth_passwordreset_request_v1(email):
 		Returns an empty dictionary
 	'''
 
+	# Check if email given is valid
+	if not email_is_valid(email):
+		raise InputError(description='Email is invalid')
+
 	store = data_store.get()
 	users = store['users']
 	sessions = store['sessions']
@@ -288,7 +294,7 @@ def auth_passwordreset_request_v1(email):
 	msg['Subject'] = 'Your Reset Code'
 	msg.attach(txt)
 
-	server = smtplib.SMTP(host='smtp.gmail.com', 465)
+	server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
 	server.login("dummyemail6767@gmail.com", "Dummy123")
 	server.sendmail(sender_email, receiver_email, msg.as_string())
 	server.quit()

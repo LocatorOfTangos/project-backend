@@ -6,22 +6,27 @@ def clear():
 	clear_v1_request()
 
 @pytest.fixture
-def user():
-    return auth_register_v2_request("user1@mail.com", "password", "firstname", "lastname").json()['token']
+def user_email():
+    user_email = 'trisshavarman@gmail.com'
+    auth_register_v2_request(user_email, "password", "firstname", "lastname")
+    return user_email
 
 def test_invalid_email():
-    assert auth_passwordreset_v1_request('a@mail.com').status_code == 400
+    assert auth_passwordreset_v1_request('c8786').status_code == 400
 
-#only works with auth_password_reset_v1
-'''
-def test_working_passwordreset_request(user):
-    auth_passwordreset_v1_request('user1@mail.com')
-    store = data_store.get()
-    codes = store['reset_codes']
-    for code in codes:
-        if code['email'] == 'user1@mail.com':
-            reset_code = code['reset_code']
-            break
+def test_working_passwordreset_request(user_email):
+    assert auth_passwordreset_v1_request(user_email).status_code == 200
 
-    assert auth_password_reset_v1(reset_code, 'user1@mail.com').status_code == 200
-'''
+def test_working_passwordreset_same_user_twice(user_email):
+    assert auth_passwordreset_v1_request(user_email).status_code == 200
+    assert auth_passwordreset_v1_request(user_email).status_code == 200
+
+def test_working_passwordreset_multiple_users():
+    auth_register_v2_request("user1@gmail.com", "password", "firstname", "lastname")
+    auth_register_v2_request("user2@gmail.com", "password", "firstname", "lastname")
+    auth_register_v2_request("user3@gmail.com", "password", "firstname", "lastname")
+
+    assert auth_passwordreset_v1_request("user1@gmail.com").status_code == 200
+    assert auth_passwordreset_v1_request("user2@gmail.com").status_code == 200
+    assert auth_passwordreset_v1_request("user3@gmail.com").status_code == 200
+
