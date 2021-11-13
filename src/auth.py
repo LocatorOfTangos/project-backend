@@ -17,7 +17,7 @@ SECRET = "irAh55GJ0H" # Ideally this would be an environment variable or similar
 # Creates a JWT token for a user's session
 def create_token(u_id):
 	store = data_store.get()
-	users = data['users']
+	users = store['users']
 	# Get the next sequential ID to use
 	s_id = store['curr_session_id']
 
@@ -280,10 +280,9 @@ def auth_passwordreset_request_v1(email):
 			user['reset_code'] = reset_code
 			user['user_sessions'].clear()
 			for session in user['user_sessions']:
-				sessions.remove(s_id)
-			
-	# Set up SMTP server and send email
+				sessions.remove(session)
 
+	# Set up SMTP server and send email
 	sender_email = 'dummyemail6767@gmail.com'
 	receiver_email = email
 
