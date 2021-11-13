@@ -69,3 +69,6 @@ def test_empty_search(user1):
 def test_long_search(user1):
 	assert search_v1_request(user1, "a" * 1000).status_code == 200
 	assert search_v1_request(user1, "a" * 1001).status_code == 400
+
+def test_invalid_token():
+	assert search_v1_request("asdgfhjk", "hello").status_code == 403
