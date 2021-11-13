@@ -69,7 +69,7 @@ initial_object = {
     'workplace_stats': {},
 
     # Individual user_sessions
-    'user_sessions': []
+    'user_sessions': [],
 
     # Profile picture ID
     'current_profile_image': 0
