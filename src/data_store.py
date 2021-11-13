@@ -28,7 +28,7 @@ Example usage:
 initial_object = {
     # List of user dictionaries, indexed by ID
     # User contains: u_id, email, name_first, name_last, handle_str, global_permissions, stats, notifications[]
-    # reset_code, user_sessions
+    # reset_code
     'users': [],
 
     # List of session_id's (integers)
@@ -65,7 +65,9 @@ initial_object = {
     'curr_message_id': 0,
 
     # Global streams statistics
-    'workplace_stats': {}
+    'workplace_stats': {},
+
+    'user_sessions': []
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
