@@ -59,20 +59,20 @@ def test_message_too_long(owner, ch_pub, ch_priv, dm):
 
     assert message_sendlater_v1_request(owner, ch_pub, message, time_sent).status_code == 400
     assert message_sendlater_v1_request(owner, ch_priv, message, time_sent).status_code == 400
-    assert message_sendlater_v1_request(owner, dm, message, time_sent).status_code == 400
+    assert message_sendlaterdm_v1_request(owner, dm, message, time_sent).status_code == 400
 
 def test_sent_in_the_past(owner, ch_pub, ch_priv, message, dm):
     time_sent = int(time.time()) - 10
     assert message_sendlater_v1_request(owner, ch_pub, message, time_sent).status_code == 400
     assert message_sendlater_v1_request(owner, ch_priv, message, time_sent).status_code == 400
-    assert message_sendlater_v1_request(owner, dm, message, time_sent).status_code == 400
+    assert message_sendlaterdm_v1_request(owner, dm, message, time_sent).status_code == 400
 
 def test_user_is_not_member(user, ch_pub, ch_priv, dm, message):
     time_sent = int(time.time()) + 3
 
     assert message_sendlater_v1_request(user, ch_pub, message, time_sent).status_code == 403
     assert message_sendlater_v1_request(user, ch_priv, message, time_sent).status_code == 403
-    assert message_sendlater_v1_request(user, dm, message, time_sent).status_code == 403
+    assert message_sendlaterdm_v1_request(user, dm, message, time_sent).status_code == 403
 
 def test_message_u_id(owner, ch_pub, ch_priv, message):
     time_sent = int(time.time()) + 1
