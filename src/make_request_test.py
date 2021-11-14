@@ -26,8 +26,8 @@ def auth_passwordreset_v1_request(email):
         'email': email
     })
     
-def auth_password_reset_v1_request(reset_code, new_password):
-    return requests.post(config.url + 'auth/passwordreset/v1', json={
+def auth_passwordreset_reset_v1_request(reset_code, new_password):
+    return requests.post(config.url + 'auth/passwordreset/reset/v1', json={
         'reset_code': reset_code,
         'new_password': new_password
     })

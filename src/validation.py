@@ -146,13 +146,5 @@ def reset_code_is_valid(reset_code):
     store = data_store.get()
     return any(user['reset_code'] == reset_code for user in store['users'])
 
-def get_reset_code(u_id):
-    store = data_store.get()
-    users = store['users']
-    reset_code = ''
-    for user in users:
-        if user['u_id'] == u_id:
-            reset_code = user['reset_code']
 
-    return reset_code
    

@@ -315,7 +315,7 @@ def auth_passwordreset_request_v1(email):
 	return {}
 	
 
-def auth_passwordreset_v1(reset_code, new_password):
+def auth_passwordreset_reset_v1(reset_code, new_password):
 	'''
     Change user password 
 
@@ -340,13 +340,16 @@ def auth_passwordreset_v1(reset_code, new_password):
 
 	store = data_store.get()
 	users = store['users']
-	password = store['passwords']
+
 	for user in users:
 		if user['reset_code'] == reset_code:
 			u_id = user['u_id']
 			break
 
-	password[u_id] == hashlib.sha256(new_password.encode()).hexdigest()
+	hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+	data_store.get()['passwords'][u_id] = hashed_password
+
+	data_store().set(store)
 
 	return {}
 

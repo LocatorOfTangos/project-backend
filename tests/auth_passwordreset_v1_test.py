@@ -8,21 +8,28 @@ def clear():
 	clear_v1_request()
 
 def test_invalid_reset_code():
-    assert auth_password_reset_v1_request(123, 'newpassword').status_code == 400
-    assert auth_password_reset_v1_request(-1, 'newpassword').status_code == 400
+    assert auth_passwordreset_reset_v1_request(123, 'newpassword').status_code == 400
+    assert auth_passwordreset_reset_v1_request(-1, 'newpassword').status_code == 400
 
 def test_password_too_short():
     email = "testemail@gmail.com"
-    u_id = auth_register_v2_request(email, "password", "firstname", "lastname").json()['auth_user_id']
-    reset_code = get_reset_code(u_id)
-    assert auth_password_reset_v1_request(reset_code, '123').status_code == 400
+    auth_register_v2_request(email, "password", "vu", "luu")
+    auth_passwordreset_request_v1('testemail@gmail.com')
 
-def test_valid_reset_code():
-    email = "testemail@gmail.com"
-    u_id = auth_register_v2_request(email, "password", "vu", "luu").json()['auth_user_id']
-    auth_passwordreset_v1_request('testemail@gmail.com')
-    reset_code = get_reset_code(u_id)
-    assert auth_password_reset_v1_request(reset_code, 'newpassword').status_code == 200
+    store = data_store.get()
+    user = store['users']
+    for user in users:
+        if user['email'] == email:
+            reset_code = user['reset_code']
+            break
+
+    assert auth_passwordreset_reset_v1_request(reset_code, '123').status_code == 400
+
+
+
+
+
+
 
 
     
