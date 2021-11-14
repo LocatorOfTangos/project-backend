@@ -41,6 +41,9 @@ def test_channel_and_dm_invalid(sender, message):
 def test_channel_and_dm_not_neg1(sender, message, channel2, dm):
 	assert message_share_v1_request(sender, message, "Hi", channel2, dm).status_code == 400
 
+def test_channel_invalid(sender, message):
+	assert message_share_v1_request(sender, message, "Hi", 12345, -1).status_code == 400
+
 def test_invalid_message(sender, channel1):
 	assert message_share_v1_request(sender, 12345, "Hi", channel1, -1).status_code == 400
 

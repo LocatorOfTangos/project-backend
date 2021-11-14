@@ -574,6 +574,8 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
 	Return Value:
 		{ message_id }
 	'''
+	print("Send later channel")
+	print(token, channel_id, message, time_sent)
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
@@ -632,6 +634,8 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 	Return Value:
 		{ message_id }
 	'''
+	print("Send later DM")
+	print(token, dm_id, message, time_sent)
 	if not valid_token(token):
 		raise AccessError(description="Invalid token")
 
