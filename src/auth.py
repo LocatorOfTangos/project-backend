@@ -349,7 +349,7 @@ def auth_passwordreset_reset_v1(reset_code, new_password):
 	hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
 	data_store.get()['passwords'][u_id] = hashed_password
 
-	data_store().set(store)
+	data_store.set(store)
 
 	return {}
 

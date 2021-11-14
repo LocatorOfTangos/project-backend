@@ -1,6 +1,5 @@
 import pytest
 from src.auth import data_store
-from src.validation import get_reset_code, reset_code_is_valid
 from src.make_request_test import *
 
 @pytest.fixture(autouse=True)
@@ -14,10 +13,11 @@ def test_invalid_reset_code():
 def test_password_too_short():
     email = "testemail@gmail.com"
     auth_register_v2_request(email, "password", "vu", "luu")
-    auth_passwordreset_request_v1('testemail@gmail.com')
+    auth_passwordreset_v1_request('testemail@gmail.com')
 
     store = data_store.get()
-    user = store['users']
+    users = store['users']
+    reset_code = ''
     for user in users:
         if user['email'] == email:
             reset_code = user['reset_code']
