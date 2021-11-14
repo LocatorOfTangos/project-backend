@@ -35,3 +35,6 @@ def test_passwordreset_logout_sessions_with_functions():
     user = auth_register_v2_request("dummyemail6767@gmail.com", "password", "first", "last").json()['token']
     auth_passwordreset_v1_request("dummyemail6767@gmail.com")
     assert auth_logout_v1_request(user).status_code == 403
+
+def test_no_users():
+    assert auth_passwordreset_v1_request("blake@mail.com").status_code == 200

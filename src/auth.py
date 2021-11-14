@@ -283,6 +283,8 @@ def auth_passwordreset_request_v1(email):
 	# Generate a reset code using secrets module
 	reset_code = secrets.token_hex(4)
 
+	u_id = None
+
 	# Store reset code and logout from all current sessions
 	for user in users:
 		if user['email'] == email:
