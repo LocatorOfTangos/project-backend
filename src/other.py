@@ -23,6 +23,7 @@ def clear_v1():
     store['workplace_stats'] = {}
     store['current_profile_img'] = 0
     store['user_sessions'] = []
+    store['msg_queue'] = []
     data_store.set(store)
 
     images = 'profile_imgs'

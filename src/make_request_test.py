@@ -318,3 +318,19 @@ def message_share_v1_request(token, og_message_id, message, channel_id, dm_id):
         'channel_id': channel_id,
         'dm_id': dm_id
     })
+
+def message_sendlater_v1_request(token, channel_id, message, time_sent):
+    return requests.post(config.url + 'message/sendlater/v1', json={
+        'token': token,
+        'channel_id': channel_id,
+        'message': message,
+        'time_sent': time_sent
+    })
+
+def message_sendlaterdm_v1_request(token, dm_id, message, time_sent):
+    return requests.post(config.url + 'message/sendlaterdm/v1', json={
+        'token': token,
+        'dm_id': dm_id,
+        'message': message,
+        'time_sent': time_sent
+    })
