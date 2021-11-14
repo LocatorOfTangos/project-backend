@@ -286,8 +286,8 @@ def user_profile_setname():
 
 @APP.route('/user/stats/v1', methods=['GET'])
 def user_stats():
-    data = request.get_json()
-    resp = user_stats_v1(data['token'])
+    data = request.args.get('token')
+    resp = user_stats_v1(data)
     return dumps(resp)
 
 @APP.route('/user/profile/uploadphoto/v1', methods=['POST'])
