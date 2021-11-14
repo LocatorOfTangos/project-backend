@@ -198,7 +198,7 @@ def user_profile_setname_v1_request(token, name_first, name_last):
 
 
 def user_stats_v1_request(token):
-	return requests.get(config.url + 'user/stats/v1', json={
+	return requests.get(config.url + 'user/stats/v1', params={
 		'token': token
 	})
 

@@ -12,7 +12,7 @@ def user_email():
     return user_email
 
 def test_invalid_email():
-    assert auth_passwordreset_v1_request('c8786').status_code == 400
+    assert auth_passwordreset_v1_request('c8786').status_code == 200
 
 def test_working_passwordreset_request(user_email):
     assert auth_passwordreset_v1_request(user_email).status_code == 200

@@ -273,7 +273,7 @@ def auth_passwordreset_request_v1(email):
 
 	# Check if email given is valid
 	if not email_is_valid(email):
-		raise InputError(description='Email is invalid')
+		return {}
 
 	store = data_store.get()
 	users = store['users']
@@ -287,6 +287,9 @@ def auth_passwordreset_request_v1(email):
 	for user in users:
 		if user['email'] == email:
 			u_id = user['u_id']
+
+	if u_id == None:
+		return {}
 
 	for s_id in user_sessions[u_id]['sessions']:
 		if s_id in sessions:

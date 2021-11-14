@@ -216,7 +216,7 @@ def global_stat_update(statistic, diff):
     })
     return
 
-def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end, host_url):
     '''
     Downloads a JPG image from the internet via a given URL, and crops according to specifications.
     The formatted image becomes the user's profile picture.
@@ -266,7 +266,7 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     imageno = store['current_profile_img']
     image.save(f'profile_imgs/{imageno}.jpg')
 
-    store['users'][u_id]['profile_img_url'] = config.url + f'profile_imgs/{imageno}.jpg'
+    store['users'][u_id]['profile_img_url'] = host_url + f'profile_imgs/{imageno}.jpg'
 
     store['current_profile_img'] += 1
 
