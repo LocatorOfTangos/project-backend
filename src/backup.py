@@ -11,10 +11,8 @@ def interval_backup():
 	print("Starting object:")
 	print(store)
 	while True:
-		store = data_store.get()
-		file = open("data.p", "wb")
-		pickle.dump(store, file)
-		file.close()
+		with open("data.p", "wb") as f:
+			pickle.dump(data_store.get(), f)
 
 		msg_queue = store['msg_queue']
 		if len(msg_queue) == 0:
@@ -29,3 +27,4 @@ def interval_backup():
 				message_senddm_v1(first_msg['token'], first_msg['dm_id'], first_msg['message'], message_id=first_msg['message_id'])
 			msg_queue.pop(0)
 			data_store.set(store)
+

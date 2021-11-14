@@ -72,7 +72,7 @@ initial_object = {
     'user_sessions': [],
 
     # Profile picture ID
-    'current_profile_image': 0,
+    'current_profile_img': 0,
 
     # Send later functions
     'msg_queue': []

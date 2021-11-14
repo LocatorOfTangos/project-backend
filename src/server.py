@@ -298,14 +298,14 @@ def user_profile_setname():
 
 @APP.route('/user/stats/v1', methods=['GET'])
 def user_stats():
-    data = request.get_json()
-    resp = user_stats_v1(data['token'])
+    token = request.args.get('token')
+    resp = user_stats_v1(token)
     return dumps(resp)
 
 @APP.route('/user/profile/uploadphoto/v1', methods=['POST'])
 def user_profile_uploadphoto():
     data = request.get_json()
-    resp = user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], data['y_start'], data['x_end'], data['y_end'])
+    resp = user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], data['y_start'], data['x_end'], data['y_end'], request.host_url)
     return dumps(resp)
 
 @APP.route('/profile_imgs/<path>')
