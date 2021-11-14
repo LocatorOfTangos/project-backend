@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 
 from src.data_store import data_store
 from src.error import AccessError, InputError
-from src.validation import valid_token, email_is_valid
+from src.validation import valid_token, email_is_valid, reset_code_is_valid
 from datetime import datetime, timezone
 from src import config
 
@@ -315,6 +315,40 @@ def auth_passwordreset_request_v1(email):
 	return {}
 	
 
+def auth_passwordreset_v1(reset_code, new_password):
+	'''
+    Change user password 
+
+    Arguments:
+        reset_code (int): Reset code that was sent to user's email
+        new_password (str): New password 
+
+    Exceptions:
+		InputError > Occur when:
+        	> Reset code is invalid
+        	> New_password is less than 6 characters
+
+    Return Value:
+        Returns an empty dictionary
+    '''
+
+	if not reset_code_is_valid(reset_code):
+		raise InputError(description='Invalid reset code')
+
+	if len(new_password) < 6:
+		raise InputError(description='Password entered is less than 6 characters long')
+
+	store = data_store.get()
+	users = store['users']
+	password = store['passwords']
+	for user in users:
+		if user['reset_code'] == reset_code:
+			u_id = user['u_id']
+			break
+
+	password[u_id] == hashlib.sha256(new_password.encode()).hexdigest()
+
+	return {}
 
 	
 
