@@ -55,3 +55,9 @@ def test_incorrect_password():
 
     assert auth_login_v2_request("JamisonFawkes@gigglemail.boom", "Roadhog").status_code == 400
     assert auth_login_v2_request("TheEngineer@mercmail.tf", "ConundrumsOfPhilosophy").status_code == 400
+
+def test_removed_user():
+    admin = auth_register_v2_request("JamisonFawkes@gigglemail.boom", "Junkrat", "Jamison", "Fawkes").json()['token']
+    user = auth_register_v2_request("dsdfgh@gigglemail.boom", "Junkrat", "Jamison", "Fawkes").json()['auth_user_id']
+    admin_user_remove_v1_request(admin, user)
+    auth_login_v2_request("JamisonFawkes@gigglemail.boom", "Junkrat")
